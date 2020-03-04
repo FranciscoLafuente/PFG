@@ -1,0 +1,58 @@
+version: "3.5"
+services:
+  #############################
+  #     Parte del backend     #
+  #############################
+  server:
+    container_name: python-backend
+    build:
+      context: ./backend/flasky
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: development
+    networks:
+      - backend
+      - frontend
+  #############################
+  #    Parte del frontend     #
+  #############################
+  client:
+    container_name: vue-frontend
+    depends_on:
+      - server
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8080"
+    networks:
+      - frontend
+  #############################
+  # Parte de la base de datos #
+  #############################
+  db:
+    container_name: mongo-db
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - "9090:27017"
+    networks:
+      - backend
+  # Semilla de la base de datos
+  db_seed:
+    container_name: mongo-db_seed
+    build: ./dbseed
+    depends_on:
+      - db
+    networks:
+      - backend
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
+  frontend:

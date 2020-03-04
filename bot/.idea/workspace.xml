@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="79f81050-0afd-4c7b-8d36-e8c53bbaf7ef" name="Default Changelist" comment="">
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/.idea/bot.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/bot.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/controllers/banner.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/controllers/banner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/controllers/ipreverse.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/controllers/ipreverse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/controllers/portscanner.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/controllers/portscanner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/datos.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/datos.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/controllers/banner.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/controllers/banner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/datos.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/datos.txt" afterDir="false" />
+>>>>>>> f355a106c41e5ee8f14acd3219094b161e3f3b7f
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1WCLMgIn3P4rZiR45DOp7E1j7ZO" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="79f81050-0afd-4c7b-8d36-e8c53bbaf7ef" name="Default Changelist" comment="" />
+      <created>1578648583116</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1578648583116</updated>
+      <workItem from="1579278094196" duration="73000" />
+      <workItem from="1579278237327" duration="4211000" />
+    </task>
+    <servers />
+  </component>
+<<<<<<< HEAD
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+=======
+>>>>>>> f355a106c41e5ee8f14acd3219094b161e3f3b7f
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+<<<<<<< HEAD
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+=======
+            <State />
+>>>>>>> f355a106c41e5ee8f14acd3219094b161e3f3b7f
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
