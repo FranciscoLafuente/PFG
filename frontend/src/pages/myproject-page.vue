@@ -3,7 +3,7 @@
     <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>My Projects</v-toolbar-title>
+          <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <v-card>
@@ -14,21 +14,85 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
+                    <v-col>
                       <v-text-field v-model="editedItem.name" label="Scan name"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.executiontime" label="Execution Time"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.hosts" label="Hosts"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
-                <div class="select-bots">
-                  <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.bots" 
-                  :listBots="(editedItem.bots = selectedBots)"></Select>
-                </div>
+                <v-container>
+                  <v-row>
+                    <v-col>
+                      <v-textarea v-model="editedItem.hosts" label="Hosts" clearable=""></v-textarea>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-container>
+                  <v-row>
+                    <v-col>
+                      <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.bots" 
+                      :listBots="(editedItem.bots = selectedBots)"></Select>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-container>
+                  <v-row>
+                    <v-col>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :return-value.sync="date"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="date"
+                            label="Picker in menu"
+                            prepend-icon="event"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="date" no-title scrollable :min-date="new Date()">
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                          <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="11" sm="5">
+                      <v-menu
+                        ref="menu"
+                        v-model="menu2"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="time"
+                            label="Picker in menu"
+                            prepend-icon="access_time"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu2"
+                          v-model="time"
+                          full-width
+                          @click:minute="$refs.menu.save(time)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-card-text>
 
               <v-card-actions>
@@ -65,6 +129,7 @@ export default {
     Select
   },
   data: () => ({
+    title: "My Projects",
     dialog: false,
     headers: [
       {
@@ -83,16 +148,20 @@ export default {
       name: "",
       bots: 0,
       executiontime: 0,
-      hosts: 0
+      hosts: ""
     },
     defaultItem: {
       name: "",
       bots: 0,
       executiontime: 0,
-      hosts: 0
+      hosts: ""
     },
     bots: ["BotA", "BotB", "BotC", "BotD"],
-    selectedBots: []
+    selectedBots: [],
+    date: new Date().toISOString().substr(0, 10),
+    menu: false,
+    time: null,
+    menu2: false,
   }),
 
   computed: {
@@ -186,7 +255,7 @@ export default {
         }
       };
       return token;
-    }
+    },
   }
 };
 </script>

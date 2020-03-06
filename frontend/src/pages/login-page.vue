@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card :elevation=9>
-      <form>
+      <form @keypress.enter="submit">
         <div>
           <h1>Login with <em>Shodita</em></h1>
         </div>
