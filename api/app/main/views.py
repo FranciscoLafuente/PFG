@@ -42,7 +42,6 @@ def login():
 def get_user():
     current_user = get_jwt_identity()
     u = User()
-    print(current_user)
 
     return jsonify(u.get_user(current_user)), 200
 
@@ -53,7 +52,6 @@ def get_products():
     current_user = get_jwt_identity()
     project_user = Project()
     all_projects = project_user.project_with_scans(current_user)
-    print(all_projects)
 
     return jsonify(all_projects), 200
 

@@ -5,103 +5,9 @@
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
 
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-text-field v-model="editedItem.name" label="Scan name"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-textarea v-model="editedItem.hosts" label="Hosts" clearable=""></v-textarea>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.bots" 
-                      :listBots="(editedItem.bots = selectedBots)"></Select>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-menu
-                        ref="menu"
-                        v-model="menu"
-                        :close-on-content-click="false"
-                        :return-value.sync="date"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="date"
-                            label="Picker in menu"
-                            prepend-icon="event"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="date" no-title scrollable :min-date="new Date()">
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                          <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="11" sm="5">
-                      <v-menu
-                        ref="menu"
-                        v-model="menu2"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="time"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="time"
-                            label="Picker in menu"
-                            prepend-icon="access_time"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-time-picker
-                          v-if="menu2"
-                          v-model="time"
-                          full-width
-                          @click:minute="$refs.menu.save(time)"
-                        ></v-time-picker>
-                      </v-menu>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
+            <dialogScan :dialog="dialog" @isShow="dialog = $event" @newScan="editedItem = $event"></dialogScan>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="addScan">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
@@ -122,15 +28,16 @@
 
 <script>
 import axios from "axios";
-import Select from "../components/select-component";
+import dialogScan from "../components/dialog-scan-component";
 
 export default {
   components: {
-    Select
+    dialogScan
   },
   data: () => ({
     title: "My Projects",
     dialog: false,
+    dialogProject: false,
     headers: [
       {
         text: "Project Name",
@@ -143,7 +50,7 @@ export default {
       { text: "Actions", value: "action", sortable: false }
     ],
     projects: [],
-    editedIndex: -1,
+    currentProject: Number,
     editedItem: {
       name: "",
       bots: 0,
@@ -156,33 +63,23 @@ export default {
       executiontime: 0,
       hosts: ""
     },
-    bots: ["BotA", "BotB", "BotC", "BotD"],
-    selectedBots: [],
-    date: new Date().toISOString().substr(0, 10),
-    menu: false,
-    time: null,
-    menu2: false,
   }),
 
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Project" : "New Scan";
-    }
-  },
-
   watch: {
-    dialog(val) {
-      val || this.close();
+    editedItem() {
+      if(this.editedItem.name != "" && this.editedItem.hosts != "" && this.editedItem.bots != 0) {
+        this.addScan()
+      }
     }
   },
 
   created() {
-    this.initialize();
+    this.initialize()
   },
 
   methods: {
     initialize() {
-      let token = this.getToken();
+      let token = this.getToken()
       let scans = []
 
       axios
@@ -198,63 +95,49 @@ export default {
           });
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
 
     addScan() {
-      let token = this.getToken();
-      let id = this.editedItem['_id'];     
+      let token = this.getToken()
+      let id = this.currentProject   
 
       axios
         .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
         .then(r => {
-          this.save(r.data);
+          this.save(r.data)
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
 
     editItem(item) {
-      this.editedIndex = this.projects.indexOf(item);          
-      this.editedItem = Object.assign({}, item);
-      console.log("Esto es en editItem", this.editedItem['_id']);
+      this.currentProject = item._id    
+      console.log("Esto es en editItem", this.currentProject)
       
-      this.dialog = true;
+      this.dialog = true
     },
 
     deleteItem(item) {
-      const index = this.projects.indexOf(item);
+      const index = this.projects.indexOf(item)
       confirm("Are you sure you want to delete this item?") &&
-        this.projects.splice(index, 1);
-    },
-
-    close() {
-      this.dialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
+        this.projects.splice(index, 1)
     },
 
     save(projectsUpdated) {
-      if (this.editedIndex > -1) {
-        Object.assign(this.projects, projectsUpdated);
-      } else {
-        this.projects.push(this.editedItem);
-      }
-      this.close();
+        Object.assign(this.projects, projectsUpdated)
     },
 
     getToken() {
-      let user = localStorage.getItem("token");
+      let user = localStorage.getItem("token")
       let token = {
         headers: {
           Authorization: "Bearer " + user
         }
-      };
-      return token;
+      }
+      return token
     },
   }
 };
