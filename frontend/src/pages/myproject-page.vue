@@ -19,7 +19,8 @@
       </template>
     </v-data-table>
     <div class="folder-button">
-      <v-btn color="blue darken-1" @click="dialog = true" dark fab>
+      <v-btn color="blue darken-1" @click="dialogPro = true" dark fab>
+        <dialogProject :dialogPro="dialogPro" @isShow="dialogPro = $event"></dialogProject>
         <v-icon>add</v-icon>
       </v-btn>
     </div>
@@ -29,15 +30,17 @@
 <script>
 import axios from "axios";
 import dialogScan from "../components/dialog-scan-component";
+import dialogProject from "../components/dialog-project-component"
 
 export default {
   components: {
-    dialogScan
+    dialogScan,
+    dialogProject
   },
   data: () => ({
     title: "My Projects",
     dialog: false,
-    dialogProject: false,
+    dialogPro: false,
     headers: [
       {
         text: "Project Name",
