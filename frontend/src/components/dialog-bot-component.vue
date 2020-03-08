@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogPro" max-width="500px">
+    <v-dialog v-model="dialogBot" max-width="500px">
         <v-card>
             <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
@@ -9,7 +9,14 @@
                 <v-container>
                   <v-row>
                     <v-col>
-                      <v-text-field v-model="editedItem.name" label="Project name"></v-text-field>
+                      <v-text-field v-model="editedItem.name" label="Bot name"></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-container>
+                  <v-row>
+                    <v-col>
+                      <v-textarea v-model="editedItem.ip" label="IPs" clearable=""></v-textarea>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -33,20 +40,20 @@
 
 <script>
 export default {
-  props: ["dialogPro"],
+  props: ["dialogBot"],
   data: () => ({
-    formTitle: "New Project",
-    items: ['Public', 'Private'],
+    formTitle: "New Bot",
+    items: ['Nobita', 'Shuneo'],
     editedItem: {
       name: "",
-      type: true,
-      scans: [],
+      ip: "",
+      type: [],
     },
   }),
 
   methods: {
       save() {
-        this.$emit('newProject', this.editedItem)
+        this.$emit('newBot', this.editedItem)
         this.$emit('isShow', false)
       }
   }

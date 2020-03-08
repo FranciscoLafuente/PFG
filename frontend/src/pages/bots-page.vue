@@ -1,55 +1,25 @@
 <template>
   <v-container>
-    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
+    <v-data-table :headers="headers" :items="bots" sort-by="Bot Name" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
 
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.name" label="Scan name"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.executiontime" label="Execution Time"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.hosts" label="Hosts"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <div class="select-bots">
-                  <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.bots" 
-                  :listBots="(editedItem.bots = selectedBots)"></Select>
-                </div>
-              </v-card-text>
+            <dialogScan :dialog="dialog" @isShow="dialog = $event" @newScan="editedItem = $event"></dialogScan>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="addScan">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
-        <v-icon small @click="deleteItem(item)">delete</v-icon>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
     </v-data-table>
     <div class="folder-button">
-      <v-btn color="blue darken-1" @click="dialog = true" dark fab>
+      <v-btn color="blue darken-1" @click="dialogBot = true" dark fab>
+        <dialogBot :dialogBot="dialogBot" @isShow="dialogBot = $event" @newBot="editedItem = $event"></dialogBot>
         <v-icon>add</v-icon>
       </v-btn>
     </div>
@@ -58,118 +28,131 @@
 
 <script>
 import axios from "axios";
-import Select from "../components/select-component";
+import dialogScan from "../components/dialog-scan-component";
+import dialogBot from "../components/dialog-bot-component"
 
 export default {
   components: {
-    Select
+    dialogScan,
+    dialogBot
   },
   data: () => ({
-    title: "My Bots",
+    title: "Bots",
     dialog: false,
+    dialogBot: false,
     headers: [
       {
-        text: "Name Bots",
+        text: "Bot Name",
         align: "left",
         sortable: true,
         value: "name"
       },
-      { text: "IPs", value: "ip"},
-      { text: "Type", value: "type" },
-      { text: "Actions", value: "action", sortable: false }
+      { text: "IP", value: "ip"},
+      { text: "Type Bot", value: "type" },
+      { text: "Generate Token", value: "action", sortable: false }
     ],
     bots: [],
-    editedIndex: -1,
+    currentProject: Number,
     editedItem: {
       name: "",
-      bots: 0,
-      executiontime: 0,
-      hosts: 0
+      ip: "",
+      type: [],
     },
-    defaultItem: {
-      name: "",
-      bots: 0,
-      executiontime: 0,
-      hosts: 0
-    },
-    //bots: ["BotA", "BotB", "BotC", "BotD"],
-    selectedBots: []
   }),
 
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "Generate Token" : "New Bot";
-    }
-  },
-
   watch: {
-    dialog(val) {
-      val || this.close();
-    }
+    editedItem() {
+      if(this.editedItem.name != "") { // && this.editItem.ip != "" && this.editedItem.type != []
+        console.log("EditBot in watch");
+      }
+    },
   },
 
   created() {
-    //this.initialize();
+    this.initialize()
   },
 
   methods: {
     initialize() {
-      let token = this.getToken();
+      let token = this.getToken()
 
       axios
         .get("http://localhost:5000/myproject", token)
         .then(r => {
-            console.log(r);
+          console.log(r.data);
+          
         })
         .catch(e => {
-          console.log(e.response);
+          console.log(e.response)
         });
     },
 
-    generateToken() {
+    addScan() {
+      let token = this.getToken()
+      let id = this.currentProject   
 
+      axios
+        .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
+        .then(r => {
+          this.save(r.data)
+        })
+        .catch(e => {
+          console.log(e.response)
+        });
+    },
+
+    addProject() {
+      let token = this.getToken()
+
+      let new_project = {}
+
+      axios
+        .post("http://localhost:5000/myproject", this.editProject, token)
+        .then(r => {
+          console.log("Data del back", r.data);
+          
+          new_project = {
+            'name': r.data.name,
+            'type': r.data.type,
+            'scans': [],
+          }
+          this.projects.push(new_project)
+          console.log("Nuevo Projecto", new_project);
+          console.log("Lista de Projects", this.projects);
+          
+          
+        })
+        .catch(e => {
+          console.log(e.response)
+        });
     },
 
     editItem(item) {
-      this.editedIndex = this.projects.indexOf(item);          
-      this.editedItem = Object.assign({}, item);
-      console.log("Esto es en editItem", this.editedItem['_id']);
+      this.currentProject = item._id    
+      console.log("Esto es en editItem", this.currentProject)
       
-      this.dialog = true;
+      this.dialog = true
     },
 
     deleteItem(item) {
-      const index = this.projects.indexOf(item);
+      const index = this.projects.indexOf(item)
       confirm("Are you sure you want to delete this item?") &&
-        this.projects.splice(index, 1);
-    },
-
-    close() {
-      this.dialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
+        this.projects.splice(index, 1)
     },
 
     save(projectsUpdated) {
-      if (this.editedIndex > -1) {
-        Object.assign(this.projects, projectsUpdated);
-      } else {
-        this.projects.push(this.editedItem);
-      }
-      this.close();
+        Object.assign(this.projects, projectsUpdated)
     },
 
     getToken() {
-      let user = localStorage.getItem("token");
+      let user = localStorage.getItem("token")
       let token = {
         headers: {
           Authorization: "Bearer " + user
         }
-      };
-      return token;
-    }
+      }
+      return token
+    },
   }
 };
 </script>
