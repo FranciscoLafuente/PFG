@@ -20,7 +20,7 @@
     </v-data-table>
     <div class="folder-button">
       <v-btn color="blue darken-1" @click="dialogPro = true" dark fab>
-        <dialogProject :dialogPro="dialogPro" @isShow="dialogPro = $event"></dialogProject>
+        <dialogProject :dialogPro="dialogPro" @isShow="dialogPro = $event" @newProject="editProject = $event"></dialogProject>
         <v-icon>add</v-icon>
       </v-btn>
     </div>
@@ -60,11 +60,10 @@ export default {
       executiontime: 0,
       hosts: ""
     },
-    defaultItem: {
+    editProject: {
       name: "",
-      bots: 0,
-      executiontime: 0,
-      hosts: ""
+      type: true,
+      scans: [],
     },
   }),
 
@@ -72,6 +71,12 @@ export default {
     editedItem() {
       if(this.editedItem.name != "" && this.editedItem.hosts != "" && this.editedItem.bots != 0) {
         this.addScan()
+      }
+    },
+
+    editProject() {
+      if(this.editProject.name != "") {
+        this.addProject()
       }
     }
   },
@@ -110,6 +115,32 @@ export default {
         .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
         .then(r => {
           this.save(r.data)
+        })
+        .catch(e => {
+          console.log(e.response)
+        });
+    },
+
+    addProject() {
+      let token = this.getToken()
+
+      let new_project = {}
+
+      axios
+        .post("http://localhost:5000/myproject", this.editProject, token)
+        .then(r => {
+          console.log("Data del back", r.data);
+          
+          new_project = {
+            'name': r.data.name,
+            'type': r.data.type,
+            'scans': [],
+          }
+          this.projects.push(new_project)
+          console.log("Nuevo Projecto", new_project);
+          console.log("Lista de Projects", this.projects);
+          
+          
         })
         .catch(e => {
           console.log(e.response)

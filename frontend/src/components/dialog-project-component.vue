@@ -13,10 +13,10 @@
                     </v-col>
                   </v-row>
                 </v-container>
-                <v-container>
+                <v-container fluid>
                   <v-row>
                     <v-col>
-                      <v-text-field v-model="editedItem.hosts" label="Type" clearable=""></v-text-field>
+                      <v-select :items="items" v-model="editedItem.type" label="Type" clearable=""></v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -36,19 +36,19 @@ export default {
   props: ["dialogPro"],
   data: () => ({
     formTitle: "New Project",
+    items: ['Public', 'Private'],
     newItem: {},
     editedIndex: -1,
     editedItem: {
       name: "",
-      bots: 0,
-      executiontime: 0,
-      hosts: ""
+      type: true,
+      scans: [],
     },
   }),
 
   methods: {
       save() {
-        this.$emit('newScan', this.editedItem)
+        this.$emit('newProject', this.editedItem)
         this.$emit('isShow', false)
       }
   }
