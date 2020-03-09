@@ -6,8 +6,7 @@
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
 
-            <dialogScan :dialog="dialog" @isShow="dialog = $event" @newScan="editedItem = $event"></dialogScan>
-
+          <dialogScan :dialog="dialog" @isShow="dialog = $event" @newScan="editedItem = $event"></dialogScan>
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
@@ -19,7 +18,11 @@
     </v-data-table>
     <div class="folder-button">
       <v-btn color="blue darken-1" @click="dialogBot = true" dark fab>
-        <dialogBot :dialogBot="dialogBot" @isShow="dialogBot = $event" @newBot="editedItem = $event"></dialogBot>
+        <dialogBot
+          :dialogBot="dialogBot"
+          @isShow="dialogBot = $event"
+          @newBot="editedItem = $event"
+        ></dialogBot>
         <v-icon>add</v-icon>
       </v-btn>
     </div>
@@ -29,7 +32,7 @@
 <script>
 import axios from "axios";
 import dialogScan from "../components/dialog-scan-component";
-import dialogBot from "../components/dialog-bot-component"
+import dialogBot from "../components/dialog-bot-component";
 
 export default {
   components: {
@@ -47,7 +50,7 @@ export default {
         sortable: true,
         value: "name"
       },
-      { text: "IP", value: "ip"},
+      { text: "IP", value: "ip" },
       { text: "Type Bot", value: "type" },
       { text: "Generate Token", value: "action", sortable: false }
     ],
@@ -56,103 +59,87 @@ export default {
     editedItem: {
       name: "",
       ip: "",
-      type: [],
-    },
+      type: []
+    }
   }),
 
   watch: {
     editedItem() {
-      if(this.editedItem.name != "") { // && this.editItem.ip != "" && this.editedItem.type != []
+      if (this.editedItem.name != "") {
+        // && this.editItem.ip != "" && this.editedItem.type != []
         console.log("EditBot in watch");
       }
-    },
+    }
   },
 
   created() {
-    this.initialize()
+    this.initialize();
   },
 
   methods: {
     initialize() {
-      let token = this.getToken()
+      let token = this.getToken();
 
       axios
-        .get("http://localhost:5000/myproject", token)
+        .get("http://localhost:5000/bots", token)
         .then(r => {
           console.log(r.data);
-          
         })
         .catch(e => {
-          console.log(e.response)
-        });
-    },
-
-    addScan() {
-      let token = this.getToken()
-      let id = this.currentProject   
-
-      axios
-        .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
-        .then(r => {
-          this.save(r.data)
-        })
-        .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
 
     addProject() {
-      let token = this.getToken()
+      let token = this.getToken();
 
-      let new_project = {}
+      let new_project = {};
 
       axios
         .post("http://localhost:5000/myproject", this.editProject, token)
         .then(r => {
           console.log("Data del back", r.data);
-          
+
           new_project = {
-            'name': r.data.name,
-            'type': r.data.type,
-            'scans': [],
-          }
-          this.projects.push(new_project)
+            name: r.data.name,
+            type: r.data.type,
+            scans: []
+          };
+          this.projects.push(new_project);
           console.log("Nuevo Projecto", new_project);
           console.log("Lista de Projects", this.projects);
-          
-          
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
 
     editItem(item) {
-      this.currentProject = item._id    
-      console.log("Esto es en editItem", this.currentProject)
-      
-      this.dialog = true
+      this.currentProject = item._id;
+      console.log("Esto es en editItem", this.currentProject);
+
+      this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.projects.indexOf(item)
+      const index = this.projects.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.projects.splice(index, 1)
+        this.projects.splice(index, 1);
     },
 
     save(projectsUpdated) {
-        Object.assign(this.projects, projectsUpdated)
+      Object.assign(this.projects, projectsUpdated);
     },
 
     getToken() {
-      let user = localStorage.getItem("token")
+      let user = localStorage.getItem("token");
       let token = {
         headers: {
           Authorization: "Bearer " + user
         }
-      }
-      return token
-    },
+      };
+      return token;
+    }
   }
 };
 </script>

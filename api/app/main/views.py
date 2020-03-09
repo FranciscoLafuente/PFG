@@ -3,7 +3,7 @@
 from flask import request, jsonify
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from . import main
-from ..models import User, Project, Scan
+from ..models import User, Project, Scan, Bot
 
 
 @main.route('/signup', methods=['POST'])
@@ -103,4 +103,26 @@ def scans(id):
 @jwt_required
 def bots():
     current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    b = Bot()
+    list_bots = b.get_bots(current_user)
+
+    return jsonify(list_bots), 200
+
+
+@main.route('/bots', methods=['POST'])
+@jwt_required
+def bots():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    bot_name = request.json.get('name', None)
+    bot_ip = request.json.get('ip', None)
+    bot_type = request.json.get('type', None)
+
+    if not bot_name or not bot_ip or not bot_type:
+        return jsonify({"msg": "Missing parameter"}), 400
+
+    b = Bot()
+    id_bot = b.create_bot(bot_name, bot_ip, bot_type)
+
+    return jsonify(id_bot), 200

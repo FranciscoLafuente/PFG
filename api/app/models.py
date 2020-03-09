@@ -128,6 +128,27 @@ class Scan:
         return list_s
 
 
+class Bot:
+
+    def create_bot(self, name, user, ip, type_bot):
+        new_bot = mongo.db.bots.insert({
+            "name": name,
+            "email": user,
+            "ip": ip,
+            "type": type_bot,
+        })
+        print(new_bot)
+
+        return new_bot
+
+    def get_bots(self, user):
+        bots = mongo.db.bots.find_one({'email': user})
+
+        print(bots)
+
+        return json.loads(JSONEncoder().encode(bots))
+
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
