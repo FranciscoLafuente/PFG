@@ -7,13 +7,13 @@
 
             <v-card-text>
                 <v-container>
-                    Debe guardar este token
+                    You must to save this token to use this bot later
                 </v-container>
             </v-card-text>
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Acept</v-btn>
+                <v-btn color="blue darken-1" text @click="$emit('isShow', false)">OK</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

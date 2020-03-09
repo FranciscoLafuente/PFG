@@ -10,7 +10,7 @@
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
+        <v-icon small class="button-add mr-2" @click="editItem(item)">add</v-icon>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -143,6 +143,11 @@ export default {
   bottom: 15%;
   right: 10%;
   position: absolute;
+}
+
+.button-add {
+  display: flex;
+  margin-left: 2.6em;
 }
 
 .v-btn--icon.v-size--default .v-icon,
