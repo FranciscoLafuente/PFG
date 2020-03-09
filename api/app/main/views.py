@@ -33,7 +33,7 @@ def login():
         return jsonify({"msg": "Unregistered user or invalid password"}), 400
 
     # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=useremail)
+    access_token = create_access_token(identity=useremail, expires_delta=None)
     return jsonify(access_token=access_token), 200
 
 
@@ -127,3 +127,10 @@ def post_bots():
     id_bot = b.create_bot(bot_name, current_user, bot_ip, bot_type)
 
     return jsonify(id_bot), 200
+
+
+@main.route('/bots/<id_bot>', methods=['POST'])
+def generateTokenBot(id_bot):
+    token_bot = create_access_token(identity=id_bot, expires_delta=None)
+    print(token_bot)
+    return jsonify(token_bot), 200

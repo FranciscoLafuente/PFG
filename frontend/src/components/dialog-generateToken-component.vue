@@ -7,7 +7,8 @@
 
             <v-card-text>
                 <v-container>
-                    You must to save this token to use this bot later
+                    <div class="subtitle">{{ subTitle }}</div>
+                    <div>{{ tokenBot }}</div>
                 </v-container>
             </v-card-text>
 
@@ -22,9 +23,10 @@
 <script>
 
 export default {
-  props: ["dialog"],
+  props: ["dialog", "tokenBot"],
     data: () => ({
     formTitle: "Token bot",
+    subTitle : "You must to save this token to use this bot later:"
   }),
 };
 </script>
@@ -34,8 +36,13 @@ export default {
   height: 90%;
   width: 80%;
   justify-content: center;
-  display: flex;
+  display: inherit;
   align-items: center;
+}
+
+.subtitle {
+    font-weight: bold;
+    margin-bottom: 1em;
 }
 
 .v-application .elevation-1 {
