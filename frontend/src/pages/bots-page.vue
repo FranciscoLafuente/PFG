@@ -6,7 +6,7 @@
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
 
-          <dialogScan :dialog="dialog" @isShow="dialog = $event" @newScan="editedItem = $event"></dialogScan>
+          <dialogToken :dialog="dialog" @isShow="dialog = $event"></dialogToken>
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
@@ -31,12 +31,12 @@
 
 <script>
 import axios from "axios";
-import dialogScan from "../components/dialog-scan-component";
+import dialogToken from "../components/dialog-generateToken-component";
 import dialogBot from "../components/dialog-bot-component";
 
 export default {
   components: {
-    dialogScan,
+    dialogToken,
     dialogBot
   },
   data: () => ({
@@ -55,19 +55,16 @@ export default {
       { text: "Generate Token", value: "action", sortable: false }
     ],
     bots: [],
-    currentProject: Number,
-    editedItem: {
-      name: "",
-      ip: "",
-      type: []
-    }
+    currentBot: Number,
+    editedItem: {}
   }),
 
   watch: {
     editedItem() {
       if (this.editedItem.name != "") {
         // && this.editItem.ip != "" && this.editedItem.type != []
-        console.log("EditBot in watch");
+        this.addBot()
+        console.log("EditBot in watch")
       }
     }
   },
@@ -79,35 +76,22 @@ export default {
   methods: {
     initialize() {
       let token = this.getToken();
-
       axios
         .get("http://localhost:5000/bots", token)
         .then(r => {
-          console.log(r.data);
+          this.bots.push(r.data)
         })
         .catch(e => {
           console.log(e.response);
         });
     },
 
-    addProject() {
+    addBot() {
       let token = this.getToken();
-
-      let new_project = {};
-
       axios
-        .post("http://localhost:5000/myproject", this.editProject, token)
+        .post("http://localhost:5000/bots", this.editedItem, token)
         .then(r => {
-          console.log("Data del back", r.data);
-
-          new_project = {
-            name: r.data.name,
-            type: r.data.type,
-            scans: []
-          };
-          this.projects.push(new_project);
-          console.log("Nuevo Projecto", new_project);
-          console.log("Lista de Projects", this.projects);
+          this.bots.push(r.data);
         })
         .catch(e => {
           console.log(e.response);
@@ -115,9 +99,7 @@ export default {
     },
 
     editItem(item) {
-      this.currentProject = item._id;
-      console.log("Esto es en editItem", this.currentProject);
-
+      this.currentBot = item._id;
       this.dialog = true;
     },
 

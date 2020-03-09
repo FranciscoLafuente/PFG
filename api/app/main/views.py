@@ -101,7 +101,7 @@ def scans(id):
 
 @main.route('/bots', methods=['GET'])
 @jwt_required
-def bots():
+def get_bots():
     current_user = get_jwt_identity()
     b = Bot()
     list_bots = b.get_bots(current_user)
@@ -111,7 +111,7 @@ def bots():
 
 @main.route('/bots', methods=['POST'])
 @jwt_required
-def bots():
+def post_bots():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
@@ -122,7 +122,8 @@ def bots():
     if not bot_name or not bot_ip or not bot_type:
         return jsonify({"msg": "Missing parameter"}), 400
 
+    current_user = get_jwt_identity()
     b = Bot()
-    id_bot = b.create_bot(bot_name, bot_ip, bot_type)
+    id_bot = b.create_bot(bot_name, current_user, bot_ip, bot_type)
 
     return jsonify(id_bot), 200

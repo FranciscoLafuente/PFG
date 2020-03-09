@@ -31,8 +31,6 @@ class User:
                 'projects': p.get_projects(email)
             }
 
-        print(user)
-
         return user
 
     def check_user(self, collection):
@@ -131,15 +129,16 @@ class Scan:
 class Bot:
 
     def create_bot(self, name, user, ip, type_bot):
-        new_bot = mongo.db.bots.insert({
+        mongo.db.bots.insert({
             "name": name,
             "email": user,
             "ip": ip,
             "type": type_bot,
         })
-        print(new_bot)
 
-        return new_bot
+        b = mongo.db.bots.find_one({"name": name, 'email': user})
+
+        return json.loads(JSONEncoder().encode(b))
 
     def get_bots(self, user):
         bots = mongo.db.bots.find_one({'email': user})
