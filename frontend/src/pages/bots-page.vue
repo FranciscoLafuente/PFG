@@ -5,7 +5,6 @@
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
-
           <dialogToken :dialog="dialog" :tokenBot="tokenBot" @isShow="dialog = $event"></dialogToken>
         </v-toolbar>
       </template>
@@ -57,21 +56,21 @@ export default {
     bots: [],
     currentBot: Number,
     editedItem: {},
-    tokenBot: "",
+    tokenBot: ""
   }),
 
   watch: {
     editedItem() {
       if (this.editedItem.name != "") {
         // && this.editItem.ip != "" && this.editedItem.type != []
-        this.addBot()
-        console.log("EditBot in watch")
+        this.addBot();
+        console.log("EditBot in watch");
       }
     }
   },
 
   created() {
-    this.initialize()
+    this.initialize();
   },
 
   methods: {
@@ -80,58 +79,60 @@ export default {
       axios
         .get("http://localhost:5000/bots", token)
         .then(r => {
-          this.bots.push(r.data)
+          r.data.forEach(e => {
+            this.bots.push(e);
+          });
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
 
     addBot() {
-      let token = this.getToken()
+      let token = this.getToken();
       axios
         .post("http://localhost:5000/bots", this.editedItem, token)
         .then(r => {
-          this.bots.push(r.data)
+          this.bots.push(r.data);
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
     },
 
     generateToken(item) {
-      this.currentBot = item._id
+      this.currentBot = item._id;
       //let token = this.getToken()
       axios
         .post("http://localhost:5000/bots/" + this.currentBot)
         .then(r => {
-          this.tokenBot = JSON.parse(JSON.stringify(r.data))  
+          this.tokenBot = JSON.parse(JSON.stringify(r.data));
         })
         .catch(e => {
-          console.log(e.response)
+          console.log(e.response);
         });
-      
+
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.projects.indexOf(item)
+      const index = this.projects.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.projects.splice(index, 1)
+        this.projects.splice(index, 1);
     },
 
     save(projectsUpdated) {
-      Object.assign(this.projects, projectsUpdated)
+      Object.assign(this.projects, projectsUpdated);
     },
 
     getToken() {
-      let user = localStorage.getItem("token")
+      let user = localStorage.getItem("token");
       let token = {
         headers: {
           Authorization: "Bearer " + user
         }
-      }
-      return token
+      };
+      return token;
     }
   }
 };

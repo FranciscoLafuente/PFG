@@ -96,10 +96,18 @@ class Project:
 
 class Scan:
 
-    def create_scan(self, id_project, name_scan, bots, hosts):
+    def create_scan(self, user, id_project, name_scan, bots, hosts):
+        b = Bot()
+        listbots_id = []
+        list_bots = b.get_bots(user)
+        for bot in list_bots:
+            b_name = bot['name']
+            if b_name in bots:
+                listbots_id.append(ObjectId(bot['_id']))
+
         new_scan = mongo.db.scans.insert({
             "name": name_scan,
-            "bots": bots,
+            "bots": listbots_id,
             "executiontime": "01/01/1612",
             "hosts": hosts
         })
@@ -142,11 +150,11 @@ class Bot:
         return json.loads(JSONEncoder().encode(b))
 
     def get_bots(self, user):
-        bots = mongo.db.bots.find_one({'email': user})
+        list_bots = []
+        for bot in mongo.db.bots.find({'email': user}):
+            list_bots.append(json.loads(JSONEncoder().encode(bot)))
 
-        print(bots)
-
-        return json.loads(JSONEncoder().encode(bots))
+        return list_bots
 
 
 class JSONEncoder(json.JSONEncoder):
