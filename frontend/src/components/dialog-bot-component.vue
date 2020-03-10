@@ -23,7 +23,9 @@
                 <v-container fluid>
                   <v-row>
                     <v-col>
-                      <v-select :items="items" v-model="editedItem.type" label="Type" clearable=""></v-select>
+                      <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.type" 
+                      :listBots="(editedItem.type = selectedBots)"></Select>
+                       <!--v-model="editedItem.type" label="Type" clearable="">-->
                     </v-col>
                   </v-row>
                 </v-container>
@@ -39,24 +41,30 @@
 </template>
 
 <script>
-export default {
-  props: ["dialogBot"],
-  data: () => ({
-    formTitle: "New Bot",
-    items: ['Nobita', 'Shuneo'],
-    editedItem: {
-      name: "",
-      ip: "",
-      type: [],
-    },
-  }),
+import Select from "../components/select-component";
 
-  methods: {
-      save() {
-        this.$emit('newBot', this.editedItem)
-        this.$emit('isShow', false)
-      }
-  }
+export default {
+    components: {
+        Select,
+    },
+    props: ["dialogBot"],
+    data: () => ({
+        formTitle: "New Bot",
+        bots: ['Nobita', 'Shuneo'],
+        selectedBots: [],
+        editedItem: {
+        name: "",
+        ip: "",
+        type: [],
+        },
+    }),
+
+    methods: {
+        save() {
+            this.$emit('newBot', this.editedItem)
+            this.$emit('isShow', false)
+        }
+    }
 };
 </script>
 

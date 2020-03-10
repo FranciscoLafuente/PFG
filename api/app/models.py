@@ -134,6 +134,7 @@ class Bot:
             "email": user,
             "ip": ip,
             "type": type_bot,
+            "token": "",
         })
 
         b = mongo.db.bots.find_one({"name": name, 'email': user})
