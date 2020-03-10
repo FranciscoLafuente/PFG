@@ -156,6 +156,16 @@ class Bot:
 
         return list_bots
 
+    def add_token(self, id_bot, token):
+        b = mongo.db.bots.find_one({"_id": ObjectId(id_bot)})
+        # Update bot with the generated token
+        bot_update = mongo.db.bots.update(
+            {'_id': b['_id']},
+            {'$set': {"token": token}}
+        )
+
+        return json.loads(JSONEncoder().encode(mongo.db.bots.find_one({"_id": ObjectId(id_bot)})))
+
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):

@@ -131,8 +131,9 @@ def post_bots():
 
 
 @main.route('/bots/<id_bot>', methods=['POST'])
-@jwt_required
-def generateTokenBot(id_bot):
+def generate_token_bot(id_bot):
     token_bot = create_access_token(identity=id_bot, expires_delta=None)
-    print(token_bot)
-    return jsonify(token_bot), 200
+    b = Bot()
+    bot_update = b.add_token(id_bot, token_bot)
+
+    return jsonify(token_bot, bot_update), 200

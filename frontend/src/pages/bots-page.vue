@@ -101,28 +101,26 @@ export default {
     },
 
     generateToken(item) {
+      if (item.token === "") {
+
       this.currentBot = item._id;
-      //let token = this.getToken()
       axios
         .post("http://localhost:5000/bots/" + this.currentBot)
         .then(r => {
-          this.tokenBot = JSON.parse(JSON.stringify(r.data));
+          this.tokenBot = JSON.parse(JSON.stringify(r.data[0]))
+          // Search de index in bots array
+          const index = this.bots.findIndex(e => e._id === this.currentBot)
+          // Change the value with the generated token
+          Object.assign(this.bots[index], r.data[1])       
         })
         .catch(e => {
           console.log(e.response);
         });
 
       this.dialog = true;
-    },
-
-    deleteItem(item) {
-      const index = this.projects.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.projects.splice(index, 1);
-    },
-
-    save(projectsUpdated) {
-      Object.assign(this.projects, projectsUpdated);
+      } else {
+        alert("Token already generated")
+      }
     },
 
     getToken() {

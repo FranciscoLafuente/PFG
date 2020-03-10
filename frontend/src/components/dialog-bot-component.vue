@@ -25,7 +25,6 @@
                     <v-col>
                       <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.type" 
                       :listBots="(editedItem.type = selectedBots)"></Select>
-                       <!--v-model="editedItem.type" label="Type" clearable="">-->
                     </v-col>
                   </v-row>
                 </v-container>
