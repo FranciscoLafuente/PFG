@@ -88,11 +88,11 @@ def scans(id):
     if not scan_name or not scan_bots or not scan_hosts:
         return jsonify({"msg": "Missing parameter"}), 400
 
+    current_user = get_jwt_identity()
     s = Scan()
-    s.create_scan(id, scan_name, scan_bots, scan_hosts)
+    s.create_scan(current_user, id, scan_name, scan_bots, scan_hosts)
 
     # Return all projects update
-    current_user = get_jwt_identity()
     project_user = Project()
     all_projects = project_user.project_with_scans(current_user)
 
@@ -105,6 +105,7 @@ def get_bots():
     current_user = get_jwt_identity()
     b = Bot()
     list_bots = b.get_bots(current_user)
+    print(list_bots)
 
     return jsonify(list_bots), 200
 
@@ -130,6 +131,7 @@ def post_bots():
 
 
 @main.route('/bots/<id_bot>', methods=['POST'])
+@jwt_required
 def generateTokenBot(id_bot):
     token_bot = create_access_token(identity=id_bot, expires_delta=None)
     print(token_bot)
