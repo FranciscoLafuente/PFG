@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import mongo
 import json
 from bson import ObjectId
+from datetime import datetime
 
 
 class User:
@@ -96,7 +97,7 @@ class Project:
 
 class Scan:
 
-    def create_scan(self, user, id_project, name_scan, bots, hosts):
+    def create_scan(self, user, id_project, name_scan, bots, hosts, executiontime):
         b = Bot()
         listbots_id = []
         list_bots = b.get_bots(user)
@@ -108,7 +109,7 @@ class Scan:
         new_scan = mongo.db.scans.insert({
             "name": name_scan,
             "bots": listbots_id,
-            "executiontime": "01/01/1612",
+            "executiontime": executiontime,
             "hosts": hosts
         })
 

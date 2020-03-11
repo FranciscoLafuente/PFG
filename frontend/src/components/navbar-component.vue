@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
     <v-app-bar color="blue darken-1" dense dark>
       <v-toolbar-title>
         <router-link to="/">Shodita</router-link>
@@ -8,18 +8,18 @@
       <v-spacer></v-spacer>
       <v-container class="bar-buttons">
         <v-btn color="blue darken-1" text>
-          <router-link to="/bots"> Bots</router-link>
+          <router-link to="/bots">Bots</router-link>
         </v-btn>
         <v-btn color="blue darken-1" text>
           <router-link to="/signup">Sign up</router-link>
         </v-btn>
 
-        <v-btn icon v-if="!isLogged">
+        <v-btn icon>
           <router-link to="/login">
-            <v-icon>perm_identity</v-icon>
+            <v-icon v-if="!isLogged">perm_identity</v-icon>
+            <v-icon v-else>power_off</v-icon>
           </router-link>
         </v-btn>
-        <v-btn icon v-else><span>Logged</span></v-btn>
       </v-container>
     </v-app-bar>
   </div>
@@ -27,8 +27,8 @@
 
 <script>
 export default {
-    props: ["isLogged"], 
-}
+  props: ["isLogged"]
+};
 </script>
 
 <style scoped>
@@ -36,7 +36,8 @@ export default {
   text-align: right;
 }
 
-a, a:visited {
+a,
+a:visited {
   color: white;
   text-decoration: none;
 }

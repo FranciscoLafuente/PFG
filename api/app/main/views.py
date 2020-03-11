@@ -84,13 +84,14 @@ def scans(id):
     scan_name = request.json.get('name', None)
     scan_bots = request.json.get('bots', None)
     scan_hosts = request.json.get('hosts', None)
+    scan_executiontime = request.json.get('executiontime', None)
 
-    if not scan_name or not scan_bots or not scan_hosts:
+    if not scan_name or not scan_bots or not scan_hosts or not scan_executiontime:
         return jsonify({"msg": "Missing parameter"}), 400
 
     current_user = get_jwt_identity()
     s = Scan()
-    s.create_scan(current_user, id, scan_name, scan_bots, scan_hosts)
+    s.create_scan(current_user, id, scan_name, scan_bots, scan_hosts, scan_executiontime)
 
     # Return all projects update
     project_user = Project()

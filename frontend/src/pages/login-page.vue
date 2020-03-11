@@ -1,9 +1,12 @@
 <template>
   <v-container>
-    <v-card :elevation=9>
+    <v-card :elevation="9">
       <form @keypress.enter="submit">
         <div>
-          <h1>Login with <em>Shodita</em></h1>
+          <h1>
+            Login with
+            <em>Shodita</em>
+          </h1>
         </div>
 
         <v-text-field
@@ -31,95 +34,95 @@
         <div>
           <router-link :to="{ path: 'recover'}">Forgot Password?</router-link>
         </div>
-
       </form>
     </v-card>
   </v-container>
 </template>
 
 <script>
-  import { validationMixin } from 'vuelidate'
-  import { required, email, minLength } from 'vuelidate/lib/validators'
-  import axios from "axios";
+import { validationMixin } from "vuelidate";
+import { required, email, minLength } from "vuelidate/lib/validators";
+import axios from "axios";
 
+export default {
+  mixins: [validationMixin],
 
-  export default {
-      mixins: [validationMixin],
+  validations: {
+    email: { required, email },
+    password: { required, minLength: minLength(8) }
+  },
 
-    validations: {
-      email: { required, email },
-      password: { required, minLength: minLength(8) },
+  data: () => ({
+    email: "",
+    password: "",
+    show: false,
+
+    form: {}
+  }),
+
+  computed: {
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.email && errors.push("Must be valid e-mail");
+      !this.$v.email.required && errors.push("E-mail is required");
+      return errors;
     },
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.password.$dirty) return errors;
+      !this.$v.password.minLength &&
+        errors.push("Password must be at least 8 characters long");
+      !this.$v.password.required && errors.push("Password is required");
+      return errors;
+    }
+  },
 
-    data: () => ({
-      email: '',
-      password: '',
-      show: false,
-      
-      form: {}
-    }),
+  methods: {
+    submit(evt) {
+      evt.preventDefault();
+      this.form = {
+        name: this.name,
+        email: this.email,
+        password: this.password
+      };
 
-    computed: {
-      emailErrors () {
-        const errors = []
-        if (!this.$v.email.$dirty) return errors
-        !this.$v.email.email && errors.push('Must be valid e-mail')
-        !this.$v.email.required && errors.push('E-mail is required')
-        return errors
-      },
-      passwordErrors () {
-        const errors = []
-        if (!this.$v.password.$dirty) return errors
-        !this.$v.password.minLength && errors.push('Password must be at least 8 characters long')
-        !this.$v.password.required && errors.push('Password is required')
-        return errors
-      },
-    },
-
-    methods: {
-      submit (evt) {
-        evt.preventDefault();
-        this.form = {
-          "name": this.name,
-          "email": this.email,
-          "password": this.password
-        }
-        
-        axios.post("http://localhost:5000/login", this.form)
+      axios
+        .post("http://localhost:5000/login", this.form)
         .then(r => {
-            if (r.status == 200) {
-              console.log(r.data['access_token']);                
-              localStorage.setItem("token", r.data['access_token']);
-              this.$router.push("/");
-            }
+          if (r.status == 200) {
+            console.log(r.data["access_token"]);
+            localStorage.setItem("token", r.data["access_token"]);
+            this.$router.push("/");
+          }
         })
         .catch(e => {
           console.log(e.response);
         });
-      },
-    },
+    }
   }
+};
 </script>
 
 <style scoped>
 .container {
-    width: 100%;
-    height:88%;
-    display: flex;
-    justify-content: center;
-    text-align: center;
+  width: 100%;
+  height: 88%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 
 .v-card {
-    width: 40%;
-    padding: inherit;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    text-align: center;
+  width: 40%;
+  padding: inherit;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 .v-card > *:last-child:not(.v-btn):not(.v-chip) {
-    width: 80%;
+  width: 80%;
 }
 
 h1 {
@@ -134,11 +137,13 @@ em {
 a {
   font-size: 1rem;
   color: #888;
-  margin: 1em 0 .5em;
+  margin: 1em 0 0.5em;
   float: right;
 }
 
-a:link, a:visited, a:active {
+a:link,
+a:visited,
+a:active {
   text-decoration: none;
 }
 </style>

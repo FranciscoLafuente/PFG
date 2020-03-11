@@ -32,14 +32,16 @@
             </v-col>
           </v-row>
         </v-container>
-        <v-container>
+        <v-container fluid>
+          <v-checkbox v-model="checkbox" label="Schedule"></v-checkbox>
+        </v-container>
+        <v-container v-if="checkbox">
           <v-row>
             <v-col>
               <v-menu
-                ref="menu"
-                v-model="menu"
+                v-model="menu2"
                 :close-on-content-click="false"
-                :return-value.sync="date"
+                :nudge-right="40"
                 transition="scale-transition"
                 offset-y
                 min-width="290px"
@@ -47,23 +49,19 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     v-model="date"
-                    label="Picker in menu"
+                    label="Picker without buttons"
                     prepend-icon="event"
                     readonly
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="date" no-title scrollable>
-                  <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                </v-date-picker>
+                <v-date-picker v-model="date" @input="menu2 = false"></v-date-picker>
               </v-menu>
             </v-col>
-            <v-col cols="11" sm="5">
+            <v-col>
               <v-menu
                 ref="menu"
-                v-model="menu2"
+                v-model="menu"
                 :close-on-content-click="false"
                 :nudge-right="40"
                 :return-value.sync="time"
@@ -82,7 +80,7 @@
                   ></v-text-field>
                 </template>
                 <v-time-picker
-                  v-if="menu2"
+                  v-if="menu"
                   v-model="time"
                   full-width
                   @click:minute="$refs.menu.save(time)"
@@ -118,16 +116,17 @@ export default {
     editedItem: {
       name: "",
       bots: [],
-      executiontime: 0,
+      executiontime: "",
       hosts: ""
     },
     bots: [],
     botsAll: [],
     selectedBots: [],
     date: new Date().toISOString().substr(0, 10),
-    menu: false,
+    menu2: false,
     time: null,
-    menu2: false
+    menu: false,
+    checkbox: false
   }),
 
   created() {
@@ -152,6 +151,12 @@ export default {
     },
 
     save() {
+      if (this.editedItem.executiontime === "") {
+        this.editedItem.executiontime = this.dateNow();
+      } else {
+        // If Scheduled
+        this.editedItem.executiontime = this.date + " " + this.time;
+      }
       this.$emit("newScan", this.editedItem);
       this.$emit("isShow", false);
     },
@@ -164,6 +169,12 @@ export default {
         }
       };
       return token;
+    },
+
+    dateNow() {
+      let time = new Date().toLocaleTimeString();
+      let date = new Date().toISOString().substr(0, 10);
+      return date + " " + time;
     }
   }
 };
@@ -176,6 +187,7 @@ export default {
   justify-content: center;
   display: flex;
   align-items: center;
+  padding: 0%;
 }
 
 .v-application .elevation-1 {

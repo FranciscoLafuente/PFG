@@ -101,7 +101,7 @@ export default {
         .get("http://localhost:5000/myproject", token)
         .then(r => {
           r.data.forEach(e => {
-            //Esto es para poder mostrar los scans por nombre
+            // Show scans by name
             e.scans.forEach(s => {
               scans.push(s.name);
             });
@@ -151,7 +151,6 @@ export default {
 
     editItem(item) {
       this.currentProject = item._id;
-      console.log("Esto es en editItem", this.currentProject);
 
       this.dialog = true;
     },
