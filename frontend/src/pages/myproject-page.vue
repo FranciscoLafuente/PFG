@@ -52,7 +52,7 @@ export default {
         value: "name"
       },
       { text: "Scans", value: "scans" },
-      { text: "Type", value: "type" },
+      { text: "Public", value: "type" },
       { text: "Actions", value: "action", sortable: false }
     ],
     projects: [],
@@ -133,7 +133,6 @@ export default {
       let token = this.getToken();
 
       let new_project = {};
-
       axios
         .post("http://localhost:5000/myproject", this.editProject, token)
         .then(r => {

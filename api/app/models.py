@@ -3,6 +3,7 @@ from . import mongo
 import json
 from bson import ObjectId
 from datetime import datetime
+import unicodedata
 
 
 class User:
@@ -18,7 +19,8 @@ class User:
                 'email': collection['email'],
                 'name': collection['name'],
                 'password': self.password(collection['password']),
-                'projects': []
+                'projects': [],
+                'created': time_str()
             })
 
     def get_user(self, email):
@@ -62,21 +64,24 @@ class Project:
             pro = mongo.db.projects.find_one({'_id': ObjectId(p)})
             list_pro.append(json.loads(JSONEncoder().encode(pro)))
 
+        print(time_str())
         return list_pro
 
     def get_oneProject(self, id_project):
         return mongo.db.projects.find_one({'_id': ObjectId(id_project)})
 
     def create_projetc(self, user, name, is_public):
+        p = unicodedata.normalize('NFKD', is_public).encode('ascii', 'ignore')
         product_type = False
-        if is_public is 1:
+        if "Public" in p:
             product_type = True
 
         # Insert in collection projects
         project = mongo.db.projects.insert({
             'name': name,
             'type': product_type,  # If is public: 1 True, 0 False
-            'scans': []
+            'scans': [],
+            'created': time_str()
         })
 
         # Update user projects
@@ -110,7 +115,9 @@ class Scan:
             "name": name_scan,
             "bots": listbots_id,
             "executiontime": executiontime,
-            "hosts": hosts
+            "hosts": hosts,
+            'created': time_str(),
+            'done': False
         })
 
         # Update project with the new scan
@@ -144,6 +151,7 @@ class Bot:
             "ip": ip,
             "type": type_bot,
             "token": "",
+            'created': time_str()
         })
 
         b = mongo.db.bots.find_one({"name": name, 'email': user})
@@ -167,6 +175,10 @@ class Bot:
 
         return json.loads(JSONEncoder().encode(mongo.db.bots.find_one({"_id": ObjectId(id_bot)})))
 
+
+def time_str():
+    now = datetime.now()
+    return now.strftime("%Y-%m-%d %H:%M:%S")
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
