@@ -1,69 +1,73 @@
 <template>
-    <v-dialog v-model="dialogBot" max-width="500px">
-        <v-card>
-            <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+  <v-dialog v-model="dialogBot" persistent max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">{{ formTitle }}</span>
+      </v-card-title>
 
-            <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-text-field v-model="editedItem.name" label="Bot name"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-textarea v-model="editedItem.ip" label="IPs" clearable=""></v-textarea>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container fluid>
-                  <v-row>
-                    <v-col>
-                      <Select :bots="bots" @listBots="selectedBots = $event" :value="editedItem.type" 
-                      :listBots="(editedItem.type = selectedBots)"></Select>
-                    </v-col>
-                  </v-row>
-                </v-container>
-            </v-card-text>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field v-model="editedItem.name" label="Bot name"></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-textarea v-model="editedItem.ip" label="IPs" clearable></v-textarea>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container fluid>
+          <v-row>
+            <v-col>
+              <Select
+                :bots="bots"
+                @listBots="selectedBots = $event"
+                :value="editedItem.type"
+                :listBots="(editedItem.type = selectedBots)"
+              ></Select>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
+        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 import Select from "../components/select-component";
 
 export default {
-    components: {
-        Select,
-    },
-    props: ["dialogBot"],
-    data: () => ({
-        formTitle: "New Bot",
-        bots: ['Nobita', 'Shuneo'],
-        selectedBots: [],
-        editedItem: {
-        name: "",
-        ip: "",
-        type: [],
-        },
-    }),
-
-    methods: {
-        save() {
-            this.$emit('newBot', this.editedItem)
-            this.$emit('isShow', false)
-        }
+  components: {
+    Select
+  },
+  props: ["dialogBot"],
+  data: () => ({
+    formTitle: "New Bot",
+    bots: ["Nobita", "Shuneo"],
+    selectedBots: [],
+    editedItem: {
+      name: "",
+      ip: "",
+      type: []
     }
+  }),
+
+  methods: {
+    save() {
+      this.$emit("newBot", this.editedItem);
+      this.$emit("isShow", false);
+    }
+  }
 };
 </script>
 

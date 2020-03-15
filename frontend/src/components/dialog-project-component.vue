@@ -1,34 +1,34 @@
 <template>
-    <v-dialog v-model="dialogPro" max-width="500px">
-        <v-card>
-            <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+  <v-dialog v-model="dialogPro" persistent max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">{{ formTitle }}</span>
+      </v-card-title>
 
-            <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-text-field v-model="editedItem.name" label="Project name"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container fluid>
-                  <v-row>
-                    <v-col>
-                      <v-select :items="items" v-model="editedItem.type" label="Type" clearable=""></v-select>
-                    </v-col>
-                  </v-row>
-                </v-container>
-            </v-card-text>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field v-model="editedItem.name" label="Project name"></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container fluid>
+          <v-row>
+            <v-col>
+              <v-select :items="items" v-model="editedItem.type" label="Type" clearable></v-select>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
+        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -36,19 +36,19 @@ export default {
   props: ["dialogPro"],
   data: () => ({
     formTitle: "New Project",
-    items: ['Public', 'Private'],
+    items: ["Public", "Private"],
     editedItem: {
       name: "",
       type: true,
-      scans: [],
-    },
+      scans: []
+    }
   }),
 
   methods: {
-      save() {
-        this.$emit('newProject', this.editedItem)
-        this.$emit('isShow', false)
-      }
+    save() {
+      this.$emit("newProject", this.editedItem);
+      this.$emit("isShow", false);
+    }
   }
 };
 </script>

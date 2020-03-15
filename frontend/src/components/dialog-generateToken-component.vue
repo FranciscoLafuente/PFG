@@ -1,33 +1,32 @@
 <template>
-    <v-dialog v-model="dialog" max-width="500px">
-        <v-card>
-            <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+  <v-dialog v-model="dialog" persistent max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">{{ formTitle }}</span>
+      </v-card-title>
 
-            <v-card-text>
-                <v-container>
-                    <div class="subtitle">{{ subTitle }}</div>
-                    <div>{{ tokenBot }}</div>
-                </v-container>
-            </v-card-text>
+      <v-card-text>
+        <v-container>
+          <div class="subtitle">{{ subTitle }}</div>
+          <div>{{ tokenBot }}</div>
+        </v-container>
+      </v-card-text>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="$emit('isShow', false)">OK</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">OK</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-
 export default {
   props: ["dialog", "tokenBot"],
-    data: () => ({
+  data: () => ({
     formTitle: "Token bot",
-    subTitle : "You must to save this token to use this bot later:"
-  }),
+    subTitle: "You must to save this token to use this bot later:"
+  })
 };
 </script>
 
@@ -41,8 +40,8 @@ export default {
 }
 
 .subtitle {
-    font-weight: bold;
-    margin-bottom: 1em;
+  font-weight: bold;
+  margin-bottom: 1em;
 }
 
 .v-application .elevation-1 {

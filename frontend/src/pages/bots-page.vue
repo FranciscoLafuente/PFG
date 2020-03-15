@@ -64,7 +64,6 @@ export default {
       if (this.editedItem.name != "") {
         // && this.editItem.ip != "" && this.editedItem.type != []
         this.addBot();
-        console.log("EditBot in watch");
       }
     }
   },
@@ -102,24 +101,24 @@ export default {
 
     generateToken(item) {
       if (item.token === "") {
+        let token = localStorage.getItem("token");
+        this.currentBot = item._id;
+        axios
+          .post("http://localhost:5000/bots/" + this.currentBot, token)
+          .then(r => {
+            this.tokenBot = JSON.parse(JSON.stringify(r.data[0]));
+            // Search de index in bots array
+            const index = this.bots.findIndex(e => e._id === this.currentBot);
+            // Change the value with the generated token
+            Object.assign(this.bots[index], r.data[1]);
+          })
+          .catch(e => {
+            console.log(e.response);
+          });
 
-      this.currentBot = item._id;
-      axios
-        .post("http://localhost:5000/bots/" + this.currentBot)
-        .then(r => {
-          this.tokenBot = JSON.parse(JSON.stringify(r.data[0]))
-          // Search de index in bots array
-          const index = this.bots.findIndex(e => e._id === this.currentBot)
-          // Change the value with the generated token
-          Object.assign(this.bots[index], r.data[1])       
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
-
-      this.dialog = true;
+        this.dialog = true;
       } else {
-        alert("Token already generated")
+        alert("Token already generated");
       }
     },
 

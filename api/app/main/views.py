@@ -106,7 +106,6 @@ def get_bots():
     current_user = get_jwt_identity()
     b = Bot()
     list_bots = b.get_bots(current_user)
-    print(list_bots)
 
     return jsonify(list_bots), 200
 
@@ -133,8 +132,29 @@ def post_bots():
 
 @main.route('/bots/<id_bot>', methods=['POST'])
 def generate_token_bot(id_bot):
-    token_bot = create_access_token(identity=id_bot, expires_delta=None)
+    token_bot = create_access_token(identity=id_bot, expires_delta=False)
     b = Bot()
     bot_update = b.add_token(id_bot, token_bot)
 
     return jsonify(token_bot, bot_update), 200
+
+
+# CONNECT WITH CEMENT
+
+@main.route('/bots/<user>', methods=['GET'])
+@jwt_required
+def bots_by_user(user):
+    b = Bot()
+    list_bots = b.get_bots(user)
+
+    return jsonify(list_bots), 200
+
+
+@main.route('/myproject/<user>', methods=['GET'])
+@jwt_required
+def products_by_user(user):
+    project_user = Project()
+    all_projects = project_user.project_with_scans(user)
+    print(all_projects)
+
+    return jsonify(all_projects), 200

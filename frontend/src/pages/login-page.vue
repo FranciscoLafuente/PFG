@@ -92,11 +92,12 @@ export default {
         .then(r => {
           if (r.status == 200) {
             console.log(r.data["access_token"]);
-            localStorage.setItem("token", r.data["access_token"]);
+            localStorage.setItem("token", r.data["access_token"]); // store the token in localstorage
             this.$router.push("/");
           }
         })
         .catch(e => {
+          localStorage.removeItem("token"); // if the request fails, remove any possible user token if possible
           console.log(e.response);
         });
     }

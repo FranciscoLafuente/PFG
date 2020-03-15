@@ -6,7 +6,10 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-container class="bar-buttons">
+      <v-toolbar-items>
+        <v-btn color="blue darken-1" text>
+          <router-link to="/myprojects">My Projects</router-link>
+        </v-btn>
         <v-btn color="blue darken-1" text>
           <router-link to="/bots">Bots</router-link>
         </v-btn>
@@ -20,7 +23,7 @@
             <v-icon v-else>power_off</v-icon>
           </router-link>
         </v-btn>
-      </v-container>
+      </v-toolbar-items>
     </v-app-bar>
   </div>
 </template>
@@ -32,8 +35,8 @@ export default {
 </script>
 
 <style scoped>
-.bar-buttons {
-  text-align: right;
+.v-toolbar__title {
+  min-width: max-content;
 }
 
 a,

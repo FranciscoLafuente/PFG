@@ -1,12 +1,13 @@
 
-from cement import App, TestApp, init_defaults
+from cement import App, TestApp, init_defaults, Interface, Handler
 from cement.core.exc import CaughtSignal
 
-from .controllers.banner import Nobita
-from .core.exc import BotError
-from .controllers.base import Base
-from .controllers.portscanner import PortScanner
-from .controllers.ipreverse import Shizuka
+from controllers.banner import Nobita
+from core.exc import BotError
+from controllers.portscanner import PortScanner
+from controllers.ipreverse import Shizuka
+from interfaces.startbot import ScansInterface, ScansHandler
+from interfaces.nobita import NobitaInterface, NobitaHandler
 
 # configuration defaults
 CONFIG = init_defaults('bot')
@@ -28,7 +29,6 @@ class Bot(App):
         extensions = [
             'yaml',
             'colorlog',
-            'jinja2',
         ]
 
         # configuration handler
@@ -40,15 +40,17 @@ class Bot(App):
         # set the log handler
         log_handler = 'colorlog'
 
-        # set the output handler
-        output_handler = 'jinja2'
-
         # register handlers
         handlers = [
-            Base,
             Nobita,
             PortScanner,
-            Shizuka
+            Shizuka,
+            ScansHandler,
+            NobitaHandler,
+        ]
+        interfaces = [
+            ScansInterface,
+            NobitaInterface,
         ]
 
 
@@ -63,6 +65,12 @@ def main():
     with Bot() as app:
         try:
             app.run()
+            # Access to database
+            g = app.handler.get('startbot', 'connect', setup=True)
+            g.get_scan()
+            # Start the scan with nobita bot
+            # p = app.handler.get('nobita', 'portscan', setup=True)
+            # p.pscan(ip_address)
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

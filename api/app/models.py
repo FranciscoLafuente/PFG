@@ -64,7 +64,6 @@ class Project:
             pro = mongo.db.projects.find_one({'_id': ObjectId(p)})
             list_pro.append(json.loads(JSONEncoder().encode(pro)))
 
-        print(time_str())
         return list_pro
 
     def get_oneProject(self, id_project):
