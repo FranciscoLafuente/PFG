@@ -1,49 +1,49 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [{
-        path: '/',
-        name: 'home',
+        path: "/",
+        name: "home",
         component: () =>
-            import ( /* webpackChunkName: "home" */ '../pages/home-page.vue'),
+            import ( /* webpackChunkName: "home" */ "../pages/home-page.vue"),
         meta: {
             Auth: false,
-            title: 'Home'
-        },
+            title: "Home"
+        }
     },
     {
-        path: '/search',
-        name: 'search',
+        path: "/search",
+        name: "search",
         component: () =>
-            import ( /* webpackChunkName: "search" */ '../pages/search-page.vue'),
+            import ( /* webpackChunkName: "search" */ "../pages/search-page.vue"),
         meta: {
             Auth: false,
-            title: 'Search'
-        },
+            title: "Search"
+        }
     },
     {
-        path: '/recover',
-        name: 'recover',
+        path: "/recover",
+        name: "recover",
         component: () =>
-            import ( /* webpackChunkName: "recover" */ '../pages/recover-page.vue'),
+            import ( /* webpackChunkName: "recover" */ "../pages/recover-page.vue"),
         meta: {
             Auth: false,
-            title: 'Recover'
-        },
+            title: "Recover"
+        }
     },
     {
-        path: '/myproject',
-        name: 'myproject',
+        path: "/myproject",
+        name: "myproject",
         component: () =>
-            import ( /* webpackChunkName: "myproject" */ '../pages/myproject-page.vue'),
+            import ( /* webpackChunkName: "myproject" */ "../pages/myproject-page.vue"),
         meta: {
             Auth: true,
-            title: 'Myproject'
+            title: "Myproject"
         },
         beforeEnter: (to, from, next) => {
-            if (!window.localStorage.getItem('token')) {
+            if (!window.localStorage.getItem("token")) {
                 next(false);
             } else {
                 next();
@@ -51,33 +51,40 @@ const routes = [{
         }
     },
     {
-        path: '/bots',
-        name: 'bots',
+        path: "/bots",
+        name: "bots",
         component: () =>
-            import ( /* webpackChunkName: "bots" */ '../pages/bots-page.vue'),
+            import ( /* webpackChunkName: "bots" */ "../pages/bots-page.vue"),
         meta: {
-            Auth: false,
-            title: 'Bots'
+            Auth: true,
+            title: "Bots"
         },
+        beforeEnter: (to, from, next) => {
+            if (!window.localStorage.getItem("token")) {
+                next(false);
+            } else {
+                next();
+            }
+        }
     },
     {
-        path: '/signup',
-        name: 'signup',
+        path: "/signup",
+        name: "signup",
         component: () =>
-            import ( /* webpackChunkName: "signup" */ '../pages/signup-page.vue'),
+            import ( /* webpackChunkName: "signup" */ "../pages/signup-page.vue"),
         meta: {
             Auth: false,
-            title: 'Signup'
-        },
+            title: "Signup"
+        }
     },
     {
-        path: '/login',
-        name: 'login',
+        path: "/login",
+        name: "login",
         component: () =>
-            import ( /* webpackChunkName: "login" */ '../pages/login-page.vue'),
+            import ( /* webpackChunkName: "login" */ "../pages/login-page.vue"),
         meta: {
             Auth: false,
-            title: 'Login'
+            title: "Login"
         },
         beforeEnter: (to, from, next) => {
             delete localStorage.token;
@@ -85,37 +92,37 @@ const routes = [{
         }
     },
     {
-        path: '/myprofile',
-        name: 'myprofile',
+        path: "/myprofile",
+        name: "myprofile",
         component: () =>
-            import ( /* webpackChunkName: "myproject" */ '../pages/myprofile-page.vue'),
+            import ( /* webpackChunkName: "myproject" */ "../pages/myprofile-page.vue"),
         meta: {
             Auth: true,
-            title: 'Myprofile'
+            title: "Myprofile"
         },
         beforeEnter: (to, from, next) => {
-            if (!window.localStorage.getItem('token')) {
+            if (!window.localStorage.getItem("token")) {
                 next(false);
             } else {
                 next();
             }
         }
     }
-]
+];
 
 const router = new VueRouter({
-    mode: 'history',
+    mode: "history",
     base: process.env.BASE_URL,
     routes
-})
+});
 
 router.beforeEach((to, from, next) => {
     document.title = to.meta.title;
-    if (to.meta.Auth && !window.localStorage.getItem('token')) {
+    if (to.meta.Auth && !window.localStorage.getItem("token")) {
         next(false);
     } else {
         next();
     }
 });
 
-export default router
+export default router;
