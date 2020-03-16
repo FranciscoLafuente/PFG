@@ -25,6 +25,18 @@
         <v-icon>add</v-icon>
       </v-btn>
     </div>
+    <v-dialog v-model="this.alert" persistent max-width="400px">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <span class="headline">This token already has been created</span>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue darken-1" text @click="alert = !alert">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -42,6 +54,7 @@ export default {
     title: "Bots",
     dialog: false,
     dialogBot: false,
+    alert: false,
     headers: [
       {
         text: "Bot Name",
@@ -101,10 +114,12 @@ export default {
 
     generateToken(item) {
       if (item.token === "") {
-        let token = localStorage.getItem("token");
+        let user_token = this.getToken();
         this.currentBot = item._id;
+        console.log(user_token);
+
         axios
-          .post("http://localhost:5000/bots/" + this.currentBot, token)
+          .get("http://localhost:5000/bots/" + this.currentBot, user_token)
           .then(r => {
             this.tokenBot = JSON.parse(JSON.stringify(r.data[0]));
             // Search de index in bots array
@@ -118,15 +133,14 @@ export default {
 
         this.dialog = true;
       } else {
-        alert("Token already generated");
+        this.alert = true;
       }
     },
 
     getToken() {
-      let user = localStorage.getItem("token");
       let token = {
         headers: {
-          Authorization: "Bearer " + user
+          Authorization: "Bearer " + this.$store.state.token
         }
       };
       return token;

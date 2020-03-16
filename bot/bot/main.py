@@ -67,10 +67,13 @@ def main():
             app.run()
             # Access to database
             g = app.handler.get('startbot', 'connect', setup=True)
-            g.get_scan()
-            # Start the scan with nobita bot
-            # p = app.handler.get('nobita', 'portscan', setup=True)
-            # p.pscan(ip_address)
+            # Get Handler Bots Nobita
+            p = app.handler.get('nobita', 'portscan', setup=True)
+            scans = g.get_scan()
+            for s in scans:
+                if not s['done']:
+                    # Start the scan with nobita bot
+                    p.pscan(s['hosts'])
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

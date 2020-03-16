@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn color="blue darken-1" text>
-          <router-link to="/myprojects">My Projects</router-link>
+          <router-link to="/myproject">My Projects</router-link>
         </v-btn>
         <v-btn color="blue darken-1" text>
           <router-link to="/bots">Bots</router-link>
@@ -19,7 +19,7 @@
 
         <v-btn icon>
           <router-link to="/login">
-            <v-icon v-if="!isLogged">perm_identity</v-icon>
+            <v-icon v-if="!isLoggedIn">perm_identity</v-icon>
             <v-icon v-else>power_off</v-icon>
           </router-link>
         </v-btn>
@@ -30,7 +30,11 @@
 
 <script>
 export default {
-  props: ["isLogged"]
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    }
+  }
 };
 </script>
 

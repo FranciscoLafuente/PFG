@@ -44,11 +44,13 @@ class ScansHandler(ScansInterface, Handler, ABC):
     def get_scan(self):
         self.app.log.debug('about to greet end-user')
         projects = self.get_projects()
-        self.stract_scans(projects)
+        return self.stract_scans(projects)
 
     def get_projects(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2NsYWltcyI6eyJwcm9qZWN0SWQiOiI1ZTUxNDdhMThmMGUxMzM0ODVhOTAyZDgifSwianRpIjoiNzU0MWRkMWEtN2FkYy00NjhiLWI0YjQtZTQzYjYzOTdhYzFmIiwiZnJlc2giOmZhbHNlLCJpYXQiOjE1ODQxNzAwMjgsInR5cGUiOiJhY2Nlc3MiLCJuYmYiOjE1ODQxNzAwMjgsImlkZW50aXR5IjoiNWU2NjdjMzY5ZWQ3MTg2OTViZTMwMzgxIn0.-3r9jayUDKYDjifq2WnXO1pIU02CveXV4ZECoCgG6cs"
-        user = 'fran@fran.es'
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2NsYWltcyI6ImZyYW5AZnJhbi5lcyIsImp0aSI6Ijg2YjdiYjNlLWQxZmUtNDViNy1iYmRjLTJlM2FhNDEzNjhmMyIsImZyZXNoIjpmYWxzZSwiaWF0IjoxNTg0MzU3MDYwLCJ0eXBlIjoiYWNjZXNzIiwibmJmIjoxNTg0MzU3MDYwLCJpZGVudGl0eSI6IjVlNmU1ZGY1OGM4Yjg0NDVjMzFkMWUxMSJ9.MglR3AAMT9sII34iMZkvCXuv8PDODm2ojZ0uEaSUtq0"
+        # Get the user
+        token_decode = jwt.decode(token, verify=False)
+        user = token_decode['user_claims']
         response = requests.get("http://localhost:5000/myproject/" + user, headers={'Authorization': 'Bearer ' + token})
 
         return response.json()

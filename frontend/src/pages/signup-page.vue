@@ -3,9 +3,7 @@
     <v-card :elevation="9">
       <form>
         <div>
-          <h1>
-            <em>Create</em> New Account
-          </h1>
+          <h1><em>Create</em> New Account</h1>
         </div>
 
         <v-text-field
@@ -39,7 +37,9 @@
           @click:append="show = !show"
         ></v-text-field>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="submit">create</v-btn>
+        <v-btn color="blue darken-1" dark class="mr-4" @click="register"
+          >create</v-btn
+        >
       </form>
     </v-card>
   </v-container>
@@ -53,7 +53,6 @@ import {
   minLength,
   email
 } from "vuelidate/lib/validators";
-import axios from "axios";
 
 export default {
   mixins: [validationMixin],
@@ -100,30 +99,17 @@ export default {
   },
 
   methods: {
-    submit(evt) {
-      evt.preventDefault();
-      // Stop here if form is invalid
-      this.$v.$touch();
-      if (this.$v.$invalid) {
-        console.log("The form is invalid");
-        return;
-      }
-
-      this.form = {
+    register: function() {
+      let data = {
         name: this.name,
         email: this.email,
-        password: this.password
+        password: this.password,
+        is_admin: this.is_admin
       };
-
-      axios
-        .post("http://localhost:5000/signup", this.form)
-        .then(r => {
-          console.log(r);
-          this.clear();
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
+      this.$store
+        .dispatch("register", data)
+        .then(() => this.$router.push("/"))
+        .catch(err => console.log(err));
     },
 
     clear() {

@@ -1,12 +1,21 @@
 <template>
   <v-container>
-    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="projects"
+      sort-by="Project Name"
+      class="elevation-1"
+    >
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
 
-          <dialogScan :dialog="dialog" @isShow="dialog = $event" @newScan="editedItem = $event"></dialogScan>
+          <dialogScan
+            :dialog="dialog"
+            @isShow="dialog = $event"
+            @newScan="editedItem = $event"
+          ></dialogScan>
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
@@ -148,6 +157,15 @@ export default {
         });
     },
 
+    getToken() {
+      let token = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.token
+        }
+      };
+      return token;
+    },
+
     editItem(item) {
       this.currentProject = item._id;
 
@@ -162,16 +180,6 @@ export default {
 
     save(projectsUpdated) {
       Object.assign(this.projects, projectsUpdated);
-    },
-
-    getToken() {
-      let user = localStorage.getItem("token");
-      let token = {
-        headers: {
-          Authorization: "Bearer " + user
-        }
-      };
-      return token;
     }
   }
 };

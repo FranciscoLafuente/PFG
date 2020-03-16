@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card :elevation="9">
-      <form @keypress.enter="submit">
+      <form @keypress.enter="login">
         <div>
           <h1>
             Login with
@@ -30,9 +30,11 @@
           @click:append="show = !show"
         ></v-text-field>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="submit">login</v-btn>
+        <v-btn color="blue darken-1" dark class="mr-4" @click="login"
+          >login</v-btn
+        >
         <div>
-          <router-link :to="{ path: 'recover'}">Forgot Password?</router-link>
+          <router-link :to="{ path: 'recover' }">Forgot Password?</router-link>
         </div>
       </form>
     </v-card>
@@ -42,7 +44,6 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email, minLength } from "vuelidate/lib/validators";
-import axios from "axios";
 
 export default {
   mixins: [validationMixin],
@@ -79,27 +80,13 @@ export default {
   },
 
   methods: {
-    submit(evt) {
-      evt.preventDefault();
-      this.form = {
-        name: this.name,
-        email: this.email,
-        password: this.password
-      };
-
-      axios
-        .post("http://localhost:5000/login", this.form)
-        .then(r => {
-          if (r.status == 200) {
-            console.log(r.data["access_token"]);
-            localStorage.setItem("token", r.data["access_token"]); // store the token in localstorage
-            this.$router.push("/");
-          }
-        })
-        .catch(e => {
-          localStorage.removeItem("token"); // if the request fails, remove any possible user token if possible
-          console.log(e.response);
-        });
+    login: function() {
+      let email = this.email;
+      let password = this.password;
+      this.$store
+        .dispatch("login", { email, password })
+        .then(() => this.$router.push("/"))
+        .catch(err => console.log(err));
     }
   }
 };
