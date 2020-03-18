@@ -5,6 +5,8 @@ from pymongo import MongoClient
 import socket
 import threading
 import ssl
+import requests
+import json
 from queue import Queue
 
 client = MongoClient('mongodb://localhost:27017/')
@@ -37,12 +39,17 @@ class NobitaInterface(Interface):
         pass
 
     @abstractmethod
-    def save_database(self, port, banner):
+    def save_database(self, ip_address, port, result, **kwargs):
         """"""
         pass
 
     @abstractmethod
     def format_text(self, text):
+        """"""
+        pass
+
+    @abstractmethod
+    def geo_ip(self, ip):
         """"""
         pass
 
@@ -53,10 +60,10 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
 
     def pscan(self, ip_address):
         queue = Queue()
-        mode = 1
+        mode = 3
         self.get_ports(mode, queue)
         # Number of threads that you want to use
-        threads = 600
+        threads = 30
         thread_list = []
 
         self.app.log.info('Scanning the ports of ' + ip_address)
@@ -86,10 +93,17 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             con = s.connect_ex((target, port))
             request = "GET / HTTP/1.1\nHost: " + ip_address + "\n\n"
             s.send(request.encode())
-            banner = s.recv(1024)
+            result = s.recv(1024)
+
+            # Print the results
+            json_obj = result.decode('utf8').replace("'", '"')
+            banner = self.format_text(json_obj)
             # If the response is 0, it's mean that the connection is succesfull
             if con is 0:
-                self.save_database(port, self.format_text(str(banner)))
+                # Save in database with geolocation
+                data_geoip = self.geo_ip(ip_address)
+                if data_geoip is not None:
+                    self.save_database(ip_address, port, banner, **data_geoip)
                 s.close()
                 return True
             s.close()
@@ -115,13 +129,27 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             if self.connect(target, port):
                 print("[-] Port {} is open".format(port))
 
-    def save_database(self, port, banner):
+    def geo_ip(self, ip):
         try:
-            col.insert_one({'port': port, 'banner': banner})
+            url = "http://ip-api.com/json/" + str(ip)
+            response = requests.get(url)
+            json_obj = response.json()
+            return json_obj
+        except:
+            pass
+
+    def save_database(self, ip_address, port, result, **kwargs):
+        try:
+            col.insert_one({'ip_address': ip_address, 'country': kwargs.get('country'),
+                            'city': kwargs.get('city'), 'region_name': kwargs.get('regionName'),
+                            'isp': kwargs.get('isp'),
+                            'port': port, 'banner': result, 'latitud': kwargs.get('lat'),
+                            'longitud': kwargs.get('lon'), 'zip': kwargs.get('zip'), 'bot': 'Nobita', })
         except:
             self.app.log.error("Error inserting to the mongodb")
 
     def format_text(self, text):
         text = str(text).replace('\\r\\n', "\n")
-        text = text.lstrip("b'").rstrip("'")
-        return text
+        sep = '<'
+        result = text.split(sep, 1)[0]
+        return result

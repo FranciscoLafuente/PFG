@@ -164,6 +164,10 @@ class Bot:
 
         return list_bots
 
+    def search_bot(self, ip_bot, bot_token):
+        for b in mongo.db.bots.find({'token': bot_token}):
+            print(b)
+
     def add_token(self, id_bot, token):
         b = mongo.db.bots.find_one({"_id": ObjectId(id_bot)})
         # Update bot with the generated token
@@ -178,6 +182,7 @@ class Bot:
 def time_str():
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
+
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):

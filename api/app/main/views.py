@@ -4,6 +4,7 @@ from flask import request, jsonify
 from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from . import main
 from ..models import User, Project, Scan, Bot
+import datetime
 
 
 @main.route('/signup', methods=['POST'])
@@ -133,8 +134,7 @@ def post_bots():
 @main.route('/bots/<id_bot>', methods=['GET'])
 @jwt_required
 def generate_token_bot(id_bot):
-    current_user = get_jwt_identity()
-    token_bot = create_access_token(identity=id_bot, expires_delta=False, user_claims=current_user)
+    token_bot = create_access_token(identity=id_bot, expires_delta=False)
     b = Bot()
     bot_update = b.add_token(id_bot, token_bot)
 
@@ -159,3 +159,19 @@ def products_by_user(user):
     all_projects = project_user.project_with_scans(user)
 
     return jsonify(all_projects), 200
+
+
+@main.route('/bots/login', methods=['POST'])
+@jwt_required
+def login_bots():
+    bot_ip = request.remote_addr
+    bot_token = request.headers.get('Authorization').lstrip('Bearer ')
+    # Search if the bot exists in database
+    b = Bot()
+    b.search_bot(bot_ip, bot_token)
+    # TODO: la ip tiene que coincidir con la ip que tenemos en base de datos, dentro del bot correspondiente. Hay que
+    #  obtener el tipo de bot y su id, para introducirlo en el token. identity=idbot
+    expires = datetime.timedelta(days=2)
+    token_bot = create_access_token(bot_ip, expires_delta=expires)
+
+    return jsonify(), 200

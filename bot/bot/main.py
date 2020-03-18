@@ -67,7 +67,8 @@ def main():
             app.run()
             # Access to database
             g = app.handler.get('startbot', 'connect', setup=True)
-            # Get Handler Bots Nobita
+            # TODO: meter un if para comprobar que bot tengo que lanzar al bot se le pasan los escaneos que tiene que
+            #  hacer Get Handler Bots Nobita
             p = app.handler.get('nobita', 'portscan', setup=True)
             scans = g.get_scan()
             for s in scans:
@@ -99,3 +100,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
