@@ -38,6 +38,7 @@ export default {
 }
 
 .v-application a {
+  text-decoration: none;
   color: white;
 }
 
