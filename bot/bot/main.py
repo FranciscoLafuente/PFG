@@ -67,14 +67,17 @@ def main():
             app.run()
             # Access to database
             g = app.handler.get('startbot', 'connect', setup=True)
-            # TODO: meter un if para comprobar que bot tengo que lanzar al bot se le pasan los escaneos que tiene que
-            #  hacer Get Handler Bots Nobita
             p = app.handler.get('nobita', 'portscan', setup=True)
-            scans = g.get_scan()
+            type_bot, scans = g.get_scan()
+            # TODO: Tras el escaneo, hay que devolver los datos a la api y que esta los guarde.
+            #  Ademas tiene que cambiar el campo 'done' a true
             for s in scans:
                 if not s['done']:
                     # Start the scan with nobita bot
-                    p.pscan(s['hosts'])
+                    if 'Nobita' in type_bot:
+                        p.pscan(s['hosts'])
+                    if 'Shuneo' in type_bot:
+                        pass
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

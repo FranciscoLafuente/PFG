@@ -101,14 +101,13 @@
 </template>
 
 <script>
-import axios from "axios";
 import Select from "../components/select-component";
 
 export default {
   components: {
     Select
   },
-  props: ["dialog"],
+  props: ["dialog", "bots"],
   data: () => ({
     formTitle: "New Scan",
     newItem: {},
@@ -119,8 +118,6 @@ export default {
       executiontime: "",
       hosts: ""
     },
-    bots: [],
-    botsAll: [],
     selectedBots: [],
     date: new Date().toISOString().substr(0, 10),
     menu2: false,
@@ -129,27 +126,7 @@ export default {
     checkbox: false
   }),
 
-  created() {
-    this.initializeBots();
-  },
-
   methods: {
-    initializeBots() {
-      let token = this.getToken();
-
-      axios
-        .get("http://localhost:5000/bots", token)
-        .then(r => {
-          for (let i in r.data) {
-            this.bots.push(r.data[i].name);
-            this.botsAll.push(r.data);
-          }
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
-    },
-
     save() {
       if (this.editedItem.executiontime === "") {
         this.editedItem.executiontime = this.dateNow();
@@ -159,16 +136,6 @@ export default {
       }
       this.$emit("newScan", this.editedItem);
       this.$emit("isShow", false);
-    },
-
-    getToken() {
-      let user = localStorage.getItem("token");
-      let token = {
-        headers: {
-          Authorization: "Bearer " + user
-        }
-      };
-      return token;
     },
 
     dateNow() {

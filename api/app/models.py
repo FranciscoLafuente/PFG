@@ -140,6 +140,13 @@ class Scan:
 
         return list_s
 
+    def get_scans_by_bot(self, id_bot):
+        list_s = []
+        for scan in mongo.db.scans.find({'bots': ObjectId(id_bot)}):
+            list_s.append(json.loads(JSONEncoder().encode(scan)))
+
+        return list_s
+
 
 class Bot:
 
@@ -164,9 +171,9 @@ class Bot:
 
         return list_bots
 
-    def search_bot(self, ip_bot, bot_token):
-        for b in mongo.db.bots.find({'token': bot_token}):
-            print(b)
+    def search_bot(self, ip_bot, id_bot):
+        b = mongo.db.bots.find_one({"_id": ObjectId(id_bot), "ip": ip_bot})
+        return b.get('type')
 
     def add_token(self, id_bot, token):
         b = mongo.db.bots.find_one({"_id": ObjectId(id_bot)})

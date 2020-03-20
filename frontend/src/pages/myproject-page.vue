@@ -1,11 +1,6 @@
 <template>
   <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="projects"
-      sort-by="Project Name"
-      class="elevation-1"
-    >
+    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -13,6 +8,7 @@
 
           <dialogScan
             :dialog="dialog"
+            :bots="bots"
             @isShow="dialog = $event"
             @newScan="editedItem = $event"
           ></dialogScan>
@@ -65,6 +61,7 @@ export default {
       { text: "Actions", value: "action", sortable: false }
     ],
     projects: [],
+    bots: [],
     currentProject: Number,
     editedItem: {
       name: "",
@@ -104,6 +101,7 @@ export default {
   methods: {
     initialize() {
       let token = this.getToken();
+      this.initializeBots(token);
       let scans = [];
 
       axios
@@ -132,6 +130,18 @@ export default {
         .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
         .then(r => {
           this.save(r.data);
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
+    },
+    initializeBots(token) {
+      axios
+        .get("http://localhost:5000/bots", token)
+        .then(r => {
+          for (let i in r.data) {
+            this.bots.push(r.data[i].name);
+          }
         })
         .catch(e => {
           console.log(e.response);

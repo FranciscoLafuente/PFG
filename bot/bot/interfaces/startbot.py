@@ -19,11 +19,9 @@ class ScansInterface(Interface):
         pass
 
     @abstractmethod
-    def get_projects(self):
+    def login_bot(self):
         """
-        Get all projects by especific user
-
-        :return: The list of projects
+        :return: The type of bots
         """
         pass
 
@@ -41,25 +39,30 @@ class ScansHandler(ScansInterface, Handler, ABC):
     class Meta:
         label = 'connect'
 
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.access_token = ""
+
     def get_scan(self):
         self.app.log.debug('about to greet end-user')
-        projects = self.get_projects()
-        return self.stract_scans(projects)
+        type_bots, id_bot = self.login_bot()
+        scans = self.stract_scans(id_bot)
+        return type_bots, scans
 
-    def get_projects(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNDFlYTg4Yy1kNmJkLTQ5YWItYTE2NC0xNDJlZmFhM2VlY2MiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NDQ2ODUzNCwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NDQ2ODUzNCwiaWRlbnRpdHkiOiI1ZTZlNWRmNThjOGI4NDQ1YzMxZDFlMTEifQ.JgNFJKNlRCfA0C1NfpAw-_XJfAgmh8uMI3PQWwLqGCQ"
-        # Get the user
-        token_decode = jwt.decode(token, verify=False)
-        # user = token_decode['user_claims']
+    def login_bot(self):
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YWEzMTNhYS02ODg0LTRhOTctOTZiZC03NGJhYzZjNGQwZTgiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NDYyOTUxMiwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NDYyOTUxMiwiaWRlbnRpdHkiOiI1ZTZlNWRmNThjOGI4NDQ1YzMxZDFlMTEifQ.xdkLvW3Z0b4HkzwMiELgKEBg_wMZRqFp4WuYZB_aBBA"
+        # Get token bot
         response = requests.post("http://localhost:5000/bots/login", headers={'Authorization': 'Bearer ' + token})
 
+        self.access_token = response.json()
+        token_decode = jwt.decode(response.json(), verify=False)
+        type_bots = token_decode['user_claims']
+        id_bot = token_decode['identity']
+
+        return type_bots, id_bot
+
+    def stract_scans(self, id_bot):
+        response = requests.get("http://localhost:5000/bots/scans", headers={'Authorization': 'Bearer '
+                                                                                              + self.access_token})
+
         return response.json()
-
-    def stract_scans(self, projects):
-        scans_list = []
-        for project in projects:
-            scans = project['scans']
-            for s in scans:
-                scans_list.append(s)
-
-        return scans_list

@@ -19,6 +19,28 @@ export default {
   components: {
     Navbar,
     Footer
+  },
+
+  created: function() {
+    this.$http.interceptors.response.use(
+      response => {
+        return response;
+      },
+      function(error) {
+        console.log("Esto es el error config", error);
+        if (error.response.status === 401) {
+          console.log("Esta dentro del error");
+          let a = this.$router.push("/login");
+          console.log("Esto es lo que devuelve el push", a);
+
+          return Promise.reject(error);
+        }
+        console.log("Sale por aqui");
+
+        // return Error object with Promise
+        return Promise.reject(error);
+      }
+    );
   }
 };
 </script>
