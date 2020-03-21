@@ -34,6 +34,15 @@ class ScansInterface(Interface):
         """
         pass
 
+    @abstractmethod
+    def send_scan(self, scan):
+        """
+
+        :param scan:
+        :return:
+        """
+        pass
+
 
 class ScansHandler(ScansInterface, Handler, ABC):
     class Meta:
@@ -66,3 +75,10 @@ class ScansHandler(ScansInterface, Handler, ABC):
                                                                                               + self.access_token})
 
         return response.json()
+
+    def send_scan(self, scan, scan_id):
+        print(scan_id)
+        print(type(scan_id))
+        response = requests.post("http://localhost:5000/bots/savescan/" + scan_id, json=scan,
+                                 headers={'Authorization': 'Bearer ' + self.access_token})
+        print("IN STARTBOT-SENDSCAN", response.json())

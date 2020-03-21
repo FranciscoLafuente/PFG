@@ -1,6 +1,5 @@
 from abc import abstractmethod, ABC
 from cement import Interface, Handler
-from pymongo import MongoClient
 
 import socket
 import threading
@@ -8,10 +7,6 @@ import ssl
 import requests
 import json
 from queue import Queue
-
-client = MongoClient('mongodb://localhost:27017/')
-db = client.mydb
-col = client.mydb.port_scanner
 
 
 class NobitaInterface(Interface):
@@ -39,7 +34,7 @@ class NobitaInterface(Interface):
         pass
 
     @abstractmethod
-    def save_database(self, ip_address, port, result, **kwargs):
+    def save_scan(self, ip_address, port, result):
         """"""
         pass
 
@@ -57,6 +52,10 @@ class NobitaInterface(Interface):
 class NobitaHandler(NobitaInterface, Handler, ABC):
     class Meta:
         label = 'portscan'
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.port_scanner = {}
 
     def pscan(self, ip_address):
         queue = Queue()
@@ -78,6 +77,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             thread.join()
 
         self.app.log.info("Scanning completed")
+        return self.port_scanner
 
     def connect(self, ip_address, port):
         target = ip_address
@@ -100,10 +100,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             banner = self.format_text(json_obj)
             # If the response is 0, it's mean that the connection is succesfull
             if con is 0:
-                # Save in database with geolocation
-                data_geoip = self.geo_ip(ip_address)
-                if data_geoip is not None:
-                    self.save_database(ip_address, port, banner, **data_geoip)
+                self.save_scan(ip_address, port, banner)
                 s.close()
                 return True
             s.close()
@@ -138,15 +135,8 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
         except:
             pass
 
-    def save_database(self, ip_address, port, result, **kwargs):
-        try:
-            col.insert_one({'ip_address': ip_address, 'country': kwargs.get('country'),
-                            'city': kwargs.get('city'), 'region_name': kwargs.get('regionName'),
-                            'isp': kwargs.get('isp'),
-                            'port': port, 'banner': result, 'latitud': kwargs.get('lat'),
-                            'longitud': kwargs.get('lon'), 'zip': kwargs.get('zip'), 'bot': 'Nobita', })
-        except:
-            self.app.log.error("Error inserting to the mongodb")
+    def save_scan(self, ip_address, port, result):
+        self.port_scanner = {'ip_address': ip_address, 'port': port, 'banner': result}
 
     def format_text(self, text):
         text = str(text).replace('\\r\\n', "\n")

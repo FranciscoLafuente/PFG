@@ -75,7 +75,7 @@ def main():
                 if not s['done']:
                     # Start the scan with nobita bot
                     if 'Nobita' in type_bot:
-                        p.pscan(s['hosts'])
+                        g.send_scan(p.pscan(s['hosts']), s['_id'])
                     if 'Shuneo' in type_bot:
                         pass
 

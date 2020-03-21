@@ -4,6 +4,7 @@ import json
 from bson import ObjectId
 from datetime import datetime
 import unicodedata
+import requests
 
 
 class User:
@@ -147,6 +148,13 @@ class Scan:
 
         return list_s
 
+    def change_done(self, scan_id):
+        update = mongo.db.scans.update(
+            {'_id': ObjectId(scan_id)},
+            {'$set': {"done": True}}
+        )
+        return update
+
 
 class Bot:
 
@@ -184,6 +192,23 @@ class Bot:
         )
 
         return json.loads(JSONEncoder().encode(mongo.db.bots.find_one({"_id": ObjectId(id_bot)})))
+
+
+class Nobita:
+
+    def save_scan(self, scan):
+        geo = self.geo_ip(scan['ip_address'])
+        complete = mongo.db.nobita_bot.insert_one({'ip_address': scan['ip_address'], 'country': geo['country'],
+                                                   'city': geo['city'], 'region_name': geo['regionName'],
+                                                   'isp': geo['isp'], 'port': scan['port'], 'banner': scan['banner'],
+                                                   'latitud': geo['lat'], 'longitud': geo['lon'], 'zip': geo['zip']})
+        return complete
+
+    def geo_ip(self, ip):
+        url = "http://ip-api.com/json/" + ip
+        response = requests.get(url)
+        json_obj = response.json()
+        return json_obj
 
 
 def time_str():

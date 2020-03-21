@@ -1,9 +1,9 @@
 # coding=utf-8
 
 from flask import request, jsonify
-from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required,create_access_token, get_jwt_identity)
+from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
 from . import main
-from ..models import User, Project, Scan, Bot
+from ..models import *
 import datetime
 import jwt
 
@@ -169,3 +169,15 @@ def scans_by_bot():
     bot_scans = s.get_scans_by_bot(bot_id)
 
     return jsonify(bot_scans), 200
+
+
+@main.route('/bots/savescan/<scan_id>', methods=['POST'])
+@fresh_jwt_required
+def save_scans(scan_id):
+    scan = request.json
+    n = Nobita()
+    result = n.save_scan(scan)
+    if result is not None:
+        s = Scan()
+        s.change_done(scan_id)
+    return jsonify({"msg": "Success!"}), 200
