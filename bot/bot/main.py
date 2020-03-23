@@ -9,6 +9,7 @@ from controllers.ipreverse import Shizuka
 from interfaces.startbot import ScansInterface, ScansHandler
 from interfaces.nobita import NobitaInterface, NobitaHandler
 from interfaces.shizukaV2 import ShizukaV2Interface, ShizukaV2Handler
+from interfaces.suneo import SuneoInterface, SuneoHandler
 
 # configuration defaults
 CONFIG = init_defaults('bot')
@@ -48,12 +49,14 @@ class Bot(App):
             Shizuka,
             ScansHandler,
             NobitaHandler,
-            ShizukaV2Handler
+            ShizukaV2Handler,
+            SuneoHandler
         ]
         interfaces = [
             ScansInterface,
             NobitaInterface,
-            ShizukaV2Interface
+            ShizukaV2Interface,
+            SuneoInterface
         ]
 
 
@@ -70,16 +73,19 @@ def main():
             app.run()
             # Access to database
             g = app.handler.get('startbot', 'connect', setup=True)
-            n = app.handler.get('nobita', 'portscan', setup=True)
+            # Bots
+            n = app.handler.get('nobitaIf', 'nobita', setup=True)
             shi = app.handler.get('shizukaV2If', 'shizukaV2', setup=True)
+            su = app.handler.get('suneoIf', 'suneo', setup=True)
             type_bot, scans = g.get_scan()
-            # TODO: Tras el escaneo, hay que devolver los datos a la api y que esta los guarde.
-            #  Ademas tiene que cambiar el campo 'done' a true
+            # TODO: El bot suneo tiene que conectarse con la api para guardar sus resultados
+            su.get_target('www.joomla.org')
+
             for s in scans:
                 if not s['done']:
                     # Start the scan with nobita bot
                     if 'Nobita' in type_bot:
-                        # g.send_scan(n.pscan(s['hosts']), s['_id'])
+                        g.send_scan(n.pscan(s['hosts']), s['_id'])
                         pass
                     if 'Shizuka' in type_bot:
                         data = shi.get_domain(s['hosts'])

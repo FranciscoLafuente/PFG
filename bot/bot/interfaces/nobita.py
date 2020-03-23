@@ -11,7 +11,7 @@ from queue import Queue
 
 class NobitaInterface(Interface):
     class Meta:
-        interface = 'nobita'
+        interface = 'nobitaIf'
 
     @abstractmethod
     def pscan(self, ip_address):
@@ -51,7 +51,7 @@ class NobitaInterface(Interface):
 
 class NobitaHandler(NobitaInterface, Handler, ABC):
     class Meta:
-        label = 'portscan'
+        label = 'nobita'
 
     def __init__(self, **kw):
         super().__init__(**kw)
