@@ -211,6 +211,13 @@ class Nobita:
         return json_obj
 
 
+class Shizuka:
+
+    def save_ipreverse(self, data):
+        date_insert = datetime.now().strftime("%H:%M:%S")
+        mongo.db.shizuka_bot.insert_many(data)
+
+
 def time_str():
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")

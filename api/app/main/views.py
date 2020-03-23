@@ -181,3 +181,12 @@ def save_scans(scan_id):
         s = Scan()
         s.change_done(scan_id)
     return jsonify({"msg": "Success!"}), 200
+
+
+@main.route('/bots/domain', methods=['POST'])
+@fresh_jwt_required
+def save_ipreverse():
+    data = request.json
+    sh = Shizuka()
+    sh.save_ipreverse(data)
+    return jsonify({"msg": "Success!"}), 200

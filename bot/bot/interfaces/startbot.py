@@ -43,6 +43,15 @@ class ScansInterface(Interface):
         """
         pass
 
+    @abstractmethod
+    def send_domain(self, data):
+        """
+
+        :param data:
+        :return:
+        """
+        pass
+
 
 class ScansHandler(ScansInterface, Handler, ABC):
     class Meta:
@@ -59,7 +68,7 @@ class ScansHandler(ScansInterface, Handler, ABC):
         return type_bots, scans
 
     def login_bot(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YWEzMTNhYS02ODg0LTRhOTctOTZiZC03NGJhYzZjNGQwZTgiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NDYyOTUxMiwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NDYyOTUxMiwiaWRlbnRpdHkiOiI1ZTZlNWRmNThjOGI4NDQ1YzMxZDFlMTEifQ.xdkLvW3Z0b4HkzwMiELgKEBg_wMZRqFp4WuYZB_aBBA"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhZTE0MmU4NC03M2Y0LTRhZmQtOTMwYi04Zjg3M2VkNDNhYWUiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NDg3NjYxNiwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NDg3NjYxNiwiaWRlbnRpdHkiOiI1ZTczN2YwMDdlYTUxY2RiMjRjNzBjMmMifQ.h2jCY9tqro9y7ujIWfEfseobYB9wJkQQFsTzsiY_9UU"
         # Get token bot
         response = requests.post("http://localhost:5000/bots/login", headers={'Authorization': 'Bearer ' + token})
 
@@ -77,8 +86,11 @@ class ScansHandler(ScansInterface, Handler, ABC):
         return response.json()
 
     def send_scan(self, scan, scan_id):
-        print(scan_id)
-        print(type(scan_id))
         response = requests.post("http://localhost:5000/bots/savescan/" + scan_id, json=scan,
                                  headers={'Authorization': 'Bearer ' + self.access_token})
-        print("IN STARTBOT-SENDSCAN", response.json())
+        print(response.json()['msg'])
+
+    def send_domain(self, data):
+        response = requests.post("http://localhost:5000/bots/domain", json=data,
+                                 headers={'Authorization': 'Bearer ' + self.access_token})
+        print(response.json()['msg'])

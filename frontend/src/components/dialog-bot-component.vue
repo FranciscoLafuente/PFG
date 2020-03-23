@@ -53,7 +53,7 @@ export default {
   props: ["dialogBot"],
   data: () => ({
     formTitle: "New Bot",
-    bots: ["Nobita", "Shuneo"],
+    bots: ["Nobita", "Shizuka", "Shuneo"],
     selectedBots: [],
     editedItem: {
       name: "",

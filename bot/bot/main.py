@@ -8,6 +8,7 @@ from controllers.portscanner import PortScanner
 from controllers.ipreverse import Shizuka
 from interfaces.startbot import ScansInterface, ScansHandler
 from interfaces.nobita import NobitaInterface, NobitaHandler
+from interfaces.shizukaV2 import ShizukaV2Interface, ShizukaV2Handler
 
 # configuration defaults
 CONFIG = init_defaults('bot')
@@ -47,10 +48,12 @@ class Bot(App):
             Shizuka,
             ScansHandler,
             NobitaHandler,
+            ShizukaV2Handler
         ]
         interfaces = [
             ScansInterface,
             NobitaInterface,
+            ShizukaV2Interface
         ]
 
 
@@ -67,7 +70,8 @@ def main():
             app.run()
             # Access to database
             g = app.handler.get('startbot', 'connect', setup=True)
-            p = app.handler.get('nobita', 'portscan', setup=True)
+            n = app.handler.get('nobita', 'portscan', setup=True)
+            shi = app.handler.get('shizukaV2If', 'shizukaV2', setup=True)
             type_bot, scans = g.get_scan()
             # TODO: Tras el escaneo, hay que devolver los datos a la api y que esta los guarde.
             #  Ademas tiene que cambiar el campo 'done' a true
@@ -75,9 +79,11 @@ def main():
                 if not s['done']:
                     # Start the scan with nobita bot
                     if 'Nobita' in type_bot:
-                        g.send_scan(p.pscan(s['hosts']), s['_id'])
-                    if 'Shuneo' in type_bot:
+                        # g.send_scan(n.pscan(s['hosts']), s['_id'])
                         pass
+                    if 'Shizuka' in type_bot:
+                        data = shi.get_domain(s['hosts'])
+                        g.send_domain(data)
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])
