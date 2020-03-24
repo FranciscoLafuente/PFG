@@ -125,7 +125,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
         while not queue.empty():
             port = queue.get()
             if self.connect(target, port):
-                print("[-] Port {} is open".format(port))
+                self.app.log.info("[-] Port {} is open".format(port))
 
     def geo_ip(self, ip):
         try:

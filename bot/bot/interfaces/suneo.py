@@ -31,6 +31,7 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
 
     def get_target(self, domain):
         url = "http://" + domain
+        self.app.log.info("Generate URL: " + str(url))
         user_agent = {'User-Agent': 'Mozilla 5.10'}
         request = urllib.request.Request(url, headers=user_agent)
         try:
@@ -39,12 +40,14 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
                 html = response.read()
                 if self.detect_wp(html, domain):
                     self.response.append({'domain': domain, 'cms': 'wordpress'})
+                    self.app.log.info(domain + " is WordPress")
                 if self.detect_joomla(html):
                     self.response.append({'domain': domain, 'cms': 'joomla'})
+                    self.app.log.info(domain + " is Joomla")
                 if self.detect_drupal(html):
                     self.response.append({'domain': domain, 'cms': 'drupal'})
+                    self.app.log.info(domain + " is Drupal")
 
-            print("Response", self.response)
         except urllib.error.URLError:
             pass
         except:

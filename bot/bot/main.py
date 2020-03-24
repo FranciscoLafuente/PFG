@@ -2,14 +2,12 @@
 from cement import App, TestApp, init_defaults, Interface, Handler
 from cement.core.exc import CaughtSignal
 
-from controllers.banner import Nobita
 from core.exc import BotError
-from controllers.portscanner import PortScanner
-from controllers.ipreverse import Shizuka
 from interfaces.startbot import ScansInterface, ScansHandler
 from interfaces.nobita import NobitaInterface, NobitaHandler
 from interfaces.shizukaV2 import ShizukaV2Interface, ShizukaV2Handler
 from interfaces.suneo import SuneoInterface, SuneoHandler
+from interfaces.gigante import GiganteInterface, GiganteHandler
 
 # configuration defaults
 CONFIG = init_defaults('bot')
@@ -44,19 +42,18 @@ class Bot(App):
 
         # register handlers
         handlers = [
-            Nobita,
-            PortScanner,
-            Shizuka,
             ScansHandler,
             NobitaHandler,
             ShizukaV2Handler,
-            SuneoHandler
+            SuneoHandler,
+            GiganteHandler
         ]
         interfaces = [
             ScansInterface,
             NobitaInterface,
             ShizukaV2Interface,
-            SuneoInterface
+            SuneoInterface,
+            GiganteInterface
         ]
 
 
@@ -77,19 +74,23 @@ def main():
             n = app.handler.get('nobitaIf', 'nobita', setup=True)
             shi = app.handler.get('shizukaV2If', 'shizukaV2', setup=True)
             su = app.handler.get('suneoIf', 'suneo', setup=True)
+            gi = app.handler.get('giganteIf', 'gigante', setup=True)
+            # Get Scans of api
             type_bot, scans = g.get_scan()
             # TODO: El bot suneo tiene que conectarse con la api para guardar sus resultados
             su.get_target('www.joomla.org')
+            gi.check_ssh('www.joomla.org')
 
             for s in scans:
                 if not s['done']:
                     # Start the scan with nobita bot
                     if 'Nobita' in type_bot:
-                        g.send_scan(n.pscan(s['hosts']), s['_id'])
+                        # g.send_scan(n.pscan(s['hosts']), s['_id'])
                         pass
                     if 'Shizuka' in type_bot:
-                        data = shi.get_domain(s['hosts'])
-                        g.send_domain(data)
+                        # data = shi.get_domain(s['hosts'])
+                        # g.send_domain(data)
+                        pass
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

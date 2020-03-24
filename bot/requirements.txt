@@ -1,3 +1,4 @@
+paramiko
 PyJWT
 requests
 beautifulsoup4
