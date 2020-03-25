@@ -8,6 +8,7 @@ from interfaces.nobita import NobitaInterface, NobitaHandler
 from interfaces.shizukaV2 import ShizukaV2Interface, ShizukaV2Handler
 from interfaces.suneo import SuneoInterface, SuneoHandler
 from interfaces.gigante import GiganteInterface, GiganteHandler
+from interfaces.suneowhois import SuneoWhoisInterface, SuneoWhoisHandler
 
 # configuration defaults
 CONFIG = init_defaults('bot')
@@ -46,14 +47,16 @@ class Bot(App):
             NobitaHandler,
             ShizukaV2Handler,
             SuneoHandler,
-            GiganteHandler
+            GiganteHandler,
+            SuneoWhoisHandler
         ]
         interfaces = [
             ScansInterface,
             NobitaInterface,
             ShizukaV2Interface,
             SuneoInterface,
-            GiganteInterface
+            GiganteInterface,
+            SuneoWhoisInterface
         ]
 
 
@@ -75,11 +78,11 @@ def main():
             shi = app.handler.get('shizukaV2If', 'shizukaV2', setup=True)
             su = app.handler.get('suneoIf', 'suneo', setup=True)
             gi = app.handler.get('giganteIf', 'gigante', setup=True)
+            sw = app.handler.get('suneowhoisIf', 'suneowhois', setup=True)
             # Get Scans of api
             type_bot, scans = g.get_scan()
-            # TODO: El bot suneo tiene que conectarse con la api para guardar sus resultados
-            su.get_target('www.joomla.org')
-            gi.check_ssh('www.joomla.org')
+            # TODO: El bot suneo y gigante tiene que conectarse con la api para guardar sus resultados
+            #  suneowhois hay que ver como buscar en libreborme con lo obtenido mediante ipwhois
 
             for s in scans:
                 if not s['done']:
@@ -90,6 +93,15 @@ def main():
                     if 'Shizuka' in type_bot:
                         # data = shi.get_domain(s['hosts'])
                         # g.send_domain(data)
+                        pass
+                    if 'Suneo' in type_bot:
+                        # su.get_target('www.joomla.org')
+                        pass
+                    if 'Gigante' in type_bot:
+                        # gi.check_ssh('www.joomla.org')
+                        pass
+                    if 'SuneoWhois' in type_bot:
+                        # sw.get_target('185.59.67.186')
                         pass
 
         except AssertionError as e:
