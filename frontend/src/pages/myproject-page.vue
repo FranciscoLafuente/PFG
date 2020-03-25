@@ -15,8 +15,10 @@
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
-        <v-icon small @click="deleteItem(item)">delete</v-icon>
+        <v-icon small class="button-add mr-2" @click="editItem(item)">add</v-icon>
+      </template>
+      <template v-slot:item.delete="{ item }">
+        <v-icon small class="button-delete" @click="deleteItem(item)">delete</v-icon>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -58,7 +60,8 @@ export default {
       },
       { text: "Scans", value: "scans" },
       { text: "Public", value: "type" },
-      { text: "Actions", value: "action", sortable: false }
+      { text: "New Scan", value: "action", sortable: false },
+      { text: "Delete Project", value: "delete", sortable: false }
     ],
     projects: [],
     bots: [],
@@ -202,6 +205,16 @@ export default {
   justify-content: center;
   display: flex;
   align-items: center;
+}
+
+.button-add {
+  display: flex;
+  margin-left: 1.2em;
+}
+
+.button-delete {
+  display: flex;
+  margin-left: 2em;
 }
 
 .v-application .elevation-1 {

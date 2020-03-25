@@ -7,30 +7,32 @@
 
       <v-card-text>
         <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field v-model="editedItem.name" label="Bot name"></v-text-field>
-            </v-col>
-          </v-row>
+          <v-text-field
+            v-model="editedItem.name"
+            label="Bot name"
+            :error-messages="nameErrors"
+            :counter="8"
+            @input="$v.editedItem.name.$touch()"
+            @blur="$v.editedItem.name.$touch()"
+          ></v-text-field>
         </v-container>
         <v-container>
-          <v-row>
-            <v-col>
-              <v-textarea v-model="editedItem.ip" label="IPs" clearable></v-textarea>
-            </v-col>
-          </v-row>
+          <v-textarea
+            v-model="editedItem.ip"
+            label="IPs"
+            clearable
+            :error-messages="ipErrors"
+            @input="$v.editedItem.ip.$touch()"
+            @blur="$v.editedItem.ip.$touch()"
+          ></v-textarea>
         </v-container>
         <v-container fluid>
-          <v-row>
-            <v-col>
-              <Select
-                :bots="bots"
-                @listBots="selectedBots = $event"
-                :value="editedItem.type"
-                :listBots="(editedItem.type = selectedBots)"
-              ></Select>
-            </v-col>
-          </v-row>
+          <Select
+            :bots="bots"
+            @listBots="selectedBots = $event"
+            :value="editedItem.type"
+            :listBots="(editedItem.type = selectedBots)"
+          ></Select>
         </v-container>
       </v-card-text>
 
@@ -44,16 +46,30 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required, maxLength } from "vuelidate/lib/validators";
+import { helpers } from "vuelidate/lib/validators";
 import Select from "../components/select-component";
+import constants from "../constants";
+
+const ip_address = helpers.regex("ip_address", constants.VALID_IP_ADDRESS);
 
 export default {
   components: {
     Select
   },
+  mixins: [validationMixin],
+
+  validations: {
+    editedItem: {
+      name: { required, maxLength: maxLength(8) },
+      ip: { required, ip_address }
+    }
+  },
   props: ["dialogBot"],
   data: () => ({
     formTitle: "New Bot",
-    bots: ["Nobita", "Shizuka", "Shuneo"],
+    bots: constants.BOTS,
     selectedBots: [],
     editedItem: {
       name: "",
@@ -61,6 +77,23 @@ export default {
       type: []
     }
   }),
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.name.$dirty) return errors;
+      !this.$v.editedItem.name.maxLength &&
+        errors.push("Name must be at most 8 characters long");
+      !this.$v.editedItem.name.required && errors.push("Name is required.");
+      return errors;
+    },
+    ipErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.ip.$dirty) return errors;
+      !this.$v.editedItem.ip.ip_address && errors.push("Must be valid ip");
+      !this.$v.editedItem.ip.required && errors.push("Ip is required");
+      return errors;
+    }
+  },
 
   methods: {
     save() {
@@ -78,6 +111,7 @@ export default {
   justify-content: center;
   display: flex;
   align-items: center;
+  padding: initial;
 }
 
 .v-application .elevation-1 {

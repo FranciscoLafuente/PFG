@@ -7,30 +7,32 @@
 
       <v-card-text>
         <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field v-model="editedItem.name" label="Scan name"></v-text-field>
-            </v-col>
-          </v-row>
+          <v-text-field
+            v-model="editedItem.name"
+            label="Scan name"
+            :error-messages="nameErrors"
+            :counter="8"
+            @input="$v.editedItem.name.$touch()"
+            @blur="$v.editedItem.name.$touch()"
+          ></v-text-field>
         </v-container>
         <v-container>
-          <v-row>
-            <v-col>
-              <v-textarea v-model="editedItem.hosts" label="Hosts" clearable></v-textarea>
-            </v-col>
-          </v-row>
+          <v-textarea
+            v-model="editedItem.hosts"
+            :error-messages="hostsErrors"
+            label="Hosts"
+            clearable
+            @input="$v.editedItem.hosts.$touch()"
+            @blur="$v.editedItem.hosts.$touch()"
+          ></v-textarea>
         </v-container>
         <v-container>
-          <v-row>
-            <v-col>
-              <Select
-                :bots="bots"
-                @listBots="selectedBots = $event"
-                :value="editedItem.bots"
-                :listBots="(editedItem.bots = selectedBots)"
-              ></Select>
-            </v-col>
-          </v-row>
+          <Select
+            :bots="bots"
+            @listBots="selectedBots = $event"
+            :value="editedItem.bots"
+            :listBots="(editedItem.bots = selectedBots)"
+          ></Select>
         </v-container>
         <v-container fluid>
           <v-checkbox v-model="checkbox" label="Schedule"></v-checkbox>
@@ -102,10 +104,24 @@
 
 <script>
 import Select from "../components/select-component";
+import { validationMixin } from "vuelidate";
+import { required, maxLength } from "vuelidate/lib/validators";
+import { helpers } from "vuelidate/lib/validators";
+import constants from "../constants";
+
+const ip_address = helpers.regex("ip_address", constants.VALID_IP_ADDRESS);
 
 export default {
   components: {
     Select
+  },
+  mixins: [validationMixin],
+
+  validations: {
+    editedItem: {
+      name: { required, maxLength: maxLength(8) },
+      hosts: { required, ip_address }
+    }
   },
   props: ["dialog", "bots"],
   data: () => ({
@@ -125,6 +141,24 @@ export default {
     menu: false,
     checkbox: false
   }),
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.name.$dirty) return errors;
+      !this.$v.editedItem.name.maxLength &&
+        errors.push("Name must be at most 8 characters long");
+      !this.$v.editedItem.name.required && errors.push("Name is required.");
+      return errors;
+    },
+    hostsErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.hosts.$dirty) return errors;
+      !this.$v.editedItem.hosts.ip_address && errors.push("Must be valid host");
+      !this.$v.editedItem.hosts.required &&
+        errors.push("At least one host is required");
+      return errors;
+    }
+  },
 
   methods: {
     save() {

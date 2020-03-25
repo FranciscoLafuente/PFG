@@ -11,6 +11,9 @@
       <template v-slot:item.action="{ item }">
         <v-icon small class="button-add mr-2" @click="generateToken(item)">add</v-icon>
       </template>
+      <template v-slot:item.delete="{ item }">
+        <v-icon small class="button-delete mr-2" @click="deleteItem(item)">delete</v-icon>
+      </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
@@ -62,9 +65,10 @@ export default {
         sortable: true,
         value: "name"
       },
-      { text: "IP", value: "ip" },
+      { text: "IPs", value: "ip" },
       { text: "Type Bot", value: "type" },
-      { text: "Generate Token", value: "action", sortable: false }
+      { text: "Generate Token", value: "action", sortable: false },
+      { text: "Delete Bot", value: "delete", sortable: false }
     ],
     bots: [],
     currentBot: Number,
@@ -116,7 +120,6 @@ export default {
       if (item.token === "") {
         let user_token = this.getToken();
         this.currentBot = item._id;
-        console.log(user_token);
 
         axios
           .get("http://localhost:5000/bots/" + this.currentBot, user_token)
@@ -135,6 +138,12 @@ export default {
       } else {
         this.alert = true;
       }
+    },
+
+    deleteItem(item) {
+      const index = this.bots.indexOf(item);
+      confirm("Are you sure you want to delete this item?") &&
+        this.bots.splice(index, 1);
     },
 
     getToken() {
@@ -170,7 +179,12 @@ export default {
 
 .button-add {
   display: flex;
-  margin-left: 2.6em;
+  margin-left: 2em;
+}
+
+.button-delete {
+  display: flex;
+  margin-left: 1.5em;
 }
 
 .v-btn--icon.v-size--default .v-icon,

@@ -7,18 +7,17 @@
 
       <v-card-text>
         <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field v-model="editedItem.name" label="Project name"></v-text-field>
-            </v-col>
-          </v-row>
+          <v-text-field
+            v-model="editedItem.name"
+            label="Project name"
+            :error-messages="nameErrors"
+            :counter="8"
+            @input="$v.editedItem.name.$touch()"
+            @blur="$v.editedItem.name.$touch()"
+          ></v-text-field>
         </v-container>
         <v-container fluid>
-          <v-row>
-            <v-col>
-              <v-select :items="items" v-model="editedItem.type" label="Type" clearable></v-select>
-            </v-col>
-          </v-row>
+          <v-select :items="items" v-model="editedItem.type" label="Type" clearable></v-select>
         </v-container>
       </v-card-text>
 
@@ -32,7 +31,17 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required, maxLength } from "vuelidate/lib/validators";
+
 export default {
+  mixins: [validationMixin],
+
+  validations: {
+    editedItem: {
+      name: { required, maxLength: maxLength(8) }
+    }
+  },
   props: ["dialogPro"],
   data: () => ({
     formTitle: "New Project",
@@ -43,6 +52,16 @@ export default {
       scans: []
     }
   }),
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.name.$dirty) return errors;
+      !this.$v.editedItem.name.maxLength &&
+        errors.push("Name must be at most 8 characters long");
+      !this.$v.editedItem.name.required && errors.push("Name is required.");
+      return errors;
+    }
+  },
 
   methods: {
     save() {
@@ -60,6 +79,7 @@ export default {
   justify-content: center;
   display: flex;
   align-items: center;
+  padding: initial;
 }
 
 .v-application .elevation-1 {
@@ -79,5 +99,9 @@ export default {
 
 .select-bots {
   padding: inherit;
+}
+
+.container > .col {
+  padding: none;
 }
 </style>

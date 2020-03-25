@@ -17,11 +17,9 @@
           <router-link to="/signup">Sign up</router-link>
         </v-btn>
 
-        <v-btn icon>
-          <router-link to="/login">
-            <v-icon v-if="!isLoggedIn">perm_identity</v-icon>
-            <v-icon v-else>power_off</v-icon>
-          </router-link>
+        <v-btn icon @click="logout()">
+          <v-icon v-if="!isLoggedIn">perm_identity</v-icon>
+          <v-icon v-else>power_off</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
@@ -33,6 +31,13 @@ export default {
   computed: {
     isLoggedIn() {
       return this.$store.getters.isLoggedIn;
+    }
+  },
+  methods: {
+    logout: function() {
+      this.$store.dispatch("logout").then(() => {
+        this.$router.push("/login");
+      });
     }
   }
 };
