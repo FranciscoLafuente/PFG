@@ -8,6 +8,8 @@ import datetime
 import jwt
 
 
+# USERS MANAGEMENT
+
 @main.route('/signup', methods=['POST'])
 def signup():
     new_user = User()
@@ -48,6 +50,8 @@ def get_user():
     return jsonify(u.get_user(current_user)), 200
 
 
+# MY PROJECT MANAGEMENT
+
 @main.route('/myproject', methods=['GET'])
 @fresh_jwt_required
 def get_products():
@@ -72,9 +76,9 @@ def post_products():
 
     current_user = get_jwt_identity()
     project_user = Project()
-    project_user.create_projetc(current_user, project_name, project_type)
+    p = project_user.create_projetc(current_user, project_name, project_type)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(p), 200
 
 
 @main.route('/myproject/<id>', methods=['POST'])
@@ -102,6 +106,20 @@ def scans(id):
     return jsonify(all_projects), 200
 
 
+@main.route('/myproject/<id>', methods=['DELETE'])
+@fresh_jwt_required
+def delete_project(id):
+    current_user = get_jwt_identity()
+    if id is not None:
+        p = Project()
+        is_delete = p.delete_project(id, current_user)
+        if is_delete:
+            return jsonify({"msg": "Success!"}), 200
+    return jsonify({"msg": "Project not found"}), 404
+
+
+# BOTS MANAGEMENT
+
 @main.route('/bots', methods=['GET'])
 @fresh_jwt_required
 def get_bots():
@@ -127,9 +145,9 @@ def post_bots():
 
     current_user = get_jwt_identity()
     b = Bot()
-    id_bot = b.create_bot(bot_name, current_user, bot_ip, bot_type)
+    bot = b.create_bot(bot_name, current_user, bot_ip, bot_type)
 
-    return jsonify(id_bot), 200
+    return jsonify(bot), 200
 
 
 @main.route('/bots/<id_bot>', methods=['GET'])
@@ -140,6 +158,17 @@ def generate_token_bot(id_bot):
     bot_update = b.add_token(id_bot, token_bot)
 
     return jsonify(token_bot, bot_update), 200
+
+
+@main.route('/bots/<id_bot>', methods=['DELETE'])
+@fresh_jwt_required
+def delete_bot(id_bot):
+    if id_bot is not None:
+        b = Bot()
+        is_delete = b.delete_bot(id_bot)
+        if is_delete:
+            return jsonify({"msg": "Success!"}), 200
+    return jsonify({"msg": "Bot not found"}), 404
 
 
 # CONNECT WITH BOTS (CEMENT)

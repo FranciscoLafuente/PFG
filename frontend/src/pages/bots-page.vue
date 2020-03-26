@@ -142,8 +142,19 @@ export default {
 
     deleteItem(item) {
       const index = this.bots.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.bots.splice(index, 1);
+      if (confirm("Are you sure you want to delete this item?")) {
+        let token = this.getToken();
+        let id = item._id;
+
+        axios
+          .delete("http://localhost:5000/bots/" + id, token)
+          .then(() => {
+            this.bots.splice(index, 1);
+          })
+          .catch(e => {
+            console.log(e.response);
+          });
+      }
     },
 
     getToken() {

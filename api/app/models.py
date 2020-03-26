@@ -37,6 +37,12 @@ class User:
 
         return user
 
+    def update_user_projects(self, projects, user):
+        # Update user projects
+        mongo.db.users.update(
+            {'email': user},
+            {'$set': {'projects': projects}})
+
     def check_user(self, collection):
         user_register = mongo.db.users.find_one({
             'email': collection['email']
@@ -89,6 +95,8 @@ class Project:
             {'email': user},
             {'$push': {'projects': project}})
 
+        return json.loads(JSONEncoder().encode(mongo.db.projects.find_one({'_id': ObjectId(project)})))
+
     def project_with_scans(self, user):
         s = Scan()
         projects = self.get_projects(user)
@@ -98,6 +106,24 @@ class Project:
             list.append(p)
 
         return list
+
+    def delete_project(self, project_id, user):
+        # Delete a project in users
+        p_str = JSONEncoder().encode(project_id)
+        update_projects = []
+        current_user = mongo.db.users.find_one({'email': user})
+        projects = current_user.get('projects')
+        for p in projects:
+            p_change = JSONEncoder().encode(p)
+            if p_change != p_str:
+                update_projects.append(ObjectId(p))
+
+        u = User()
+        u.update_user_projects(update_projects, user)
+        # Delete a project in projects
+        p_delete = mongo.db.projects.delete_one({'_id': ObjectId(project_id)})
+
+        return p_delete
 
 
 class Scan:
@@ -155,6 +181,25 @@ class Scan:
         )
         return update
 
+    def update_scan_bots(self, scan, id_bot):
+        list_update = []
+        bot_str = JSONEncoder().encode(id_bot)
+        # Get all bots in a specific scan
+        bots = scan['bots']
+        for b in bots:
+            b_str = JSONEncoder().encode(b)
+            if b_str != bot_str:
+                list_update.append(b)
+        print(list_update)
+        print(type(scan['_id']))
+        print(scan['_id'])
+        update = mongo.db.scans.update(
+            {'_id': ObjectId(scan['_id'])},
+            {'$set': {"bots": list_update}}
+        )
+        print(update)
+        return update
+
 
 class Bot:
 
@@ -192,6 +237,17 @@ class Bot:
         )
 
         return json.loads(JSONEncoder().encode(mongo.db.bots.find_one({"_id": ObjectId(id_bot)})))
+
+    def delete_bot(self, id_bot):
+        change = False
+        s = Scan()
+        scans = s.get_scans_by_bot(id_bot)
+        for sc in scans:
+            update = s.update_scan_bots(sc, id_bot)
+            if update['updatedExisting']:
+                change = True
+                mongo.db.bots.delete_one({'_id': ObjectId(id_bot)})
+        return change
 
 
 class Nobita:

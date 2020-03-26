@@ -138,6 +138,7 @@ export default {
           console.log(e.response);
         });
     },
+
     initializeBots(token) {
       axios
         .get("http://localhost:5000/bots", token)
@@ -154,16 +155,10 @@ export default {
     addProject() {
       let token = this.getToken();
 
-      let new_project = {};
       axios
         .post("http://localhost:5000/myproject", this.editProject, token)
         .then(r => {
-          new_project = {
-            name: r.data.name,
-            type: r.data.type,
-            scans: []
-          };
-          this.projects.push(new_project);
+          this.projects.push(r.data);
         })
         .catch(e => {
           console.log(e.response);
@@ -181,14 +176,24 @@ export default {
 
     editItem(item) {
       this.currentProject = item._id;
-
       this.dialog = true;
     },
 
     deleteItem(item) {
       const index = this.projects.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.projects.splice(index, 1);
+      if (confirm("Are you sure you want to delete this item?")) {
+        let token = this.getToken();
+        let id = item._id;
+
+        axios
+          .delete("http://localhost:5000/myproject/" + id, token)
+          .then(() => {
+            this.projects.splice(index, 1);
+          })
+          .catch(e => {
+            console.log(e.response);
+          });
+      }
     },
 
     save(projectsUpdated) {
