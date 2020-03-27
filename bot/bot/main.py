@@ -81,21 +81,22 @@ def main():
             sw = app.handler.get('suneowhoisIf', 'suneowhois', setup=True)
             # Get Scans of api
             type_bot, scans = g.get_scan()
-            # TODO: El bot suneo y gigante tiene que conectarse con la api para guardar sus resultados
+            # TODO: El bot gigante tiene que conectarse con la api para guardar sus resultados
             #  suneowhois hay que ver como buscar en libreborme con lo obtenido mediante ipwhois
 
             for s in scans:
                 if not s['done']:
                     # Start the scan with nobita bot
                     if 'Nobita' in type_bot:
-                        # g.send_scan(n.pscan(s['hosts']), s['_id'])
+                        # g.send_nobita(n.pscan(s['hosts']), s['_id'])
                         pass
                     if 'Shizuka' in type_bot:
                         # data = shi.get_domain(s['hosts'])
-                        # g.send_domain(data)
+                        # g.send_shizuka(data)
                         pass
                     if 'Suneo' in type_bot:
-                        # su.get_target('www.joomla.org')
+                        # data = su.get_target(s['hosts'])
+                        # g.send_suneo(data)
                         pass
                     if 'Gigante' in type_bot:
                         # gi.check_ssh('www.joomla.org')

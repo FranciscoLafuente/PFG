@@ -151,11 +151,8 @@ class Scan:
             {'_id': ObjectId(id_project)},
             {'$push': {"scans": new_scan}}
         )
-
-        p = Project()
-        project_update = p.get_oneProject(id_project)
-
-        return json.loads(JSONEncoder().encode(project_update))
+        scan_created = mongo.db.scans.find_one({'_id': ObjectId(new_scan)})
+        return json.loads(JSONEncoder().encode(scan_created))
 
     def get_scans(self, id_project):
         project = mongo.db.projects.find_one({'_id': ObjectId(id_project)})
@@ -190,14 +187,11 @@ class Scan:
             b_str = JSONEncoder().encode(b)
             if b_str != bot_str:
                 list_update.append(b)
-        print(list_update)
-        print(type(scan['_id']))
-        print(scan['_id'])
+
         update = mongo.db.scans.update(
             {'_id': ObjectId(scan['_id'])},
             {'$set': {"bots": list_update}}
         )
-        print(update)
         return update
 
 
@@ -226,7 +220,9 @@ class Bot:
 
     def search_bot(self, ip_bot, id_bot):
         b = mongo.db.bots.find_one({"_id": ObjectId(id_bot), "ip": ip_bot})
-        return b.get('type')
+        if b:
+            return b['type']
+        return None
 
     def add_token(self, id_bot, token):
         b = mongo.db.bots.find_one({"_id": ObjectId(id_bot)})
@@ -270,8 +266,28 @@ class Nobita:
 class Shizuka:
 
     def save_ipreverse(self, data):
-        date_insert = datetime.now().strftime("%H:%M:%S")
-        mongo.db.shizuka_bot.insert_many(data)
+        d_insert = mongo.db.shizuka_bot.find_one({'domain': data['domain']})
+        if d_insert is None:
+            return mongo.db.shizuka_bot.insert_many(data)
+        return d_insert
+
+
+class Suneo:
+
+    def save_domain(self, data):
+        d_insert = mongo.db.suneo_bot.find_one({'domain': data['domain']})
+        if d_insert is None:
+            return mongo.db.suneo_bot.insert_one(data)
+        return d_insert
+
+
+class Gigante:
+
+    def save_ssh(self, data):
+        d_insert = mongo.db.gigante_bot.find_one({'domain': data['domain']})
+        if d_insert is None:
+            return mongo.db.gigante_bot.insert_one(data)
+        return d_insert
 
 
 def time_str():

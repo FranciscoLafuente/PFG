@@ -1,14 +1,12 @@
 <template>
   <v-container>
     <Search class="bar-search"></Search>
-    <div>
-      <div>
-        <v-btn class="folder-button" color="primary" dark fab>
-          <router-link to="/myproject">
-            <v-icon>folder_open</v-icon>
-          </router-link>
-        </v-btn>
-      </div>
+    <div v-if="isLoggedIn">
+      <v-btn class="folder-button" color="primary" dark fab>
+        <router-link to="/myproject">
+          <v-icon>folder_open</v-icon>
+        </router-link>
+      </v-btn>
     </div>
   </v-container>
 </template>
@@ -19,6 +17,11 @@ import Search from "../components/search-component";
 export default {
   components: {
     Search
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    }
   }
 };
 </script>

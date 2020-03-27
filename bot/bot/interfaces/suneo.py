@@ -27,7 +27,7 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.response = []
+        self.response = {}
 
     def get_target(self, domain):
         url = "http://" + domain
@@ -39,19 +39,19 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
             if response.code == 200 or response.code == "OK":
                 html = response.read()
                 if self.detect_wp(html, domain):
-                    self.response.append({'domain': domain, 'cms': 'wordpress'})
+                    self.response = {'domain': domain, 'cms': 'wordpress'}
                     self.app.log.info(domain + " is WordPress")
                 if self.detect_joomla(html):
-                    self.response.append({'domain': domain, 'cms': 'joomla'})
+                    self.response = {'domain': domain, 'cms': 'joomla'}
                     self.app.log.info(domain + " is Joomla")
                 if self.detect_drupal(html):
-                    self.response.append({'domain': domain, 'cms': 'drupal'})
+                    self.response = {'domain': domain, 'cms': 'drupal'}
                     self.app.log.info(domain + " is Drupal")
 
         except urllib.error.URLError:
             pass
-        except:
-            pass
+        else:
+            return self.response
 
     def detect_joomla(self, html):
         soup = BeautifulSoup(html, features="html.parser")

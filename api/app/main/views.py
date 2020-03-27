@@ -97,13 +97,9 @@ def scans(id):
 
     current_user = get_jwt_identity()
     s = Scan()
-    s.create_scan(current_user, id, scan_name, scan_bots, scan_hosts, scan_executiontime)
+    new_scan = s.create_scan(current_user, id, scan_name, scan_bots, scan_hosts, scan_executiontime)
 
-    # Return all projects update
-    project_user = Project()
-    all_projects = project_user.project_with_scans(current_user)
-
-    return jsonify(all_projects), 200
+    return jsonify(new_scan), 200
 
 
 @main.route('/myproject/<id>', methods=['DELETE'])
@@ -200,9 +196,9 @@ def scans_by_bot():
     return jsonify(bot_scans), 200
 
 
-@main.route('/bots/savescan/<scan_id>', methods=['POST'])
+@main.route('/bots/nobita/<scan_id>', methods=['POST'])
 @fresh_jwt_required
-def save_scans(scan_id):
+def save_nobita(scan_id):
     scan = request.json
     n = Nobita()
     result = n.save_scan(scan)
@@ -212,10 +208,32 @@ def save_scans(scan_id):
     return jsonify({"msg": "Success!"}), 200
 
 
-@main.route('/bots/domain', methods=['POST'])
+@main.route('/bots/shizuka', methods=['POST'])
 @fresh_jwt_required
-def save_ipreverse():
+def save_shizuka():
     data = request.json
     sh = Shizuka()
     sh.save_ipreverse(data)
     return jsonify({"msg": "Success!"}), 200
+
+
+@main.route('/bots/suneo', methods=['POST'])
+@fresh_jwt_required
+def save_suneo():
+    data = request.json
+    if data:
+        su = Suneo()
+        su.save_domain(data)
+        return jsonify({"msg": "Success!"}), 200
+    return jsonify({"msg": "The received data is empty"}), 400
+
+
+@main.route('/bots/gigante', methods=['POST'])
+@fresh_jwt_required
+def save_gigante():
+    data = request.json
+    if data:
+        gi = Gigante()
+        gi.save_ssh(data)
+        return jsonify({"msg": "Success!"}), 200
+    return jsonify({"msg": "The received data is empty"}), 400

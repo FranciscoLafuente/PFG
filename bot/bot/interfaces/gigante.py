@@ -27,7 +27,7 @@ class GiganteHandler(GiganteInterface, Handler, ABC):
     def __init__(self, **kw):
         super().__init__(**kw)
         self.passwords = ["123456", "root", "admin", "12345"]
-        self.response = []
+        self.response = ""
 
     def check_ssh(self, target):
         paramiko.util.log_to_file("filename.log")

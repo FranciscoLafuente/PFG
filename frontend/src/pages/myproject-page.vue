@@ -66,6 +66,7 @@ export default {
     projects: [],
     bots: [],
     currentProject: Number,
+    index: Number,
     editedItem: {
       name: "",
       bots: 0,
@@ -132,7 +133,7 @@ export default {
       axios
         .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
         .then(r => {
-          this.save(r.data);
+          this.projects[this.index].scans.push(r.data["name"]);
         })
         .catch(e => {
           console.log(e.response);
@@ -176,6 +177,8 @@ export default {
 
     editItem(item) {
       this.currentProject = item._id;
+      this.index = this.projects.indexOf(item);
+
       this.dialog = true;
     },
 
@@ -194,10 +197,6 @@ export default {
             console.log(e.response);
           });
       }
-    },
-
-    save(projectsUpdated) {
-      Object.assign(this.projects, projectsUpdated);
     }
   }
 };
