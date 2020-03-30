@@ -56,7 +56,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 commit("auth_request");
                 axios({
-                        url: "http://localhost:5000/register",
+                        url: "http://localhost:5000/signup",
                         data: user,
                         method: "POST"
                     })

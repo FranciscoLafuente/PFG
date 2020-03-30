@@ -1,10 +1,12 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import render_template
 from . import mongo
 import json
 from bson import ObjectId
 from datetime import datetime
 import unicodedata
 import requests
+from .email import send_email
 
 
 class User:

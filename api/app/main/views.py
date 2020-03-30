@@ -37,8 +37,31 @@ def login():
         return jsonify({"msg": "Unregistered user or invalid password"}), 400
 
     # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=useremail, fresh=True, expires_delta=datetime.timedelta(seconds=10))
+    expires = datetime.timedelta(seconds=10)
+    access_token = create_access_token(identity=useremail, fresh=True, expires_delta=expires)
     return jsonify(access_token=access_token), 200
+
+
+@main.route('/reset', methods=['POST'])
+def forgot_password():
+    url = request.host_url + 'reset/'
+    body = request.get_json()
+    email = body.get('email')
+    if not email:
+        return jsonify({"msg": "Missing parameter"}), 400
+    # Todo: buscar que el email este entre los usuarios
+    user = User()
+    user_email = user.get_user(email)
+    if not user_email:
+        return jsonify({"msg": "User not found"}), 404
+    expires = datetime.timedelta(hours=24)
+    reset_token = create_access_token(identity=email, expires_delta=expires)
+
+    send_email('[Shodita] Reset Your Password', sender='shodita@shodita.com', recipients=[email],
+               text_body=render_template('email/reset_password.txt', url=url + reset_token),
+               html_body=render_template('email/reset_password.html', url=url + reset_token))
+
+    return jsonify({"msg": "Success!"}), 200
 
 
 @main.route('/myprofile', methods=['GET'])
@@ -180,7 +203,8 @@ def login_bots():
     if type_bot is None:
         return jsonify({"msg": "Unregistered bot"}), 400
 
-    token_bot = create_access_token(identity=bot_id, fresh=True, expires_delta=datetime.timedelta(days=2),
+    expires = datetime.timedelta(days=2)
+    token_bot = create_access_token(identity=bot_id, fresh=True, expires_delta=expires,
                                     user_claims=type_bot)
 
     return jsonify(token_bot), 200

@@ -24,13 +24,13 @@ const routes = [{
         }
     },
     {
-        path: "/recover",
-        name: "recover",
+        path: "/reset",
+        name: "reset",
         component: () =>
-            import ( /* webpackChunkName: "recover" */ "../pages/recover-page.vue"),
+            import ( /* webpackChunkName: "recover" */ "../pages/reset-page.vue"),
         meta: {
             Auth: false,
-            title: "Recover"
+            title: "Reset"
         }
     },
     {

@@ -30,11 +30,9 @@
           @click:append="show = !show"
         ></v-text-field>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="login"
-          >login</v-btn
-        >
+        <v-btn color="blue darken-1" dark class="mr-4" @click="login">login</v-btn>
         <div>
-          <router-link :to="{ path: 'recover' }">Forgot Password?</router-link>
+          <router-link :to="{ path: 'reset' }">Forgot Password?</router-link>
         </div>
       </form>
     </v-card>
