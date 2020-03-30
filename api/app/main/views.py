@@ -37,7 +37,7 @@ def login():
         return jsonify({"msg": "Unregistered user or invalid password"}), 400
 
     # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=useremail, fresh=True)
+    access_token = create_access_token(identity=useremail, fresh=True, expires_delta=datetime.timedelta(seconds=10))
     return jsonify(access_token=access_token), 200
 
 
@@ -180,8 +180,8 @@ def login_bots():
     if type_bot is None:
         return jsonify({"msg": "Unregistered bot"}), 400
 
-    expires = datetime.timedelta(days=2)
-    token_bot = create_access_token(identity=bot_id, fresh=True, user_claims=type_bot)
+    token_bot = create_access_token(identity=bot_id, fresh=True, expires_delta=datetime.timedelta(days=2),
+                                    user_claims=type_bot)
 
     return jsonify(token_bot), 200
 

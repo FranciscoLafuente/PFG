@@ -4,7 +4,7 @@
     <div class="base">
       <router-view />
     </div>
-    <v-container>
+    <v-container class="container">
       <v-dialog v-model="dialog" persistent max-width="195px">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
@@ -16,6 +16,7 @@
               <v-icon>clear</v-icon>
             </v-btn>
           </v-card-actions>
+          <v-icon class="icon-error">https</v-icon>
           <v-card-title class="headline">Unauthorized</v-card-title>
           <v-card-text>The access token provided is expired. You need to login again</v-card-text>
         </v-card>
@@ -66,5 +67,13 @@ export default {
   height: 100%;
   /*background: url(/img/doraemon.5ec8c002.jpg) no-repeat center top;
     opacity: 0.1;*/
+}
+
+.v-card:not(.v-sheet--tile):not(.v-card--shaped) {
+  text-align: center;
+}
+
+.icon-error {
+  font-size: 60px;
 }
 </style>
