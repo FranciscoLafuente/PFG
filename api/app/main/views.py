@@ -1,7 +1,8 @@
 # coding=utf-8
 
 from flask import request, jsonify
-from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
+from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity,
+                                decode_token)
 from . import main
 from ..models import *
 import datetime
@@ -42,14 +43,13 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
-@main.route('/reset', methods=['POST'])
+@main.route('/forgot', methods=['POST'])
 def forgot_password():
-    url = request.host_url + 'reset/'
+    url = 'http://localhost:8080/' + 'reset/'
     body = request.get_json()
     email = body.get('email')
     if not email:
         return jsonify({"msg": "Missing parameter"}), 400
-    # Todo: buscar que el email este entre los usuarios
     user = User()
     user_email = user.get_user(email)
     if not user_email:
@@ -60,6 +60,28 @@ def forgot_password():
     send_email('[Shodita] Reset Your Password', sender='shodita@shodita.com', recipients=[email],
                text_body=render_template('email/reset_password.txt', url=url + reset_token),
                html_body=render_template('email/reset_password.html', url=url + reset_token))
+
+    return jsonify({"msg": "Success!"}), 200
+
+
+@main.route('/reset', methods=['POST'])
+@jwt_required
+def reset_password():
+    body = request.get_json()
+    reset_token = body.get('reset_token')
+    password = body.get('password')
+
+    if not reset_token or not password:
+        return jsonify({"msg": "Missing parameter"}), 400
+
+    user_email = decode_token(reset_token)['identity']
+    u = User()
+    new_user = u.change_password(user_email, password)
+    if new_user is None:
+        return jsonify({"msg": "User not found"}), 404
+
+    send_email('[Shodita] Password reset successful', sender='shodita@shodita.com', recipients=[user_email],
+               text_body='Password reset was successful', html_body='<p>Password reset was successful</p>')
 
     return jsonify({"msg": "Success!"}), 200
 

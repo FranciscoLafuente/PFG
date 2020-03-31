@@ -39,6 +39,15 @@ class User:
 
         return user
 
+    def change_password(self, email, new_pass):
+        u = mongo.db.users.find_one({'email': email})
+        if u is not None:
+            hash_password = self.password(new_pass)
+            update = mongo.db.users.update(
+                {'email': email},
+                {'$set': {'password': hash_password}})
+        return update
+
     def update_user_projects(self, projects, user):
         # Update user projects
         mongo.db.users.update(

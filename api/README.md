@@ -8,6 +8,7 @@ $ source env/bin/activate
 
 # Servidor smtp dev
 $ python -m smtpd -n -c DebuggingServer localhost:1025
+Habrá que cambiar tambien la url para acceder al front, que tiene asociado el metodo forgot_password.
 
 This repository contains the source code examples for the second edition of my O'Reilly book [Flask Web Development](http://www.flaskbook.com).
 

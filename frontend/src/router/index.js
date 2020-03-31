@@ -24,16 +24,6 @@ const routes = [{
         }
     },
     {
-        path: "/reset",
-        name: "reset",
-        component: () =>
-            import ( /* webpackChunkName: "recover" */ "../pages/reset-page.vue"),
-        meta: {
-            Auth: false,
-            title: "Reset"
-        }
-    },
-    {
         path: "/myproject",
         name: "myproject",
         component: () =>
@@ -89,6 +79,26 @@ const routes = [{
         beforeEnter: (to, from, next) => {
             delete localStorage.token;
             next();
+        }
+    },
+    {
+        path: "/forgot",
+        name: "forgot",
+        component: () =>
+            import ( /* webpackChunkName: "recover" */ "../pages/forgot-page.vue"),
+        meta: {
+            Auth: false,
+            title: "Forgot"
+        }
+    },
+    {
+        path: "/reset/:reset_token",
+        name: "reset",
+        component: () =>
+            import ( /* webpackChunkName: "recover" */ "../pages/reset-page.vue"),
+        meta: {
+            Auth: false,
+            title: "Reset"
         }
     },
     {

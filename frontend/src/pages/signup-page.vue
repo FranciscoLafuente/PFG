@@ -1,9 +1,11 @@
 <template>
   <v-container>
     <v-card :elevation="9">
-      <form>
+      <form @keypress.enter="register">
         <div>
-          <h1><em>Create</em> New Account</h1>
+          <h1>
+            <em>Create</em> New Account
+          </h1>
         </div>
 
         <v-text-field
@@ -37,9 +39,7 @@
           @click:append="show = !show"
         ></v-text-field>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="register"
-          >create</v-btn
-        >
+        <v-btn color="blue darken-1" dark class="mr-4" @click="register">create</v-btn>
       </form>
     </v-card>
   </v-container>
