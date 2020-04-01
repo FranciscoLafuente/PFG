@@ -29,6 +29,7 @@ class SuneoWhoisHandler(SuneoWhoisInterface, Handler, ABC):
         self.response = []
 
     def get_target(self, target):
+        self.app.log.info("BOT SUNEOWHOIS")
         self.app.log.info("Domain: " + target)
         obj = ipwhois.IPWhois(target)
         res = obj.lookup_whois()

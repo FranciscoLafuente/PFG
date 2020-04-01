@@ -30,6 +30,7 @@ class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
         self.response = []
 
     def get_domain(self, target):
+        self.app.log.info("BOT SHIZUKA")
         url = "https://www.robtex.net/?dns=" + str(target) + "&rev=1"
         req = urllib.Request(url, headers={'User-Agent': "Magic Browser"})
         html = urllib.urlopen(req).read()
@@ -44,7 +45,6 @@ class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
                 d = d.replace("]", "")
                 self.response.append({'target': target, 'domain': d})
 
-        print(self.response)
         return self.response
 
     def __remove_tags(self, text):

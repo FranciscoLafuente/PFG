@@ -55,9 +55,10 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.port_scanner = {}
+        self.port_scanner = []
 
     def pscan(self, address):
+        self.app.log.info("BOT NOBITA")
         ip_address = socket.gethostbyname(address)
         queue = Queue()
         mode = 3
@@ -137,7 +138,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             pass
 
     def save_scan(self, ip_address, port, result):
-        self.port_scanner = {'ip_address': ip_address, 'port': port, 'banner': result}
+        self.port_scanner.append({'ip_address': ip_address, 'port': port, 'banner': result})
 
     def format_text(self, text):
         text = str(text).replace('\\r\\n', "\n")

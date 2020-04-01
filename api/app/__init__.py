@@ -24,7 +24,12 @@ def create_app(config_name):
     jwt.init_app(app)
     mail.init_app(app)
 
+    '''
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    '''
+
+    from .resources import resources as resources_blueprint
+    app.register_blueprint(resources_blueprint)
 
     return app

@@ -86,24 +86,26 @@ def main():
 
             for s in scans:
                 if not s['done']:
-                    # Start the scan with nobita bot
                     if 'Nobita' in type_bot:
-                        # g.send_nobita(n.pscan(s['hosts']), s['_id'])
-                        pass
+                        data = n.pscan(s['hosts'])
+                        g.send_nobita(data)
                     if 'Shizuka' in type_bot:
-                        # data = shi.get_domain(s['hosts'])
-                        # g.send_shizuka(data)
-                        pass
+                        data = shi.get_domain(s['hosts'])
+                        g.send_shizuka(data)
                     if 'Suneo' in type_bot:
-                        # data = su.get_target(s['hosts'])
-                        # g.send_suneo(data)
-                        pass
+                        data = su.get_target(s['hosts'])
+                        g.send_suneo(data)
                     if 'Gigante' in type_bot:
-                        # gi.check_ssh('www.joomla.org')
-                        pass
+                        data = gi.check_ssh(s['hosts'])
+                        # g.select_action(data)
                     if 'SuneoWhois' in type_bot:
                         # sw.get_target('185.59.67.186')
                         pass
+                    else:
+                        app.log.warning("The created bot doesn't exists or the scan hasn't bots")
+
+                    data = s['_id']
+                    g.update_done(data)
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

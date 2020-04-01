@@ -69,14 +69,9 @@ export default {
         password: "nuevapass"
       };
 
-      axios
-        .post("http://localhost:5000/reset", data, token)
-        .then(r => {
-          console.log(r);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      axios.post("http://localhost:5000/reset", data, token).catch(error => {
+        console.log(error);
+      });
     },
 
     getToken(reset_token) {

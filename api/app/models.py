@@ -1,5 +1,4 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template
 from . import mongo
 import json
 from bson import ObjectId
@@ -260,11 +259,13 @@ class Bot:
 class Nobita:
 
     def save_scan(self, scan):
-        geo = self.geo_ip(scan['ip_address'])
-        complete = mongo.db.nobita_bot.insert_one({'ip_address': scan['ip_address'], 'country': geo['country'],
-                                                   'city': geo['city'], 'region_name': geo['regionName'],
-                                                   'isp': geo['isp'], 'port': scan['port'], 'banner': scan['banner'],
-                                                   'latitud': geo['lat'], 'longitud': geo['lon'], 'zip': geo['zip']})
+        for s in scan:
+            geo = self.geo_ip(s['ip_address'])
+            complete = mongo.db.nobita_bot.insert_one({'ip_address': s['ip_address'], 'country': geo['country'],
+                                                       'city': geo['city'], 'region_name': geo['regionName'],
+                                                       'isp': geo['isp'], 'port': s['port'], 'banner': s['banner'],
+                                                       'latitud': geo['lat'], 'longitud': geo['lon'],
+                                                       'zip': geo['zip']})
         return complete
 
     def geo_ip(self, ip):
@@ -277,9 +278,10 @@ class Nobita:
 class Shizuka:
 
     def save_ipreverse(self, data):
-        d_insert = mongo.db.shizuka_bot.find_one({'domain': data['domain']})
-        if d_insert is None:
-            return mongo.db.shizuka_bot.insert_many(data)
+        for d in data:
+            d_insert = mongo.db.shizuka_bot.find_one({'domain': d['domain']})
+            if d_insert is None:
+                mongo.db.shizuka_bot.insert_one({'target': d['target'], 'domain': d['domain']})
         return d_insert
 
 
@@ -288,7 +290,7 @@ class Suneo:
     def save_domain(self, data):
         d_insert = mongo.db.suneo_bot.find_one({'domain': data['domain']})
         if d_insert is None:
-            return mongo.db.suneo_bot.insert_one(data)
+            mongo.db.suneo_bot.insert_one(data)
         return d_insert
 
 

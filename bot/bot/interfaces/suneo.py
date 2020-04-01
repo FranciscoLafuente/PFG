@@ -30,6 +30,7 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
         self.response = {}
 
     def get_target(self, domain):
+        self.app.log.info("BOT SUNEO")
         url = "http://" + domain
         self.app.log.info("Generate URL: " + str(url))
         user_agent = {'User-Agent': 'Mozilla 5.10'}

@@ -30,6 +30,7 @@ class GiganteHandler(GiganteInterface, Handler, ABC):
         self.response = ""
 
     def check_ssh(self, target):
+        self.app.log.info("BOT GIGANTE")
         paramiko.util.log_to_file("filename.log")
         fail = 0
         user = "root"
@@ -44,7 +45,7 @@ class GiganteHandler(GiganteInterface, Handler, ABC):
                 continue
             except socket.error as error:
                 fail += 1
-                print(error)
+                self.app.log.warning(error)
                 continue
             except paramiko.SSHException as error:
                 fail += 1
