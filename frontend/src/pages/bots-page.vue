@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import constants from "../constants";
 import axios from "axios";
 import dialogToken from "../components/dialog-generateToken-component";
 import dialogBot from "../components/dialog-bot-component";
@@ -93,7 +94,7 @@ export default {
     initialize() {
       let token = this.getToken();
       axios
-        .get("http://localhost:5000/bots", token)
+        .get(constants.END_POINT_LOCAL + "/bots", token)
         .then(r => {
           r.data.forEach(e => {
             this.bots.push(e);
@@ -107,7 +108,7 @@ export default {
     addBot() {
       let token = this.getToken();
       axios
-        .post("http://localhost:5000/bots", this.editedItem, token)
+        .post(constants.END_POINT_LOCAL + "/bots", this.editedItem, token)
         .then(r => {
           this.bots.push(r.data);
         })
@@ -122,7 +123,10 @@ export default {
         this.currentBot = item._id;
 
         axios
-          .get("http://localhost:5000/bots/" + this.currentBot, user_token)
+          .get(
+            constants.END_POINT_LOCAL + "/bots/" + this.currentBot,
+            user_token
+          )
           .then(r => {
             this.tokenBot = JSON.parse(JSON.stringify(r.data[0]));
             // Search de index in bots array
@@ -147,7 +151,7 @@ export default {
         let id = item._id;
 
         axios
-          .delete("http://localhost:5000/bots/" + id, token)
+          .delete(constants.END_POINT_LOCAL + "/bots/" + id, token)
           .then(() => {
             this.bots.splice(index, 1);
           })

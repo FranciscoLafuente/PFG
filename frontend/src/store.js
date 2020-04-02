@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import constants from "./constants";
 
 Vue.use(Vuex);
 
@@ -32,7 +33,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 commit("auth_request");
                 axios({
-                        url: "http://localhost:5000/login",
+                        url: constants.END_POINT_LOCAL + "/login",
                         data: user,
                         method: "POST"
                     })
@@ -56,7 +57,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 commit("auth_request");
                 axios({
-                        url: "http://localhost:5000/signup",
+                        url: constants.END_POINT_LOCAL + "/signup",
                         data: user,
                         method: "POST"
                     })

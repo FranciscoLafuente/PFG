@@ -28,6 +28,7 @@
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
 import axios from "axios";
+import constants from "../constants";
 
 export default {
   mixins: [validationMixin],
@@ -60,7 +61,7 @@ export default {
       console.log(this.form);
 
       axios
-        .post("http://localhost:5000/forgot", this.form)
+        .post(constants.END_POINT_LOCAL + "/forgot", this.form)
         .then(r => {
           console.log(r);
         })

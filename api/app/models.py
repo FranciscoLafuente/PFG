@@ -3,7 +3,6 @@ from . import mongo
 import json
 from bson import ObjectId
 from datetime import datetime
-import unicodedata
 import requests
 from .email import send_email
 
@@ -87,7 +86,7 @@ class Project:
         return mongo.db.projects.find_one({'_id': ObjectId(id_project)})
 
     def create_projetc(self, user, name, is_public):
-        p = unicodedata.normalize('NFKD', is_public).encode('ascii', 'ignore')
+        p = JSONEncoder().encode(is_public)
         product_type = False
         if "Public" in p:
             product_type = True
@@ -246,13 +245,16 @@ class Bot:
 
     def delete_bot(self, id_bot):
         change = False
-        s = Scan()
-        scans = s.get_scans_by_bot(id_bot)
-        for sc in scans:
-            update = s.update_scan_bots(sc, id_bot)
-            if update['updatedExisting']:
-                change = True
-                mongo.db.bots.delete_one({'_id': ObjectId(id_bot)})
+        b = mongo.db.bots.find_one({"_id": ObjectId(id_bot)})
+        if b is not None:
+            s = Scan()
+            scans = s.get_scans_by_bot(id_bot)
+            if scans:
+                for sc in scans:
+                    s.update_scan_bots(sc, id_bot)
+
+            change = True
+            mongo.db.bots.delete_one({'_id': ObjectId(id_bot)})
         return change
 
 

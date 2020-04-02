@@ -41,6 +41,7 @@
 import axios from "axios";
 import dialogScan from "../components/dialog-scan-component";
 import dialogProject from "../components/dialog-project-component";
+import constants from "../constants";
 
 export default {
   components: {
@@ -109,7 +110,7 @@ export default {
       let scans = [];
 
       axios
-        .get("http://localhost:5000/myproject", token)
+        .get(constants.END_POINT_LOCAL + "/myproject", token)
         .then(r => {
           r.data.forEach(e => {
             // Show scans by name
@@ -131,7 +132,11 @@ export default {
       let id = this.currentProject;
 
       axios
-        .post("http://localhost:5000/myproject/" + id, this.editedItem, token)
+        .post(
+          constants.END_POINT_LOCAL + "/myproject/" + id,
+          this.editedItem,
+          token
+        )
         .then(r => {
           this.projects[this.index].scans.push(r.data["name"]);
         })
@@ -142,7 +147,7 @@ export default {
 
     initializeBots(token) {
       axios
-        .get("http://localhost:5000/bots", token)
+        .get(constants.END_POINT_LOCAL + "/bots", token)
         .then(r => {
           for (let i in r.data) {
             this.bots.push(r.data[i].name);
@@ -157,7 +162,7 @@ export default {
       let token = this.getToken();
 
       axios
-        .post("http://localhost:5000/myproject", this.editProject, token)
+        .post(constants.END_POINT_LOCAL + "/myproject", this.editProject, token)
         .then(r => {
           this.projects.push(r.data);
         })
@@ -189,7 +194,7 @@ export default {
         let id = item._id;
 
         axios
-          .delete("http://localhost:5000/myproject/" + id, token)
+          .delete(constants.END_POINT_LOCAL + "/myproject/" + id, token)
           .then(() => {
             this.projects.splice(index, 1);
           })
