@@ -1,12 +1,10 @@
 # coding=utf-8
 
 from flask import request, jsonify
-from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity,
-                                decode_token)
+from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
 from . import resources
-from ..models import *
+from app.models import Bot, Scan, Nobita, Suneo, Shizuka, Gigante
 import datetime
-import jwt
 
 
 @resources.route('/bots', methods=['GET'])

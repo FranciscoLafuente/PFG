@@ -1,12 +1,11 @@
 # coding=utf-8
 
 from flask import request, jsonify
-from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity,
+from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity,
                                 decode_token)
 from . import resources
-from ..models import *
+from app.models import User
 import datetime
-import jwt
 
 
 @resources.route('/signup', methods=['POST'])

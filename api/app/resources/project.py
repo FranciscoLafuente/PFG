@@ -1,12 +1,9 @@
 # coding=utf-8
 
 from flask import request, jsonify
-from flask_jwt_extended import (JWTManager, jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity,
-                                decode_token)
+from flask_jwt_extended import (fresh_jwt_required, get_jwt_identity)
 from . import resources
-from ..models import *
-import datetime
-import jwt
+from app.models import Scan, Project
 
 
 # MY PROJECT MANAGEMENT

@@ -1,10 +1,9 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from . import mongo
+from app import mongo
+from app.methods import JSONEncoder, time_str
 import json
 from bson import ObjectId
-from datetime import datetime
 import requests
-from .email import send_email
 
 
 class User:
@@ -303,15 +302,3 @@ class Gigante:
         if d_insert is None:
             return mongo.db.gigante_bot.insert_one(data)
         return d_insert
-
-
-def time_str():
-    now = datetime.now()
-    return now.strftime("%Y-%m-%d %H:%M:%S")
-
-
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)

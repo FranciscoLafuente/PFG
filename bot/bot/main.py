@@ -101,8 +101,6 @@ def main():
                     if 'SuneoWhois' in type_bot:
                         # sw.get_target('185.59.67.186')
                         pass
-                    else:
-                        app.log.warning("The created bot doesn't exists or the scan hasn't bots")
 
                     data = s['_id']
                     g.update_done(data)
