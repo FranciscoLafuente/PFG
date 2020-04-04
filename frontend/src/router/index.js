@@ -1,5 +1,11 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+import "leaflet/dist/leaflet.css";
+
+Vue.component("l-map", LMap);
+Vue.component("l-tile-layer", LTileLayer);
+Vue.component("l-marker", LMarker);
 
 Vue.use(VueRouter);
 
@@ -10,8 +16,8 @@ const routes = [{
             import ( /* webpackChunkName: "home" */ "../pages/home-page.vue"),
         meta: {
             Auth: false,
-            title: "Home"
-        }
+            title: "Home",
+        },
     },
     {
         path: "/search",
@@ -20,8 +26,8 @@ const routes = [{
             import ( /* webpackChunkName: "search" */ "../pages/search-page.vue"),
         meta: {
             Auth: false,
-            title: "Search"
-        }
+            title: "Search",
+        },
     },
     {
         path: "/myproject",
@@ -30,7 +36,7 @@ const routes = [{
             import ( /* webpackChunkName: "myproject" */ "../pages/myproject-page.vue"),
         meta: {
             Auth: true,
-            title: "Myproject"
+            title: "Myproject",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {
@@ -38,7 +44,7 @@ const routes = [{
             } else {
                 next();
             }
-        }
+        },
     },
     {
         path: "/myproject/:id",
@@ -47,7 +53,7 @@ const routes = [{
             import ( /* webpackChunkName: "myproject" */ "../pages/scans-page.vue"),
         meta: {
             Auth: true,
-            title: "Scans"
+            title: "Scans",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {
@@ -55,7 +61,7 @@ const routes = [{
             } else {
                 next();
             }
-        }
+        },
     },
     {
         path: "/myproject/:id_project/scan/:id_scan",
@@ -64,7 +70,7 @@ const routes = [{
             import ( /* webpackChunkName: "myproject" */ "../pages/view-scan-page.vue"),
         meta: {
             Auth: true,
-            title: "ViewScan"
+            title: "ViewScan",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {
@@ -72,7 +78,7 @@ const routes = [{
             } else {
                 next();
             }
-        }
+        },
     },
     {
         path: "/bots",
@@ -81,7 +87,7 @@ const routes = [{
             import ( /* webpackChunkName: "bots" */ "../pages/bots-page.vue"),
         meta: {
             Auth: true,
-            title: "Bots"
+            title: "Bots",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {
@@ -89,7 +95,7 @@ const routes = [{
             } else {
                 next();
             }
-        }
+        },
     },
     {
         path: "/signup",
@@ -98,8 +104,8 @@ const routes = [{
             import ( /* webpackChunkName: "signup" */ "../pages/signup-page.vue"),
         meta: {
             Auth: false,
-            title: "Signup"
-        }
+            title: "Signup",
+        },
     },
     {
         path: "/login",
@@ -108,12 +114,12 @@ const routes = [{
             import ( /* webpackChunkName: "login" */ "../pages/login-page.vue"),
         meta: {
             Auth: false,
-            title: "Login"
+            title: "Login",
         },
         beforeEnter: (to, from, next) => {
             delete localStorage.token;
             next();
-        }
+        },
     },
     {
         path: "/forgot",
@@ -122,8 +128,8 @@ const routes = [{
             import ( /* webpackChunkName: "recover" */ "../pages/forgot-page.vue"),
         meta: {
             Auth: false,
-            title: "Forgot"
-        }
+            title: "Forgot",
+        },
     },
     {
         path: "/reset/:reset_token",
@@ -132,8 +138,8 @@ const routes = [{
             import ( /* webpackChunkName: "recover" */ "../pages/reset-page.vue"),
         meta: {
             Auth: false,
-            title: "Reset"
-        }
+            title: "Reset",
+        },
     },
     {
         path: "/myprofile",
@@ -142,7 +148,7 @@ const routes = [{
             import ( /* webpackChunkName: "myproject" */ "../pages/myprofile-page.vue"),
         meta: {
             Auth: true,
-            title: "Myprofile"
+            title: "Myprofile",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {
@@ -150,14 +156,14 @@ const routes = [{
             } else {
                 next();
             }
-        }
-    }
+        },
+    },
 ];
 
 const router = new VueRouter({
     mode: "history",
     base: process.env.BASE_URL,
-    routes
+    routes,
 });
 
 router.beforeEach((to, from, next) => {
