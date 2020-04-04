@@ -81,8 +81,12 @@ class Project:
 
         return list_pro
 
-    def get_oneProject(self, id_project):
-        return mongo.db.projects.find_one({'_id': ObjectId(id_project)})
+    def get_scansProject(self, id_project):
+        list_scans = []
+        p = mongo.db.projects.find_one({'_id': ObjectId(id_project)})
+        for scan in p['scans']:
+            list_scans.append(scan)
+        return list_scans
 
     def create_projetc(self, user, name, is_public):
         p = JSONEncoder().encode(is_public)
@@ -133,6 +137,21 @@ class Project:
 
         return p_delete
 
+    def del_one_scan(self, id_project, id_scan):
+        update_scans = []
+        p = mongo.db.projects.find_one({'_id': ObjectId(id_project)})
+        list_s = self.get_scansProject(id_project)
+        for scan in list_s:
+            scan_str = JSONEncoder().encode(scan)
+            if id_scan not in scan_str:
+                update_scans.append(scan)
+        if p:
+            update = mongo.db.projects.update(
+                {'_id': ObjectId(id_project)},
+                {'$set': {'scans': update_scans}}
+            )
+        return update
+
 
 class Scan:
 
@@ -179,12 +198,14 @@ class Scan:
 
         return list_s
 
-    def change_done(self, scan_id):
-        update = mongo.db.scans.update(
-            {'_id': ObjectId(scan_id)},
-            {'$set': {"done": True}}
-        )
-        return update
+    def change_done(self, scan_id, value):
+        if isinstance(value, bool):
+            update = mongo.db.scans.update(
+                {'_id': ObjectId(scan_id)},
+                {'$set': {"done": value}}
+            )
+            return update
+        return None
 
     def update_scan_bots(self, scan, id_bot):
         list_update = []
@@ -201,6 +222,15 @@ class Scan:
             {'$set': {"bots": list_update}}
         )
         return update
+
+    def delete_scan(self, id_project, id_scan):
+        scan = mongo.db.scans.delete_one({'_id': ObjectId(id_scan)})
+        if scan:
+            p = Project()
+            update = p.del_one_scan(id_project, id_scan)
+            if update:
+                return update
+        return None
 
 
 class Bot:

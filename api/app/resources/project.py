@@ -18,6 +18,15 @@ def get_products():
     return jsonify(all_projects), 200
 
 
+@resources.route('/myproject/<id_p>', methods=['GET'])
+@fresh_jwt_required
+def get_scans(id_p):
+    s = Scan()
+    all_scans = s.get_scans(id_p)
+
+    return jsonify(all_scans), 200
+
+
 @resources.route('/myproject', methods=['POST'])
 @fresh_jwt_required
 def post_products():
@@ -39,7 +48,7 @@ def post_products():
 
 @resources.route('/myproject/<id>', methods=['POST'])
 @fresh_jwt_required
-def scans(id):
+def add_scan(id):
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
@@ -58,6 +67,15 @@ def scans(id):
     return jsonify(new_scan), 200
 
 
+@resources.route('/myproject/scan/<scan_id>', methods=['PUT'])
+def relunch(scan_id):
+    s = Scan()
+    update = s.change_done(scan_id, False)
+    if update is None:
+        return jsonify({"msg": "Scan not found"}), 404
+    return jsonify({"msg": "Success!"}), 200
+
+
 @resources.route('/myproject/<id>', methods=['DELETE'])
 @fresh_jwt_required
 def delete_project(id):
@@ -65,6 +83,17 @@ def delete_project(id):
     if id is not None:
         p = Project()
         is_delete = p.delete_project(id, current_user)
+        if is_delete:
+            return jsonify({"msg": "Success!"}), 200
+    return jsonify({"msg": "Project not found"}), 404
+
+
+@resources.route('/myproject/<id_p>/<id_scan>', methods=['DELETE'])
+@fresh_jwt_required
+def delete_scan(id_p, id_scan):
+    if id_scan:
+        s = Scan()
+        is_delete = s.delete_scan(id_p, id_scan)
         if is_delete:
             return jsonify({"msg": "Success!"}), 200
     return jsonify({"msg": "Project not found"}), 404

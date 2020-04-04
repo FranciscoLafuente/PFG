@@ -134,7 +134,7 @@ def save_gigante():
 @fresh_jwt_required
 def update_done(scan_id):
     s = Scan()
-    update = s.change_done(scan_id)
+    update = s.change_done(scan_id, True)
     if update is None:
         return jsonify({"msg": "Scan not found"}), 404
     return jsonify({"msg": "Success!"}), 200

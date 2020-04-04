@@ -14,11 +14,10 @@
           ></dialogScan>
         </v-toolbar>
       </template>
-      <template v-slot:item.action="{ item }">
-        <v-icon small class="button-add mr-2" @click="editItem(item)">add</v-icon>
-      </template>
-      <template v-slot:item.delete="{ item }">
-        <v-icon small class="button-delete" @click="deleteItem(item)">delete</v-icon>
+      <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
+        <v-icon small class="mr-2" @click="visualizeScan(item)">visibility</v-icon>
+        <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -59,10 +58,8 @@ export default {
         sortable: true,
         value: "name"
       },
-      { text: "Scans", value: "scans" },
       { text: "Public", value: "type" },
-      { text: "New Scan", value: "action", sortable: false },
-      { text: "Delete Project", value: "delete", sortable: false }
+      { text: "Actions", value: "actions", sortable: false }
     ],
     projects: [],
     bots: [],
@@ -107,38 +104,13 @@ export default {
     initialize() {
       let token = this.getToken();
       this.initializeBots(token);
-      let scans = [];
 
       axios
         .get(constants.END_POINT_LOCAL + "/myproject", token)
         .then(r => {
           r.data.forEach(e => {
-            // Show scans by name
-            e.scans.forEach(s => {
-              scans.push(s.name);
-            });
-            e.scans = scans;
             this.projects.push(e);
-            scans = [];
           });
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
-    },
-
-    addScan() {
-      let token = this.getToken();
-      let id = this.currentProject;
-
-      axios
-        .post(
-          constants.END_POINT_LOCAL + "/myproject/" + id,
-          this.editedItem,
-          token
-        )
-        .then(r => {
-          this.projects[this.index].scans.push(r.data["name"]);
         })
         .catch(e => {
           console.log(e.response);
@@ -171,23 +143,30 @@ export default {
         });
     },
 
-    getToken() {
-      let token = {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.token
-        }
-      };
-      return token;
+    addScan() {
+      let token = this.getToken();
+      let id = this.currentProject;
+
+      axios
+        .post(
+          constants.END_POINT_LOCAL + "/myproject/" + id,
+          this.editedItem,
+          token
+        )
+        .then(r => {
+          this.projects[this.index].scans.push(r.data["name"]);
+        })
+        .catch(e => {
+          console.log(e.response);
+        });
     },
 
-    editItem(item) {
-      this.currentProject = item._id;
-      this.index = this.projects.indexOf(item);
-
-      this.dialog = true;
+    visualizeScan(item) {
+      let currentProject = item._id;
+      this.$router.push("/myproject/" + currentProject);
     },
 
-    deleteItem(item) {
+    deleteProject(item) {
       const index = this.projects.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
         let token = this.getToken();
@@ -202,6 +181,22 @@ export default {
             console.log(e.response);
           });
       }
+    },
+
+    getToken() {
+      let token = {
+        headers: {
+          Authorization: "Bearer " + this.$store.state.token
+        }
+      };
+      return token;
+    },
+
+    editItem(item) {
+      this.currentProject = item._id;
+      this.index = this.projects.indexOf(item);
+
+      this.dialog = true;
     }
   }
 };

@@ -58,6 +58,23 @@ const routes = [{
         }
     },
     {
+        path: "/myproject/:id_project/scan/:id_scan",
+        name: "view_scan",
+        component: () =>
+            import ( /* webpackChunkName: "myproject" */ "../pages/view-scan-page.vue"),
+        meta: {
+            Auth: true,
+            title: "ViewScan"
+        },
+        beforeEnter: (to, from, next) => {
+            if (!window.localStorage.getItem("token")) {
+                next(false);
+            } else {
+                next();
+            }
+        }
+    },
+    {
         path: "/bots",
         name: "bots",
         component: () =>
