@@ -5,6 +5,7 @@ import urllib
 import re
 import time
 from bs4 import BeautifulSoup
+import socket
 
 
 class SuneoInterface(Interface):
@@ -28,9 +29,11 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
     def __init__(self, **kw):
         super().__init__(**kw)
         self.response = {}
+        self.ip = ""
 
     def get_target(self, domain):
         self.app.log.info("BOT SUNEO")
+        self.ip = socket.gethostbyname(domain)
         url = "http://" + domain
         self.app.log.info("Generate URL: " + str(url))
         user_agent = {'User-Agent': 'Mozilla 5.10'}
@@ -40,13 +43,13 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
             if response.code == 200 or response.code == "OK":
                 html = response.read()
                 if self.detect_wp(html, domain):
-                    self.response = {'domain': domain, 'cms': 'wordpress'}
+                    self.response = {'ip': self.ip, 'domain': domain, 'cms': 'wordpress'}
                     self.app.log.info(domain + " is WordPress")
                 if self.detect_joomla(html):
-                    self.response = {'domain': domain, 'cms': 'joomla'}
+                    self.response = {'ip': self.ip, 'domain': domain, 'cms': 'joomla'}
                     self.app.log.info(domain + " is Joomla")
                 if self.detect_drupal(html):
-                    self.response = {'domain': domain, 'cms': 'drupal'}
+                    self.response = {'ip': self.ip, 'domain': domain, 'cms': 'drupal'}
                     self.app.log.info(domain + " is Drupal")
 
         except urllib.error.URLError:

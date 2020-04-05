@@ -5,6 +5,7 @@ import urllib.request as urllib
 import re
 import time
 from bs4 import BeautifulSoup
+import socket
 
 
 class ShizukaV2Interface(Interface):
@@ -31,6 +32,7 @@ class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
 
     def get_domain(self, target):
         self.app.log.info("BOT SHIZUKA")
+        ip = socket.gethostbyname(target)
         url = "https://www.robtex.net/?dns=" + str(target) + "&rev=1"
         req = urllib.Request(url, headers={'User-Agent': "Magic Browser"})
         html = urllib.urlopen(req).read()
@@ -43,7 +45,7 @@ class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
             if len(d) > 10:
                 d = d.replace(" ", "")
                 d = d.replace("]", "")
-                self.response.append({'target': target, 'domain': d})
+                self.response.append({'ip': ip, 'target': target, 'domain': d})
 
         return self.response
 

@@ -5,6 +5,7 @@ import urllib.request as urllib
 import re
 import time
 from bs4 import BeautifulSoup
+import socket
 
 
 class ShizukaInterface(Interface):
@@ -39,6 +40,7 @@ class ShizukaHandler(ShizukaInterface, Handler, ABC):
         self.response = []
 
     def ipreverse(self, target):
+        ip = socket.gethostbyname(target)
         url = 'https://viewdns.info/reverseip/?host=' + target + '&t=1'
 
         self.app.log.info("Obtaining the associated domains of " + target + "\n")
@@ -54,19 +56,10 @@ class ShizukaHandler(ShizukaInterface, Handler, ABC):
             if len(d) > 50 or d.find(".") < 0:
                 pass
             else:
-                self.response.append({'target': target, 'domain': d})
+                self.response.append({'ip': ip, 'target': target, 'domain': d})
 
-        print(self.response)
         return self.response
 
     def remove_tags(self, text):
         TAG_RE = re.compile(r'<[^>]+>')
         return TAG_RE.sub('', text)
-
-    def save_database(self, ip, domain):
-        try:
-            date_insert = time.strftime("%H:%M:%S")
-            print("ip", ip, "domain", domain, "date_insert", date_insert)
-            # col.insert_one({"ip": ip, "domain": domain, "date_insert": date_insert})
-        except:
-            self.app.log.error("Error inserting to the mongodb")

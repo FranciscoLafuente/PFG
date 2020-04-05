@@ -6,9 +6,6 @@
     </div>
     <v-container class="container">
       <v-dialog v-model="dialog" persistent max-width="195px">
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
-        </template>
         <v-card>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -18,7 +15,10 @@
           </v-card-actions>
           <v-icon class="icon-error">https</v-icon>
           <v-card-title class="headline">Unauthorized</v-card-title>
-          <v-card-text>The access token provided is expired. You need to login again</v-card-text>
+          <v-card-text
+            >The access token provided is expired. You need to login
+            again</v-card-text
+          >
         </v-card>
       </v-dialog>
     </v-container>
@@ -36,19 +36,19 @@ export default {
 
   components: {
     Navbar,
-    Footer
+    Footer,
   },
   data: () => ({
-    dialog: false
+    dialog: false,
   }),
 
-  created: function() {
+  created: function () {
     let msg = "Token has expired";
     this.$http.interceptors.response.use(
-      response => {
+      (response) => {
         return response;
       },
-      error => {
+      (error) => {
         if (error.response.status === 401 && error.response.data.msg === msg) {
           this.dialog = true;
           this.$store.dispatch("logout").then(() => this.$router.push("/"));
@@ -56,7 +56,7 @@ export default {
         throw error;
       }
     );
-  }
+  },
 };
 </script>
 

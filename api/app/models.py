@@ -191,6 +191,10 @@ class Scan:
 
         return list_s
 
+    def get_domain(self, id_scan):
+        domain = mongo.db.scans.find_one({'_id': ObjectId(id_scan)})
+        return domain['hosts']
+
     def get_scans_by_bot(self, id_bot):
         list_s = []
         for scan in mongo.db.scans.find({'bots': ObjectId(id_bot)}):
@@ -290,14 +294,22 @@ class Bot:
 class Nobita:
 
     def save_scan(self, scan):
+        d_insert = False
         for s in scan:
+            date_update = ""
             geo = self.geo_ip(s['ip_address'])
-            complete = mongo.db.nobita_bot.insert_one({'ip_address': s['ip_address'], 'country': geo['country'],
+            d_insert = mongo.db.nobita_bot.insert_one({'bot': "nobita", 'ip_address': s['ip_address'],
+                                                       'domain': s['domain'],
+                                                       'created': time_str(), 'updated': date_update,
+                                                       'banner': s['banner'], 'country': geo['country'],
                                                        'city': geo['city'], 'region_name': geo['regionName'],
-                                                       'isp': geo['isp'], 'port': s['port'], 'banner': s['banner'],
+                                                       'isp': geo['isp'], 'port': s['port'],
                                                        'latitud': geo['lat'], 'longitud': geo['lon'],
                                                        'zip': geo['zip']})
-        return complete
+        return d_insert
+
+    def get_nobita_scan(self, domain):
+        return mongo.db.nobita_bot.find_one({'domain': domain})
 
     def geo_ip(self, ip):
         url = "http://ip-api.com/json/" + ip
@@ -309,26 +321,53 @@ class Nobita:
 class Shizuka:
 
     def save_ipreverse(self, data):
+        print("SHIZUKA", data)
+        d_insert = False
         for d in data:
+            date_update = ""
             d_insert = mongo.db.shizuka_bot.find_one({'domain': d['domain']})
             if d_insert is None:
-                mongo.db.shizuka_bot.insert_one({'target': d['target'], 'domain': d['domain']})
+                mongo.db.shizuka_bot.insert_one({'bot': "shizuka", 'ip': d['ip'], 'target': d['target'],
+                                                 'domain': d['domain'], 'created': time_str(), 'updated': date_update})
         return d_insert
+
+    def get_shizuka_scan(self, domain):
+        return mongo.db.shizuka_bot.find_one({'target': domain})
 
 
 class Suneo:
 
     def save_domain(self, data):
+        print("SUNEO", data)
         d_insert = mongo.db.suneo_bot.find_one({'domain': data['domain']})
         if d_insert is None:
-            mongo.db.suneo_bot.insert_one(data)
+            date_update = ""
+            mongo.db.suneo_bot.insert_one({'bot': "suneo", 'ip': data['ip'], 'domain': data['domain'],
+                                           'cms': data['cms'], 'created': time_str(), 'updated': date_update})
         return d_insert
+
+    def get_suneo_scan(self, domain):
+        return mongo.db.suneo_bot.find_one({'domain': domain})
 
 
 class Gigante:
 
     def save_ssh(self, data):
-        d_insert = mongo.db.gigante_bot.find_one({'domain': data['domain']})
+        d_insert = mongo.db.gigante_bot.find_one({'bot': "gigante", 'domain': data['domain']})
         if d_insert is None:
             return mongo.db.gigante_bot.insert_one(data)
         return d_insert
+
+
+class AllBots:
+
+    def get_data(self, domain):
+        list = []
+        n = Nobita()
+        sh = Shizuka()
+        su = Suneo()
+        list.append(json.loads(JSONEncoder().encode(n.get_nobita_scan(domain))))
+        list.append(json.loads(JSONEncoder().encode(sh.get_shizuka_scan(domain))))
+        list.append(json.loads(JSONEncoder().encode(su.get_suneo_scan(domain))))
+
+        return list

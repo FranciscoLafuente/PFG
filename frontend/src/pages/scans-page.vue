@@ -13,6 +13,21 @@
         <v-icon small @click="deleteScan(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
+    <v-dialog v-model="dialog" persistent max-width="195px">
+      <v-card>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog = false">
+            <v-icon>clear</v-icon>
+          </v-btn>
+        </v-card-actions>
+        <v-icon class="icon-error">autorenew</v-icon>
+        <v-card-title class="headline"
+          ><span class="title-dialog">Relunched!</span></v-card-title
+        >
+        <v-card-text>The scan has been successfully relaunched</v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -29,15 +44,15 @@ export default {
         text: "IP",
         align: "start",
         sortable: false,
-        value: "hosts"
+        value: "hosts",
       },
       { text: "Country", value: "country" },
       { text: "Date", value: "created" },
       { text: "ISP", value: "isp" },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Actions", value: "actions", sortable: false },
     ],
     scans: [],
-    id_project: ""
+    id_project: "",
   }),
 
   created() {
@@ -50,13 +65,12 @@ export default {
       let token = this.getToken();
       axios
         .get(constants.END_POINT_LOCAL + "/myproject/" + this.id_project, token)
-        .then(r => {
-          r.data.forEach(e => {
-            console.log(e);
+        .then((r) => {
+          r.data.forEach((e) => {
             this.scans.push(e);
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.response);
         });
     },
@@ -79,7 +93,7 @@ export default {
           .then(() => {
             this.scans.splice(index, 1);
           })
-          .catch(e => {
+          .catch((e) => {
             console.log(e.response);
           });
       }
@@ -96,10 +110,10 @@ export default {
 
       axios
         .put(constants.END_POINT_LOCAL + "/myproject/scan/" + id_scan)
-        .then(r => {
-          console.log(r.data);
+        .then(() => {
+          this.dialog = true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.response);
         });
     },
@@ -107,12 +121,12 @@ export default {
     getToken() {
       let token = {
         headers: {
-          Authorization: "Bearer " + this.$store.state.token
-        }
+          Authorization: "Bearer " + this.$store.state.token,
+        },
       };
       return token;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -127,5 +141,13 @@ export default {
 
 .v-application .elevation-1 {
   width: inherit;
+}
+
+.v-card:not(.v-sheet--tile):not(.v-card--shaped) {
+  text-align: center;
+}
+
+.title-dialog {
+  margin: auto;
 }
 </style>

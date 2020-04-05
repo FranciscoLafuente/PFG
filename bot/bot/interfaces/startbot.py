@@ -105,7 +105,7 @@ class ScansHandler(ScansInterface, Handler, ABC):
         return type_bots, scans
 
     def login_bot(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNzgzYzU4ZC1lYmQyLTRlNzctOTAwOS1iNjJjMTIyMjI2Y2UiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NTkzNDI4MiwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NTkzNDI4MiwiaWRlbnRpdHkiOiI1ZTg3NmZjOGIzZThmY2I3N2E1NTM3NTkifQ.josfzeuHsMiQxSZ4Cx2u2tbq9vaSHflftMxowL5442Y"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4Nzg0MDg2ZS1kYmZkLTRlMzItYjUxZC00OTUxYmFhODU2ZDYiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NTMxMTM3MCwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NTMxMTM3MCwiaWRlbnRpdHkiOiI1ZTdkZWU4NTZhM2I3MzdmZDllN2JkNWIifQ.1zsB14KNuDzz6uNLFyxQNgiFfW4pMBL1-HghgweYoVY"
         try:
             # Get token bot
             response = requests.post("http://localhost:5000/bots/login", headers={'Authorization': 'Bearer ' + token})

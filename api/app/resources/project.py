@@ -3,7 +3,7 @@
 from flask import request, jsonify
 from flask_jwt_extended import (fresh_jwt_required, get_jwt_identity)
 from . import resources
-from app.models import Scan, Project
+from app.models import Scan, Project, AllBots
 
 
 # MY PROJECT MANAGEMENT
@@ -25,6 +25,18 @@ def get_scans(id_p):
     all_scans = s.get_scans(id_p)
 
     return jsonify(all_scans), 200
+
+
+@resources.route('/scan/<id_scan>', methods=['GET'])
+@fresh_jwt_required
+def get_info(id_scan):
+    s = Scan()
+    domain = s.get_domain(id_scan)
+    data = AllBots()
+    response = data.get_data(domain)
+    print(response)
+
+    return jsonify(response), 200
 
 
 @resources.route('/myproject', methods=['POST'])
