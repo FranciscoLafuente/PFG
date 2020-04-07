@@ -99,6 +99,11 @@ export default {
     save() {
       this.$emit("newBot", this.editedItem);
       this.$emit("isShow", false);
+      this.editedItem = {
+        name: "",
+        ip: "",
+        type: []
+      };
     }
   }
 };

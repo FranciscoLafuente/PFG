@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-card :elevation="9">
-      <form @keypress.enter="login">
+    <v-card :elevation="9" class="form-card">
+      <form @keypress.enter="login" class="form-data">
         <div>
           <h1>
             Login with
@@ -36,6 +36,21 @@
         </div>
       </form>
     </v-card>
+    <v-dialog v-model="dialog" persistent max-width="195px">
+      <v-card>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialog = false">
+            <v-icon>clear</v-icon>
+          </v-btn>
+        </v-card-actions>
+        <v-icon class="icon-error">lock</v-icon>
+        <v-card-title class="headline">
+          <span class="title-dialog">No Access!</span>
+        </v-card-title>
+        <v-card-text>Wrong email or password</v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -56,7 +71,8 @@ export default {
     password: "",
     show: false,
 
-    form: {}
+    form: {},
+    dialog: false
   }),
 
   computed: {
@@ -84,7 +100,9 @@ export default {
       this.$store
         .dispatch("login", { email, password })
         .then(() => this.$router.push("/"))
-        .catch(err => console.log(err));
+        .catch(() => {
+          this.dialog = true;
+        });
     }
   }
 };
@@ -99,7 +117,7 @@ export default {
   text-align: center;
 }
 
-.v-card {
+.form-card {
   width: 40%;
   padding: inherit;
   margin: auto;
@@ -107,7 +125,8 @@ export default {
   justify-content: center;
   text-align: center;
 }
-.v-card > *:last-child:not(.v-btn):not(.v-chip) {
+
+.form-data {
   width: 80%;
 }
 
@@ -131,5 +150,13 @@ a:link,
 a:visited,
 a:active {
   text-decoration: none;
+}
+
+.v-card:not(.v-sheet--tile):not(.v-card--shaped) {
+  text-align: center;
+}
+
+.title-dialog {
+  margin: auto;
 }
 </style>

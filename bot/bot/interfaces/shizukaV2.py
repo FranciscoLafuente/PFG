@@ -43,6 +43,7 @@ class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
         data = table.split(",")
         for d in data:
             if len(d) > 10:
+                d = d.replace("[", "")
                 d = d.replace(" ", "")
                 d = d.replace("]", "")
                 self.response.append({'ip': ip, 'target': target, 'domain': d})

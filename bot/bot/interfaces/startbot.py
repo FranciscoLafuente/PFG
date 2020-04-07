@@ -101,11 +101,13 @@ class ScansHandler(ScansInterface, Handler, ABC):
     def get_scan(self):
         self.app.log.debug('about to greet end-user')
         type_bots, id_bot = self.login_bot()
+        print(type_bots, id_bot)
         scans = self.stract_scans(id_bot)
+        print(scans)
         return type_bots, scans
 
     def login_bot(self):
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4Nzg0MDg2ZS1kYmZkLTRlMzItYjUxZC00OTUxYmFhODU2ZDYiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NTMxMTM3MCwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NTMxMTM3MCwiaWRlbnRpdHkiOiI1ZTdkZWU4NTZhM2I3MzdmZDllN2JkNWIifQ.1zsB14KNuDzz6uNLFyxQNgiFfW4pMBL1-HghgweYoVY"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhOTY1NDdiMC1kODJkLTQxODYtYjk4ZC05MmUxODQ3ZDA0OTQiLCJmcmVzaCI6ZmFsc2UsImlhdCI6MTU4NjE4MTYwNSwidHlwZSI6ImFjY2VzcyIsIm5iZiI6MTU4NjE4MTYwNSwiaWRlbnRpdHkiOiI1ZThiMzVkODJlNTE2NjIyMGJjZjQyNjkifQ.RgCy9LJ5zdeuuANFRyxwf0K7WpTgVPv0Eze_iSLPvAs"
         try:
             # Get token bot
             response = requests.post("http://localhost:5000/bots/login", headers={'Authorization': 'Bearer ' + token})

@@ -27,4 +27,7 @@ def create_app(config_name):
     from .resources import resources as resources_blueprint
     app.register_blueprint(resources_blueprint)
 
+    from .respository import repository as respository_blueprint
+    app.register_blueprint(respository_blueprint)
+
     return app

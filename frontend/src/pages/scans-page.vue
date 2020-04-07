@@ -22,9 +22,9 @@
           </v-btn>
         </v-card-actions>
         <v-icon class="icon-error">autorenew</v-icon>
-        <v-card-title class="headline"
-          ><span class="title-dialog">Relunched!</span></v-card-title
-        >
+        <v-card-title class="headline">
+          <span class="title-dialog">Relunched!</span>
+        </v-card-title>
         <v-card-text>The scan has been successfully relaunched</v-card-text>
       </v-card>
     </v-dialog>
@@ -44,15 +44,15 @@ export default {
         text: "IP",
         align: "start",
         sortable: false,
-        value: "hosts",
+        value: "hosts"
       },
       { text: "Country", value: "country" },
       { text: "Date", value: "created" },
       { text: "ISP", value: "isp" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     scans: [],
-    id_project: "",
+    id_project: ""
   }),
 
   created() {
@@ -65,12 +65,12 @@ export default {
       let token = this.getToken();
       axios
         .get(constants.END_POINT_LOCAL + "/myproject/" + this.id_project, token)
-        .then((r) => {
-          r.data.forEach((e) => {
+        .then(r => {
+          r.data.forEach(e => {
             this.scans.push(e);
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error.response);
         });
     },
@@ -79,7 +79,7 @@ export default {
       const index = this.scans.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
         let token = this.getToken();
-        let id_scan = item._id;
+        let id_scan = item.id;
 
         axios
           .delete(
@@ -93,27 +93,27 @@ export default {
           .then(() => {
             this.scans.splice(index, 1);
           })
-          .catch((e) => {
+          .catch(e => {
             console.log(e.response);
           });
       }
     },
 
     openScan(item) {
-      let id_scan = item._id;
+      let id_scan = item.id;
       this.$router.push("/myproject/" + this.id_project + "/scan/" + id_scan);
     },
 
     renewScan(item) {
       //let token = this.getToken();
-      let id_scan = item._id;
+      let id_scan = item.id;
 
       axios
         .put(constants.END_POINT_LOCAL + "/myproject/scan/" + id_scan)
         .then(() => {
           this.dialog = true;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error.response);
         });
     },
@@ -121,12 +121,12 @@ export default {
     getToken() {
       let token = {
         headers: {
-          Authorization: "Bearer " + this.$store.state.token,
-        },
+          Authorization: "Bearer " + this.$store.state.token
+        }
       };
       return token;
-    },
-  },
+    }
+  }
 };
 </script>
 

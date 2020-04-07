@@ -11,7 +11,6 @@
             v-model="editedItem.name"
             label="Project name"
             :error-messages="nameErrors"
-            :counter="8"
             @input="$v.editedItem.name.$touch()"
             @blur="$v.editedItem.name.$touch()"
           ></v-text-field>
@@ -32,14 +31,14 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
-      name: { required, maxLength: maxLength(8) }
+      name: { required }
     }
   },
   props: ["dialogPro"],
@@ -56,8 +55,6 @@ export default {
     nameErrors() {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
-      !this.$v.editedItem.name.maxLength &&
-        errors.push("Name must be at most 8 characters long");
       !this.$v.editedItem.name.required && errors.push("Name is required.");
       return errors;
     }
@@ -67,6 +64,11 @@ export default {
     save() {
       this.$emit("newProject", this.editedItem);
       this.$emit("isShow", false);
+      this.editedItem = {
+        name: "",
+        type: true,
+        scans: []
+      };
     }
   }
 };

@@ -11,7 +11,6 @@
             v-model="editedItem.name"
             label="Scan name"
             :error-messages="nameErrors"
-            :counter="8"
             @input="$v.editedItem.name.$touch()"
             @blur="$v.editedItem.name.$touch()"
           ></v-text-field>
@@ -27,12 +26,7 @@
           ></v-textarea>
         </v-container>
         <v-container>
-          <Select
-            :bots="bots"
-            @listBots="selectedBots = $event"
-            :value="editedItem.bots"
-            :listBots="(editedItem.bots = selectedBots)"
-          ></Select>
+          <v-select v-model="editedItem.bot" :items="bots" label="Bots"></v-select>
         </v-container>
         <v-container fluid>
           <v-checkbox v-model="checkbox" label="Schedule"></v-checkbox>
@@ -103,9 +97,9 @@
 </template>
 
 <script>
-import Select from "../components/select-component";
+//mport Select from "../components/select-component";
 import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
 import constants from "../constants";
 
@@ -113,24 +107,25 @@ const ip_address = helpers.regex("ip_address", constants.VALID_IP_ADDRESS);
 
 export default {
   components: {
-    Select
+    //Select
   },
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
-      name: { required, maxLength: maxLength(8) },
+      name: { required },
       hosts: { required, ip_address }
     }
   },
   props: ["dialog", "bots"],
   data: () => ({
+    selectedValue: null,
     formTitle: "New Scan",
     newItem: {},
     editedIndex: -1,
     editedItem: {
       name: "",
-      bots: [],
+      bot: "",
       executiontime: "",
       hosts: ""
     },
@@ -145,8 +140,6 @@ export default {
     nameErrors() {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
-      !this.$v.editedItem.name.maxLength &&
-        errors.push("Name must be at most 8 characters long");
       !this.$v.editedItem.name.required && errors.push("Name is required.");
       return errors;
     },
@@ -170,6 +163,12 @@ export default {
       }
       this.$emit("newScan", this.editedItem);
       this.$emit("isShow", false);
+      this.editedItem = {
+        name: "",
+        bot: "",
+        executiontime: "",
+        hosts: ""
+      };
     },
 
     dateNow() {

@@ -19,9 +19,6 @@
         <v-icon small class="mr-2" @click="visualizeScan(item)">visibility</v-icon>
         <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
       </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
     </v-data-table>
     <div class="folder-button">
       <v-btn color="blue darken-1" @click="dialogPro = true" dark fab>
@@ -33,6 +30,21 @@
         <v-icon>add</v-icon>
       </v-btn>
     </div>
+    <v-dialog v-model="createdScan" persistent max-width="195px">
+      <v-card>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="createdScan = false">
+            <v-icon>clear</v-icon>
+          </v-btn>
+        </v-card-actions>
+        <v-icon class="icon-error">done</v-icon>
+        <v-card-title class="headline">
+          <span class="title-dialog">Success!</span>
+        </v-card-title>
+        <v-card-text>The scan has been created successfully</v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -51,6 +63,7 @@ export default {
     title: "My Projects",
     dialog: false,
     dialogPro: false,
+    createdScan: false,
     headers: [
       {
         text: "Project Name",
@@ -63,6 +76,7 @@ export default {
     ],
     projects: [],
     bots: [],
+    fullBots: [],
     currentProject: Number,
     index: Number,
     editedItem: {
@@ -121,12 +135,13 @@ export default {
       axios
         .get(constants.END_POINT_LOCAL + "/bots", token)
         .then(r => {
-          for (let i in r.data) {
-            this.bots.push(r.data[i].name);
-          }
+          r.data.forEach(e => {
+            this.bots.push(e.name);
+            this.fullBots.push(e);
+          });
         })
-        .catch(e => {
-          console.log(e.response);
+        .catch(error => {
+          console.log(error.response);
         });
     },
 
@@ -138,31 +153,40 @@ export default {
         .then(r => {
           this.projects.push(r.data);
         })
-        .catch(e => {
-          console.log(e.response);
+        .catch(error => {
+          console.log(error.response);
         });
     },
 
     addScan() {
       let token = this.getToken();
       let id = this.currentProject;
+      let botId = "";
+      this.fullBots.forEach(b => {
+        if (this.editedItem.bot === b.name) {
+          botId = b.id;
+        }
+      });
+
+      let scan = {
+        name: this.editedItem.name,
+        bot: botId,
+        executiontime: this.editedItem.executiontime,
+        hosts: this.editedItem.hosts
+      };
 
       axios
-        .post(
-          constants.END_POINT_LOCAL + "/myproject/" + id,
-          this.editedItem,
-          token
-        )
-        .then(r => {
-          this.projects[this.index].scans.push(r.data["name"]);
+        .post(constants.END_POINT_LOCAL + "/myproject/" + id, scan, token)
+        .then(() => {
+          this.createdScan = true;
         })
-        .catch(e => {
-          console.log(e.response);
+        .catch(error => {
+          console.log(error.response);
         });
     },
 
     visualizeScan(item) {
-      let currentProject = item._id;
+      let currentProject = item.id;
       this.$router.push("/myproject/" + currentProject);
     },
 
@@ -170,15 +194,15 @@ export default {
       const index = this.projects.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
         let token = this.getToken();
-        let id = item._id;
+        let id = item.id;
 
         axios
           .delete(constants.END_POINT_LOCAL + "/myproject/" + id, token)
           .then(() => {
             this.projects.splice(index, 1);
           })
-          .catch(e => {
-            console.log(e.response);
+          .catch(error => {
+            console.log(error.response);
           });
       }
     },
@@ -193,7 +217,7 @@ export default {
     },
 
     editItem(item) {
-      this.currentProject = item._id;
+      this.currentProject = item.id;
       this.index = this.projects.indexOf(item);
 
       this.dialog = true;
@@ -238,5 +262,13 @@ export default {
 
 .select-bots {
   padding: inherit;
+}
+
+.v-card:not(.v-sheet--tile):not(.v-card--shaped) {
+  text-align: center;
+}
+
+.title-dialog {
+  margin: auto;
 }
 </style>

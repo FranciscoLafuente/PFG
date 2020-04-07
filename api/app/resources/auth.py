@@ -1,17 +1,16 @@
 # coding=utf-8
 
-from flask import request, jsonify
-from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity,
-                                decode_token)
+from flask import request, jsonify, render_template
+from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, decode_token)
 from . import resources
-from app.models import User
+from app.respository import views
 import datetime
+from app.email import send_email
 
 
 @resources.route('/signup', methods=['POST'])
 def signup():
-    new_user = User()
-    new_user.insert(request.json)
+    views.UserManagement().create(request.json)
 
     return jsonify({"msg": "Success!"}), 200
 
@@ -28,10 +27,9 @@ def login():
         return jsonify({"msg": "Missing parameter"}), 400
 
     # Verify password and email
-    user = User()
-    check = user.check_user(request.json)
+    check = views.UserManagement().check(email=useremail, password=password)
 
-    if check is False:
+    if not check:
         return jsonify({"msg": "Unregistered user or invalid password"}), 400
 
     # Identity can be any data that is json serializable
@@ -47,8 +45,8 @@ def forgot_password():
     email = body.get('email')
     if not email:
         return jsonify({"msg": "Missing parameter"}), 400
-    user = User()
-    user_email = user.get_user(email)
+    user_email = views.UserManagement().exists(email=email)
+
     if not user_email:
         return jsonify({"msg": "User not found"}), 404
     expires = datetime.timedelta(hours=24)
@@ -72,9 +70,8 @@ def reset_password():
         return jsonify({"msg": "Missing parameter"}), 400
 
     user_email = decode_token(reset_token)['identity']
-    u = User()
-    new_user = u.change_password(user_email, password)
-    if new_user is None:
+    is_changed = views.UserManagement().change_password(email=user_email, password=password)
+    if not is_changed:
         return jsonify({"msg": "User not found"}), 404
 
     send_email('[Shodita] Password reset successful', sender='shodita@shodita.com', recipients=[user_email],
@@ -86,8 +83,5 @@ def reset_password():
 @resources.route('/myprofile', methods=['GET'])
 @fresh_jwt_required
 def get_user():
-    current_user = get_jwt_identity()
-    u = User()
-
-    return jsonify(u.get_user(current_user)), 200
+    pass
 

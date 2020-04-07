@@ -14,9 +14,6 @@
       <template v-slot:item.delete="{ item }">
         <v-icon small class="button-delete mr-2" @click="deleteItem(item)">delete</v-icon>
       </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
     </v-data-table>
     <div class="folder-button">
       <v-btn color="blue darken-1" @click="dialogBot = true" dark fab>
@@ -107,6 +104,7 @@ export default {
 
     addBot() {
       let token = this.getToken();
+
       axios
         .post(constants.END_POINT_LOCAL + "/bots", this.editedItem, token)
         .then(r => {
@@ -118,9 +116,10 @@ export default {
     },
 
     generateToken(item) {
-      if (item.token === "") {
+      if (!item.token) {
         let user_token = this.getToken();
-        this.currentBot = item._id;
+        this.currentBot = item.id;
+        let index = this.bots.indexOf(item);
 
         axios
           .get(
@@ -128,11 +127,8 @@ export default {
             user_token
           )
           .then(r => {
-            this.tokenBot = JSON.parse(JSON.stringify(r.data[0]));
-            // Search de index in bots array
-            const index = this.bots.findIndex(e => e._id === this.currentBot);
-            // Change the value with the generated token
-            Object.assign(this.bots[index], r.data[1]);
+            this.tokenBot = JSON.parse(JSON.stringify(r.data));
+            this.bots[index].token = this.tokenBot;
           })
           .catch(e => {
             console.log(e.response);
@@ -148,7 +144,7 @@ export default {
       const index = this.bots.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
         let token = this.getToken();
-        let id = item._id;
+        let id = item.id;
 
         axios
           .delete(constants.END_POINT_LOCAL + "/bots/" + id, token)
