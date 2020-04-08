@@ -1,9 +1,10 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Project, Scan, Bot, Nobita, Shizuka, Suneo, Gigante
+from .models import User, Project, Scan, Bot, Nobita, Shizuka, Suneo, Gigante, GeoLocation
 import json
 from bson import ObjectId
 import datetime
 import requests
+from mongoengine import errors
 
 
 class UserManagement:
@@ -11,7 +12,11 @@ class UserManagement:
     def create(self, data):
         password = self.password(data['password'])
         u = User(email=data['email'], name=data['name'], password=password)
-        u.save()
+        try:
+            u.save()
+            return True
+        except errors.NotUniqueError:
+            return False
 
     def change_password(self, **kwargs):
         password = self.password(kwargs['password'])
@@ -52,10 +57,13 @@ class ProjectManagement:
 
     def create(self, **kwargs):
         p = Project(name=kwargs['name'], type=kwargs['type'])
-        p.save()
-        return json.loads(JSONEncoder().encode(
-            dict({'id': p.id, 'name': p.name, 'type': p.type})
-        ))
+        try:
+            p.save()
+            return json.loads(JSONEncoder().encode(
+                dict({'id': p.id, 'name': p.name, 'type': p.type})
+            ))
+        except errors.NotUniqueError:
+            return False
 
     def project(self, **kwargs):
         for p in Project.objects(id=kwargs['id']):
@@ -86,14 +94,21 @@ class ScanManagement:
     def create(self, **kwargs):
         s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'],
                  executionTime=kwargs['execution_time'])
-        s.save()
-        return s.id
+        try:
+            s.save()
+            return s.id
+        except errors.NotUniqueError:
+            return False
 
     def get_scan(self, **kwargs):
         for s in Scan.objects(id=kwargs['id']):
             return json.loads(JSONEncoder().encode(
                 dict({'id': s.id, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
             ))
+
+    def get_domain(self, **kwargs):
+        for s in Scan.objects(id=kwargs['id']):
+            return s.hosts
 
     def change_done(self, **kwargs):
         for s in Scan.objects(id=kwargs['id']):
@@ -107,7 +122,7 @@ class ScanManagement:
         for s in Scan.objects(bot=ObjectId(kwargs['bot'])):
             scans_list.append(
                 json.loads(JSONEncoder().encode(
-                    dict({'hosts': s.hosts, 'done': s.done})
+                    dict({'id': s.id, 'hosts': s.hosts, 'done': s.done})
                 )))
         return scans_list
 
@@ -116,10 +131,13 @@ class BotManagement:
 
     def create(self, **kwargs):
         b = Bot(name=kwargs['name'], email=kwargs['email'], ip=kwargs['ip'], type=kwargs['type'])
-        b.save()
-        return json.loads(JSONEncoder().encode(
-            dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type})
-        ))
+        try:
+            b.save()
+            return json.loads(JSONEncoder().encode(
+                dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type})
+            ))
+        except errors.NotUniqueError:
+            return False
 
     def get_bots(self, **kwargs):
         list_bots = []
@@ -145,44 +163,97 @@ class BotManagement:
 class NobitaManagement:
 
     def create(self, **kwargs):
-        geo = geo_ip(kwargs['data']['ip_address'])
         n = Nobita(
-            ip=kwargs['data']['ip_address'],
+            ip=kwargs['data']['ip'],
             domain=kwargs['data']['domain'],
             port=kwargs['data']['port'],
             banner=kwargs['data']['banner'],
-            country=geo['country'],
-            city=geo['city'],
-            region_name=geo['regionName'],
-            isp=geo['isp'],
-            latitud=geo['lat'],
-            longitud=geo['lon'],
-            zip=geo['zip'],
         )
         n.save()
         return n
+
+    def get_nobita(self, **kwargs):
+        nobita_list = []
+        for n in Nobita.objects(domain=kwargs['domain']):
+            nobita_list.append(
+                json.loads(JSONEncoder().encode(
+                    dict({'ip': n.ip, 'domain': n.domain, 'port': n.port, 'banner': n.banner})
+                ))
+            )
+        return nobita_list
 
 
 class ShizukaManagement:
 
     def create(self, **kwargs):
-        shi = Shizuka(ip=kwargs['data']['ip_address'], target=kwargs['data']['target'], domain=kwargs['data']['domain'])
-        shi.save()
-        return shi
+        shi = Shizuka(ip=kwargs['data']['ip'], target=kwargs['data']['target'], domain=kwargs['data']['domain'])
+        try:
+            shi.save()
+        except errors.NotUniqueError:
+            pass
+
+    def get_shizuka(self, **kwargs):
+        shizuka_list = []
+        for shi in Shizuka.objects(target=kwargs['domain']):
+            shizuka_list.append(
+                json.loads(JSONEncoder().encode(
+                    dict({'ip': shi.ip, 'target': shi.target, 'domain': shi.domain})
+                ))
+            )
+        return shizuka_list
 
 
 class SuneoManagement:
 
     def create(self, **kwargs):
-        su = Suneo(ip=kwargs['data']['ip_address'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'])
+        su = Suneo(ip=kwargs['data']['ip'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'])
         su.save()
-        return su
+
+    def get_suneo(self, **kwargs):
+        for su in Suneo.objects(domain=kwargs['domain']):
+            return json.loads(JSONEncoder().encode(
+                dict({'cms': su.cms})
+            ))
 
 
 class GiganteManagement:
 
     def create(self, **kwargs):
         pass
+
+    def get_shizuka(self, **kwargs):
+        for gi in Gigante.objects(domain=kwargs['domain']):
+            return gi.to_json()
+
+
+class GeoLocationManagement:
+
+    def create(self, **kwargs):
+        g = geo_ip(kwargs['domain'])
+        geo = GeoLocation(
+            ip=kwargs['ip'],
+            domain=kwargs['domain'],
+            country=g['country'],
+            city=g['city'],
+            region_name=g['regionName'],
+            isp=g['isp'],
+            lat=g['lat'],
+            lon=g['lon'],
+            zip=g['zip'],
+        )
+        try:
+            geo.save()
+        except errors.NotUniqueError:
+            pass
+
+    def get_geo(self, **kwargs):
+        for g in GeoLocation.objects(domain=kwargs['domain']):
+            return json.loads(JSONEncoder().encode(
+                dict({
+                    'ip': g.ip, 'domain': g.domain, 'country': g.country, 'city': g.city, 'region_name': g.region_name,
+                    'isp': g.isp, 'lat': g.lat, 'lon': g.lon, 'zip': g.zip
+                })
+            ))
 
 
 def geo_ip(ip):

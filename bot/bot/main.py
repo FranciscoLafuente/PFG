@@ -102,7 +102,7 @@ def main():
                         # sw.get_target('185.59.67.186')
                         pass
 
-                    data = s['_id']
+                    data = s['id']
                     g.update_done(data)
 
         except AssertionError as e:

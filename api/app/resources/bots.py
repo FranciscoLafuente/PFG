@@ -32,6 +32,8 @@ def create_bots():
         return jsonify({"msg": "Missing parameter"}), 400
 
     bot = views.BotManagement().create(name=bot_name, email=current_user, ip=bot_ip, type=bot_type)
+    if not bot:
+        return jsonify({"msg": "The name is alredy in use"}), 400
 
     return jsonify(bot), 200
 

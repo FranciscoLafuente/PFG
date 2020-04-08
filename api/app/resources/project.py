@@ -6,9 +6,8 @@ from . import resources
 from app.models import Scan, Project, AllBots
 from app.respository import views
 from bson import ObjectId
+import socket
 
-
-# MY PROJECT MANAGEMENT
 
 @resources.route('/myproject', methods=['GET'])
 @fresh_jwt_required
@@ -36,12 +35,8 @@ def get_scans(id_p):
 @resources.route('/scan/<id_scan>', methods=['GET'])
 @fresh_jwt_required
 def get_info(id_scan):
-    # TODO: queda por hacer, hay que crear en el repository los bots nobita, suneo, etc y devolver
-    #  todos los datos obtenidos por cada bot
-    s = Scan()
-    domain = s.get_domain(id_scan)
-    data = AllBots()
-    response = data.get_data(domain)
+    domain = views.ScanManagement().get_domain(id=id_scan)
+    response = get_all_data(domain)
     if not response:
         return jsonify({'msg': "Don't found data"})
 
@@ -62,6 +57,8 @@ def add_project():
 
     current_user = get_jwt_identity()
     project = views.ProjectManagement().create(name=project_name, type=project_type)
+    if not project:
+        return jsonify({"msg": "The name is alredy in use"}), 400
     views.UserManagement().add_project(user=current_user, id=ObjectId(project['id']))
 
     return jsonify(project), 200
@@ -83,6 +80,8 @@ def add_scan(id):
 
     scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(scan_bot),
                                             execution_time=scan_executiontime)
+    if not scan_id:
+        return jsonify({"msg": "The name is alredy in use"}), 400
     views.ProjectManagement().add_scan(id=id, scan_id=scan_id)
 
     return jsonify({"msg": "Success!"}), 200
@@ -127,3 +126,24 @@ def delete_scan(id_p, id_scan):
     views.ProjectManagement().update_scans(id=id_p, scans=scans_new)
 
     return jsonify({"msg": "Success!"}), 200
+
+
+def get_all_data(domain):
+    list_data = []
+    # Create geoLocation
+    ip = socket.gethostbyname(domain)
+    views.GeoLocationManagement().create(ip=ip, domain=domain)
+    # Save all scans in a list
+    n = views.NobitaManagement().get_nobita(domain=domain)
+    n_dict = dict({"type": "nobita", "data": n})
+    shi = views.ShizukaManagement().get_shizuka(domain=domain)
+    shi_dict = dict({"type": "shizuka", "data": shi})
+    su = views.SuneoManagement().get_suneo(domain=domain)
+    su_dict = dict({"type": "suneo", "data": su})
+    geo = views.GeoLocationManagement().get_geo(domain=domain)
+    geo_dict = dict({"type": "geo", "data": geo})
+    list_data.append(n_dict)
+    list_data.append(shi_dict)
+    list_data.append(su_dict)
+    list_data.append(geo_dict)
+    return list_data

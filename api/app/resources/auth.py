@@ -10,7 +10,9 @@ from app.email import send_email
 
 @resources.route('/signup', methods=['POST'])
 def signup():
-    views.UserManagement().create(request.json)
+    user = views.UserManagement().create(request.json)
+    if not user:
+        return jsonify({"msg": "The email is alredy in use"}), 400
 
     return jsonify({"msg": "Success!"}), 200
 

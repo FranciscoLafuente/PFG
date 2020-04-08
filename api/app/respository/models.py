@@ -40,26 +40,19 @@ class Bot(Document):
 
 class Nobita(Document):
     bot = StringField(default="nobita")
-    ip_address = StringField()
+    ip = StringField()
     domain = StringField()
     port = IntField()
+    banner = StringField()
     created = DateTimeField(default=datetime.datetime.utcnow)
     updated = DateTimeField()
-    banner = StringField()
-    country = StringField()
-    city = StringField()
-    region_name = StringField()
-    isp = StringField()
-    latitud = FloatField()
-    longitud = FloatField()
-    zip = StringField()
 
 
 class Shizuka(Document):
     bot = StringField(default="shizuka")
     ip = StringField()
     target = StringField()
-    domain = StringField()
+    domain = StringField(unique=True)
     created = DateTimeField(default=datetime.datetime.utcnow)
     updated = StringField()
 
@@ -79,3 +72,16 @@ class Gigante(Document):
     domain = StringField()
     created = DateTimeField(default=datetime.datetime.utcnow)
     updated = StringField()
+
+
+class GeoLocation(Document):
+    ip = StringField(unique=True)
+    domain = StringField(unique=True)
+    country = StringField()
+    city = StringField()
+    region_name = StringField()
+    isp = StringField()
+    lat = FloatField()
+    lon = FloatField()
+    zip = StringField()
+    created = DateTimeField(default=datetime.datetime.utcnow)

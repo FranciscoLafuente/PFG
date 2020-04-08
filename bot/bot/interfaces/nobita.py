@@ -140,7 +140,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             pass
 
     def save_scan(self, ip_address, port, result):
-        self.port_scanner.append({'ip_address': ip_address, 'domain': self.domain, 'port': port, 'banner': result})
+        self.port_scanner.append({'ip': ip_address, 'domain': self.domain, 'port': port, 'banner': result})
 
     def format_text(self, text):
         text = str(text).replace('\\r\\n', "\n")
