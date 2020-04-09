@@ -1,3 +1,6 @@
+whois
+bson
+builtwith
 ipwhois
 paramiko
 PyJWT

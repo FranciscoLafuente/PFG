@@ -1,9 +1,11 @@
 from abc import abstractmethod, ABC
 from cement import Interface, Handler
 
-import ipwhois
+import whois
+# import ipwhois
 import json
 import urllib.request as urllib
+from pprint import pprint
 
 
 class SuneoWhoisInterface(Interface):
@@ -31,9 +33,9 @@ class SuneoWhoisHandler(SuneoWhoisInterface, Handler, ABC):
     def get_target(self, target):
         self.app.log.info("BOT SUNEOWHOIS")
         self.app.log.info("Domain: " + target)
-        obj = ipwhois.IPWhois(target)
-        res = obj.lookup_whois()
-        name = res.get('nets')[0].get('name').lower()
+        w = whois.whois(target)
+        pprint(w)
+        name = w.org
         self.app.log.info("OWNER: " + name)
         try:
             url = "https://libreborme.net/borme/api/v1/persona/search/?q=" + str(name.replace(" ", "%20"))

@@ -85,29 +85,27 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
 
     def connect(self, ip_address, port):
         target = ip_address
+        socket.setdefaulttimeout(5.0)
 
         try:
             if port == 443:
                 socketssl = socket.socket()
-                socketssl.settimeout(3.0)
                 s = ssl.wrap_socket(socketssl)
             else:
                 s = socket.socket()
-                s.settimeout(5.0)
             con = s.connect_ex((target, port))
             request = "GET / HTTP/1.1\nHost: " + ip_address + "\n\n"
             s.send(request.encode())
             result = s.recv(1024)
+            s.close()
 
-            # Print the results
+            # Print results
             json_obj = result.decode('utf8').replace("'", '"')
             banner = self.format_text(json_obj)
             # If the response is 0, it's mean that the connection is succesfull
             if con is 0:
                 self.save_scan(ip_address, port, banner)
-                s.close()
                 return True
-            s.close()
             return False
         except:
             return False

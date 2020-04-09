@@ -5,6 +5,7 @@ from bson import ObjectId
 import datetime
 import requests
 from mongoengine import errors
+from pprint import pprint
 
 
 class UserManagement:
@@ -122,7 +123,8 @@ class ScanManagement:
         for s in Scan.objects(bot=ObjectId(kwargs['bot'])):
             scans_list.append(
                 json.loads(JSONEncoder().encode(
-                    dict({'id': s.id, 'hosts': s.hosts, 'done': s.done})
+                    dict({'id': s.id, 'hosts': s.hosts, 'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
+                          'done': s.done})
                 )))
         return scans_list
 
@@ -206,13 +208,17 @@ class ShizukaManagement:
 class SuneoManagement:
 
     def create(self, **kwargs):
-        su = Suneo(ip=kwargs['data']['ip'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'])
-        su.save()
+        su = Suneo(ip=kwargs['data']['ip'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'],
+                   technologies=kwargs['data']['technologies'])
+        try:
+            su.save()
+        except errors.NotUniqueError:
+            pass
 
     def get_suneo(self, **kwargs):
         for su in Suneo.objects(domain=kwargs['domain']):
             return json.loads(JSONEncoder().encode(
-                dict({'cms': su.cms})
+                dict({'cms': su.cms, 'technologies': su.technologies})
             ))
 
 
@@ -234,6 +240,7 @@ class GeoLocationManagement:
             ip=kwargs['ip'],
             domain=kwargs['domain'],
             country=g['country'],
+            org=g['org'],
             city=g['city'],
             region_name=g['regionName'],
             isp=g['isp'],
@@ -250,8 +257,8 @@ class GeoLocationManagement:
         for g in GeoLocation.objects(domain=kwargs['domain']):
             return json.loads(JSONEncoder().encode(
                 dict({
-                    'ip': g.ip, 'domain': g.domain, 'country': g.country, 'city': g.city, 'region_name': g.region_name,
-                    'isp': g.isp, 'lat': g.lat, 'lon': g.lon, 'zip': g.zip
+                    'ip': g.ip, 'domain': g.domain, 'country': g.country, 'org': g.org, 'city': g.city,
+                    'region_name': g.region_name, 'isp': g.isp, 'lat': g.lat, 'lon': g.lon, 'zip': g.zip
                 })
             ))
 

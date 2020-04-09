@@ -32,6 +32,11 @@
                     <td v-else>--</td>
                   </tr>
                   <tr>
+                    <td>Organization</td>
+                    <td v-if="geo.org">{{ geo.org }}</td>
+                    <td v-else>--</td>
+                  </tr>
+                  <tr>
                     <td>ISP</td>
                     <td v-if="geo.isp">{{ geo.isp }}</td>
                     <td v-else>--</td>
@@ -73,12 +78,24 @@
                 <thead>
                   <h3 class="text-left">Suneo</h3>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>CMS</td>
-                    <td>{{ suneo.cms }}</td>
-                  </tr>
-                </tbody>
+                <div v-if="suneo">
+                  <tbody>
+                    <tr>
+                      <td>CMS</td>
+                      <td v-if="suneo.cms">{{ suneo.cms }}</td>
+                      <td v-else>--</td>
+                    </tr>
+                  </tbody>
+                  <h4>Technologies</h4>
+                  <div class="suneo-tech" v-if="suneo.technologies">
+                    <div
+                      class="suneo-tech-item"
+                      v-for="(tech, index) in suneo.technologies"
+                      :key="index"
+                    >{{ tech }}</div>
+                  </div>
+                  <div v-else>--</div>
+                </div>
               </template>
             </v-simple-table>
           </v-col>
@@ -172,9 +189,6 @@ export default {
             if (e.type === "geo") {
               this.geo = e.data;
               this.ip = e.data.ip;
-              console.log(this.ip);
-              console.log(e.data);
-
               this.domain = e.data.domain;
               this.loadLocation(this.geo.lat, this.geo.lon);
             }
@@ -205,6 +219,11 @@ export default {
 </script>
 
 <style>
+h2,
+h3 {
+  font-family: "Helvetica", sans-serif;
+}
+
 .container-map {
   height: 300px;
   width: 100%;
@@ -224,5 +243,14 @@ export default {
   padding-left: 10px;
   font-weight: 400;
   color: #999;
+}
+
+.suneo-tech {
+  padding: 16px 0px;
+}
+
+.suneo-tech-item {
+  font-family: "Roboto", sans-serif;
+  padding: 0px 16px;
 }
 </style>

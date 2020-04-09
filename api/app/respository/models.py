@@ -24,7 +24,7 @@ class Scan(Document):
     name = StringField(required=True, unique=True)
     hosts = StringField(required=True)
     bot = ObjectIdField()
-    executionTime = DateTimeField()
+    executionTime = DateTimeField(default=datetime.datetime.utcnow)
     created = DateTimeField(default=datetime.datetime.utcnow)
     done = BooleanField(default=False, required=True)
 
@@ -60,8 +60,9 @@ class Shizuka(Document):
 class Suneo(Document):
     bot = StringField(default="suneo")
     ip = StringField()
-    domain = StringField()
+    domain = StringField(unique=True)
     cms = StringField()
+    technologies = ListField()
     created = DateTimeField(default=datetime.datetime.utcnow)
     updated = StringField()
 
@@ -78,6 +79,7 @@ class GeoLocation(Document):
     ip = StringField(unique=True)
     domain = StringField(unique=True)
     country = StringField()
+    org = StringField()
     city = StringField()
     region_name = StringField()
     isp = StringField()
