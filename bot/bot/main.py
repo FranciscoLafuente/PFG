@@ -86,27 +86,32 @@ def main():
             # TODO: El bot gigante tiene que conectarse con la api para guardar sus resultados
             #  suneowhois hay que ver como buscar en libreborme con lo obtenido mediante ipwhois
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print("NOW", now)
             for s in scans:
+                print("EXECUTIONTIME", s['executionTime'])
                 if s['executionTime'] < now and not s['done']:
-                    if 'Nobita' in type_bot:
-                        data = n.pscan(s['hosts'])
-                        g.send_nobita(data)
-                    if 'Shizuka' in type_bot:
-                        data = shi.get_domain(s['hosts'])
-                        g.send_shizuka(data)
-                    if 'Suneo' in type_bot:
-                        data = su.get_cms(s['hosts'])
-                        g.send_suneo(data)
-                    if 'Gigante' in type_bot:
-                        pass
-                        # data = gi.check_ssh(s['hosts'])
-                        # g.select_action(data)
-                    if 'SuneoWhois' in type_bot:
-                        sw.get_target('www.latevaweb.com')
-                        pass
+                    '''
+                    print("ALL HOSTS", s['hosts'])
+                    for host in s['hosts']:
+                        print("HOST", host)
+                        if 'Nobita' in type_bot:
+                            data = n.pscan(host)
+                            g.send_nobita(data)
+                        if 'Shizuka' in type_bot:
+                            data = shi.get_domain(host)
+                            g.send_shizuka(data)
+                        if 'Suneo' in type_bot:
+                            data = su.get_cms(host)
+                            g.send_suneo(data)
+                        if 'Gigante' in type_bot:
+                            data = gi.check_ssh(host)
+                        if 'SuneoWhois' in type_bot:
+                            sw.get_target(host)
+                            pass
 
                     data = s['id']
-                    g.update_done(data)
+                    g.update_done(data)'''
+                    print("HA ENTRADO")
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

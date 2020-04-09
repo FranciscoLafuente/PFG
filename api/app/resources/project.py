@@ -77,7 +77,7 @@ def add_scan(id):
     scan_hosts = request.json.get('hosts', None)
     scan_executiontime = request.json.get('executiontime', None)
 
-    if not scan_name or not scan_bot or not scan_hosts or not scan_executiontime:
+    if not scan_name or not scan_bot or not scan_hosts:
         return jsonify({"msg": "Missing parameter"}), 400
 
     scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(scan_bot),

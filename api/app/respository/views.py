@@ -93,8 +93,11 @@ class ProjectManagement:
 class ScanManagement:
 
     def create(self, **kwargs):
-        s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'],
-                 executionTime=kwargs['execution_time'])
+        if kwargs['execution_time']:
+            s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'],
+                     executionTime=kwargs['execution_time'])
+        else:
+            s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'])
         try:
             s.save()
             return s.id

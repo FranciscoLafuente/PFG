@@ -22,7 +22,7 @@ class Project(Document):
 
 class Scan(Document):
     name = StringField(required=True, unique=True)
-    hosts = StringField(required=True)
+    hosts = ListField(required=True)
     bot = ObjectIdField()
     executionTime = DateTimeField(default=datetime.datetime.utcnow)
     created = DateTimeField(default=datetime.datetime.utcnow)

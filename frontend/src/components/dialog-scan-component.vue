@@ -17,12 +17,12 @@
         </v-container>
         <v-container>
           <v-textarea
-            v-model="editedItem.hosts"
+            v-model="hosts"
             :error-messages="hostsErrors"
             label="Hosts"
             clearable
-            @input="$v.editedItem.hosts.$touch()"
-            @blur="$v.editedItem.hosts.$touch()"
+            @input="$v.hosts.$touch()"
+            @blur="$v.hosts.$touch()"
           ></v-textarea>
         </v-container>
         <v-container>
@@ -103,7 +103,7 @@ import { required } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
 import constants from "../constants";
 
-const ip_address = helpers.regex("ip_address", constants.VALID_IP_ADDRESS);
+const ip_address = helpers.regex("ip_address", constants.VALID_HOST_NAME);
 
 export default {
   components: {
@@ -113,9 +113,9 @@ export default {
 
   validations: {
     editedItem: {
-      name: { required },
-      hosts: { required, ip_address }
-    }
+      name: { required }
+    },
+    hosts: { required, ip_address }
   },
   props: ["dialog", "bots"],
   data: () => ({
@@ -127,12 +127,13 @@ export default {
       name: "",
       bot: "",
       executiontime: "",
-      hosts: ""
+      hosts: []
     },
+    hosts: "",
     selectedBots: [],
     date: new Date().toISOString().substr(0, 10),
     menu2: false,
-    time: null,
+    time: "",
     menu: false,
     checkbox: false
   }),
@@ -145,29 +146,29 @@ export default {
     },
     hostsErrors() {
       const errors = [];
-      if (!this.$v.editedItem.hosts.$dirty) return errors;
-      !this.$v.editedItem.hosts.ip_address && errors.push("Must be valid host");
-      !this.$v.editedItem.hosts.required &&
-        errors.push("At least one host is required");
+      if (!this.$v.hosts.$dirty) return errors;
+      !this.$v.hosts.ip_address && errors.push("Must be valid host");
+      !this.$v.hosts.required && errors.push("At least one host is required");
       return errors;
     }
   },
 
   methods: {
     save() {
-      if (this.editedItem.executiontime === "") {
-        this.editedItem.executiontime = this.dateNow();
-      } else {
+      if (this.date !== "" && this.time !== "") {
+        console.log("No ha detecta execution time");
         // If Scheduled
         this.editedItem.executiontime = this.date + " " + this.time;
       }
+      this.editedItem.hosts = this.hosts.split(",");
+      console.log(this.editedItem);
       this.$emit("newScan", this.editedItem);
       this.$emit("isShow", false);
       this.editedItem = {
         name: "",
         bot: "",
         executiontime: "",
-        hosts: ""
+        hosts: []
       };
     },
 
