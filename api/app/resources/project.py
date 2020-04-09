@@ -133,19 +133,20 @@ def delete_scan(id_p, id_scan):
 def get_all_data(domain):
     list_data = []
     # Create geoLocation
-    ip = socket.gethostbyname(domain)
-    views.GeoLocationManagement().create(ip=ip, domain=domain)
-    # Save all scans in a list
-    n = views.NobitaManagement().get_nobita(domain=domain)
-    n_dict = dict({"type": "nobita", "data": n})
-    shi = views.ShizukaManagement().get_shizuka(domain=domain)
-    shi_dict = dict({"type": "shizuka", "data": shi})
-    su = views.SuneoManagement().get_suneo(domain=domain)
-    su_dict = dict({"type": "suneo", "data": su})
-    geo = views.GeoLocationManagement().get_geo(domain=domain)
-    geo_dict = dict({"type": "geo", "data": geo})
-    list_data.append(n_dict)
-    list_data.append(shi_dict)
-    list_data.append(su_dict)
-    list_data.append(geo_dict)
+    for d in domain:
+        ip = socket.gethostbyname(d)
+        views.GeoLocationManagement().create(ip=ip, domain=d)
+        # Save all scans in a list
+        n = views.NobitaManagement().get_nobita(domain=d)
+        n_dict = dict({"type": "nobita", "data": n})
+        shi = views.ShizukaManagement().get_shizuka(domain=d)
+        shi_dict = dict({"type": "shizuka", "data": shi})
+        su = views.SuneoManagement().get_suneo(domain=d)
+        su_dict = dict({"type": "suneo", "data": su})
+        geo = views.GeoLocationManagement().get_geo(domain=d)
+        geo_dict = dict({"type": "geo", "data": geo})
+        list_data.append(n_dict)
+        list_data.append(shi_dict)
+        list_data.append(su_dict)
+        list_data.append(geo_dict)
     return list_data

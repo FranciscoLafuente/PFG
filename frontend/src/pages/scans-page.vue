@@ -41,14 +41,12 @@ export default {
     dialog: false,
     headers: [
       {
-        text: "IP",
+        text: "Name",
         align: "start",
         sortable: false,
-        value: "hosts"
+        value: "name"
       },
-      { text: "Country", value: "country" },
       { text: "Date", value: "created" },
-      { text: "ISP", value: "isp" },
       { text: "Actions", value: "actions", sortable: false }
     ],
     scans: [],

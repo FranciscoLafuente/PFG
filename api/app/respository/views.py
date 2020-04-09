@@ -107,7 +107,7 @@ class ScanManagement:
     def get_scan(self, **kwargs):
         for s in Scan.objects(id=kwargs['id']):
             return json.loads(JSONEncoder().encode(
-                dict({'id': s.id, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
+                dict({'id': s.id, 'name': s.name, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
             ))
 
     def get_domain(self, **kwargs):
