@@ -37,12 +37,29 @@ def get_scans(id_p):
 @resources.route('/scan/<id_scan>', methods=['GET'])
 @fresh_jwt_required
 def get_info(id_scan):
-    domain = views.ScanManagement().get_domain(id=id_scan)
-    response = get_all_data(domain)
-    if not response:
-        return jsonify({'msg': "Don't found data"})
+    list_domain = []
+    list_response = []
+    hosts = views.ScanManagement().get_scan(id=id_scan)['hosts']
+    for h in hosts:
+        list_domain.append(views.HostIpManagement().get_domain(id=h))
+    for d in list_domain:
+        list_response.append(get_all_data(d))
+    if list_response:
+        return jsonify(list_response), 200
+    return jsonify({'msg': "Don't found data"})
 
-    return jsonify(response), 200
+
+@resources.route('/scan/<id_scan>/2', methods=['GET'])
+@fresh_jwt_required
+def get_all_info(id_scan):
+    list_domain = []
+    hosts = views.ScanManagement().get_scan(id=id_scan)['hosts']
+    for h in hosts:
+        list_domain.append(views.HostIpManagement().get_domain(id=h))
+    response = get_all_data(list_domain)
+    if response:
+        return jsonify(response), 200
+    return jsonify({'msg': "Don't found data"})
 
 
 @resources.route('/myproject', methods=['POST'])
@@ -80,7 +97,15 @@ def add_scan(id):
     if not scan_name or not scan_bot or not scan_hosts:
         return jsonify({"msg": "Missing parameter"}), 400
 
-    scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(scan_bot),
+    # Save hosts
+    id_hosts = []
+    for host in scan_hosts:
+        ip = socket.gethostbyname(host)
+        views.HostIpManagement().create(domain=host, ip=ip)
+        h = views.HostIpManagement().get_host(domain=host)
+        id_hosts.append(h['id'])
+    # Create scan
+    scan_id = views.ScanManagement().create(name=scan_name, hosts=id_hosts, bot=ObjectId(scan_bot),
                                             execution_time=scan_executiontime)
     if not scan_id:
         return jsonify({"msg": "The name is alredy in use"}), 400
@@ -133,20 +158,19 @@ def delete_scan(id_p, id_scan):
 def get_all_data(domain):
     list_data = []
     # Create geoLocation
-    for d in domain:
-        ip = socket.gethostbyname(d)
-        views.GeoLocationManagement().create(ip=ip, domain=d)
-        # Save all scans in a list
-        n = views.NobitaManagement().get_nobita(domain=d)
-        n_dict = dict({"type": "nobita", "data": n})
-        shi = views.ShizukaManagement().get_shizuka(domain=d)
-        shi_dict = dict({"type": "shizuka", "data": shi})
-        su = views.SuneoManagement().get_suneo(domain=d)
-        su_dict = dict({"type": "suneo", "data": su})
-        geo = views.GeoLocationManagement().get_geo(domain=d)
-        geo_dict = dict({"type": "geo", "data": geo})
-        list_data.append(n_dict)
-        list_data.append(shi_dict)
-        list_data.append(su_dict)
-        list_data.append(geo_dict)
+    ip = socket.gethostbyname(domain)
+    views.GeoLocationManagement().create(ip=ip, domain=domain)
+    # Save all scans in a list
+    n = views.NobitaManagement().get_nobita(domain=domain)
+    n_dict = dict({"type": "nobita", "data": n})
+    shi = views.ShizukaManagement().get_shizuka(domain=domain)
+    shi_dict = dict({"type": "shizuka", "data": shi})
+    su = views.SuneoManagement().get_suneo(domain=domain)
+    su_dict = dict({"type": "suneo", "data": su})
+    geo = views.GeoLocationManagement().get_geo(domain=domain)
+    geo_dict = dict({"type": "geo", "data": geo})
+    list_data.append(n_dict)
+    list_data.append(shi_dict)
+    list_data.append(su_dict)
+    list_data.append(geo_dict)
     return list_data

@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 
+Vue.config.productionTip = false;
+
 Vue.component("l-map", LMap);
 Vue.component("l-tile-layer", LTileLayer);
 Vue.component("l-marker", LMarker);
@@ -54,6 +56,23 @@ const routes = [{
         meta: {
             Auth: true,
             title: "Scans",
+        },
+        beforeEnter: (to, from, next) => {
+            if (!window.localStorage.getItem("token")) {
+                next(false);
+            } else {
+                next();
+            }
+        },
+    },
+    {
+        path: "/scan/:id_scan",
+        name: "info-scan",
+        component: () =>
+            import ( /* webpackChunkName: "myproject" */ "../pages/info-scan-page.vue"),
+        meta: {
+            Auth: true,
+            title: "InfoScan",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {

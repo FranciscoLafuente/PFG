@@ -38,6 +38,13 @@ class Bot(Document):
     created = DateTimeField(default=datetime.datetime.utcnow)
 
 
+class HostIp(Document):
+    domain = StringField(required=True)
+    ip = StringField(unique=True)
+    created = DateTimeField(default=datetime.datetime.utcnow)
+    updated = DateTimeField(required=False)
+
+
 class Nobita(Document):
     bot = StringField(default="nobita")
     ip = StringField()
