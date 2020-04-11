@@ -90,7 +90,6 @@ def main():
             for s in scans:
                 print("EXECUTIONTIME", s['executionTime'])
                 if s['executionTime'] < now and not s['done']:
-                    '''
                     print("ALL HOSTS", s['hosts'])
                     for host in s['hosts']:
                         print("HOST", host)
@@ -110,7 +109,7 @@ def main():
                             pass
 
                     data = s['id']
-                    g.update_done(data)'''
+                    g.update_done(data)
                     print("HA ENTRADO")
 
         except AssertionError as e:

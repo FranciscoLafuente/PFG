@@ -25,8 +25,8 @@ export default {
     return {
       map: {
         defaultCountryFillColor: "#999",
-        highColor: "red",
-        lowColor: "red",
+        highColor: "grey",
+        lowColor: "grey",
         countryStrokeColor: "white",
       },
     };

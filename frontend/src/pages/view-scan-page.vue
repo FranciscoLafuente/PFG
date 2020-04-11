@@ -92,7 +92,9 @@
                       class="suneo-tech-item"
                       v-for="(tech, index) in suneo.technologies"
                       :key="index"
-                    >{{ tech }}</div>
+                    >
+                      {{ tech }}
+                    </div>
                   </div>
                   <div v-else>--</div>
                 </div>
@@ -143,7 +145,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker
+    LMarker,
   },
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -156,7 +158,7 @@ export default {
     shizuka: [],
     suneo: {},
     gigante: {},
-    geo: {}
+    geo: {},
   }),
 
   created() {
@@ -167,19 +169,22 @@ export default {
     initialize() {
       let token = this.getToken();
       let id_scan = this.$route.params.id_scan.toString();
+      let host = this.$route.params.ip.toString();
 
       axios
-        .get(constants.END_POINT_LOCAL + "/scan/" + id_scan, token)
-        .then(r => {
-          console.log(r.data);
-          r.data.forEach(e => {
+        .get(
+          constants.END_POINT_LOCAL + "/scan/" + id_scan + "/host=" + host,
+          token
+        )
+        .then((r) => {
+          r.data.forEach((e) => {
             if (e.type === "nobita") {
-              e.data.forEach(i => {
+              e.data.forEach((i) => {
                 this.nobita.push(i);
               });
             }
             if (e.type === "shizuka") {
-              e.data.forEach(i => {
+              e.data.forEach((i) => {
                 this.shizuka.push(i.domain);
               });
             }
@@ -194,7 +199,7 @@ export default {
             }
           });
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e.response);
         });
     },
@@ -209,12 +214,12 @@ export default {
     getToken() {
       let token = {
         headers: {
-          Authorization: "Bearer " + this.$store.state.token
-        }
+          Authorization: "Bearer " + this.$store.state.token,
+        },
       };
       return token;
-    }
-  }
+    },
+  },
 };
 </script>
 

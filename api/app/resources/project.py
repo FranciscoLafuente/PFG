@@ -41,7 +41,7 @@ def get_info(id_scan):
     list_response = []
     hosts = views.ScanManagement().get_scan(id=id_scan)['hosts']
     for h in hosts:
-        list_domain.append(views.HostIpManagement().get_domain(id=h))
+        list_domain.append(h)
     for d in list_domain:
         list_response.append(get_all_data(d))
     if list_response:
@@ -49,14 +49,10 @@ def get_info(id_scan):
     return jsonify({'msg': "Don't found data"})
 
 
-@resources.route('/scan/<id_scan>/2', methods=['GET'])
+@resources.route('/scan/<id_scan>/host=<domain>', methods=['GET'])
 @fresh_jwt_required
-def get_all_info(id_scan):
-    list_domain = []
-    hosts = views.ScanManagement().get_scan(id=id_scan)['hosts']
-    for h in hosts:
-        list_domain.append(views.HostIpManagement().get_domain(id=h))
-    response = get_all_data(list_domain)
+def get_all_info(id_scan, domain):
+    response = get_all_data(domain)
     if response:
         return jsonify(response), 200
     return jsonify({'msg': "Don't found data"})
@@ -96,16 +92,8 @@ def add_scan(id):
 
     if not scan_name or not scan_bot or not scan_hosts:
         return jsonify({"msg": "Missing parameter"}), 400
-
-    # Save hosts
-    id_hosts = []
-    for host in scan_hosts:
-        ip = socket.gethostbyname(host)
-        views.HostIpManagement().create(domain=host, ip=ip)
-        h = views.HostIpManagement().get_host(domain=host)
-        id_hosts.append(h['id'])
     # Create scan
-    scan_id = views.ScanManagement().create(name=scan_name, hosts=id_hosts, bot=ObjectId(scan_bot),
+    scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(scan_bot),
                                             execution_time=scan_executiontime)
     if not scan_id:
         return jsonify({"msg": "The name is alredy in use"}), 400

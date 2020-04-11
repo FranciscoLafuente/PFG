@@ -44,13 +44,13 @@ export default {
         text: "Name",
         align: "start",
         sortable: false,
-        value: "name"
+        value: "name",
       },
       { text: "Date", value: "created" },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Actions", value: "actions", sortable: false },
     ],
     scans: [],
-    id_project: ""
+    id_project: "",
   }),
 
   created() {
@@ -63,12 +63,12 @@ export default {
       let token = this.getToken();
       axios
         .get(constants.END_POINT_LOCAL + "/myproject/" + this.id_project, token)
-        .then(r => {
-          r.data.forEach(e => {
+        .then((r) => {
+          r.data.forEach((e) => {
             this.scans.push(e);
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.response);
         });
     },
@@ -91,7 +91,7 @@ export default {
           .then(() => {
             this.scans.splice(index, 1);
           })
-          .catch(e => {
+          .catch((e) => {
             console.log(e.response);
           });
       }
@@ -99,7 +99,7 @@ export default {
 
     openScan(item) {
       let id_scan = item.id;
-      this.$router.push("/myproject/" + this.id_project + "/scan/" + id_scan);
+      this.$router.push("/scan=" + id_scan);
     },
 
     renewScan(item) {
@@ -111,7 +111,7 @@ export default {
         .then(() => {
           this.dialog = true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.response);
         });
     },
@@ -119,12 +119,12 @@ export default {
     getToken() {
       let token = {
         headers: {
-          Authorization: "Bearer " + this.$store.state.token
-        }
+          Authorization: "Bearer " + this.$store.state.token,
+        },
       };
       return token;
-    }
-  }
+    },
+  },
 };
 </script>
 

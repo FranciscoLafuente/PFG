@@ -1,9 +1,9 @@
 <template>
   <v-row class="container">
-    <v-col class="col-map" cols="4">
+    <v-col class="col-map" cols="5">
       <WorldMap :visitedCountries="visitedCountries"></WorldMap>
     </v-col>
-    <v-col class="col-table" cols="8">
+    <v-col class="col-table" cols="7">
       <v-simple-table>
         <template v-slot:default>
           <thead>
@@ -12,9 +12,17 @@
           <tbody>
             <tr v-for="s in scan" :key="s.ip">
               <td class="table-item">
-                <a>
+                <router-link
+                  :to="{
+                    name: 'view_host',
+                    params: {
+                      id_scan: '5e90121e0b4f8878db79ccc2',
+                      ip: s.domain,
+                    },
+                  }"
+                >
                   <div class="item-ip">{{ s.ip }}</div>
-                </a>
+                </router-link>
                 <div class="item-org">{{ s.org }}</div>
                 <div class="item-domain">{{ s.domain }}</div>
                 <div class="item-country">{{ s.country }}</div>
@@ -103,6 +111,9 @@ export default {
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+}
 a:hover {
   text-decoration: underline solid #444;
 }

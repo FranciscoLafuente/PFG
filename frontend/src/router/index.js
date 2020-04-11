@@ -66,7 +66,7 @@ const routes = [{
         },
     },
     {
-        path: "/scan/:id_scan",
+        path: "/scan=:id_scan",
         name: "info-scan",
         component: () =>
             import ( /* webpackChunkName: "myproject" */ "../pages/info-scan-page.vue"),
@@ -83,13 +83,13 @@ const routes = [{
         },
     },
     {
-        path: "/myproject/:id_project/scan/:id_scan",
-        name: "view_scan",
+        path: "/scan=:id_scan/host=:ip",
+        name: "view_host",
         component: () =>
             import ( /* webpackChunkName: "myproject" */ "../pages/view-scan-page.vue"),
         meta: {
             Auth: true,
-            title: "ViewScan",
+            title: "ViewHost",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("token")) {
