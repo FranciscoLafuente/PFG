@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import constants from "../constants";
-import axios from "axios";
+import { mapGetters } from "vuex";
+import { FETCH_SCANS, SCAN_RELUNCH, SCAN_DELETE } from "../store/actions.type";
 
 export default {
   data: () => ({
@@ -44,87 +44,49 @@ export default {
         text: "Name",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "name"
       },
       { text: "Date", value: "created" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
-    scans: [],
-    id_project: "",
+    id_project: ""
   }),
 
-  created() {
-    this.initialize();
+  mounted() {
+    this.id_project = this.$route.params.id.toString();
+    this.$store.dispatch(`scans/${FETCH_SCANS}`, this.id_project);
+  },
+
+  computed: {
+    ...mapGetters({ scans: "scans/scans" })
   },
 
   methods: {
-    initialize() {
-      this.id_project = this.$route.params.id.toString();
-      let token = this.getToken();
-      axios
-        .get(constants.END_POINT_LOCAL + "/myproject/" + this.id_project, token)
-        .then((r) => {
-          r.data.forEach((e) => {
-            this.scans.push(e);
-          });
-        })
-        .catch((error) => {
-          console.log(error.response);
-        });
-    },
-
     deleteScan(item) {
-      const index = this.scans.indexOf(item);
+      //const index = this.scans.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
-        let token = this.getToken();
         let id_scan = item.id;
-
-        axios
-          .delete(
-            constants.END_POINT_LOCAL +
-              "/myproject/" +
-              this.id_project +
-              "/" +
-              id_scan,
-            token
-          )
-          .then(() => {
-            this.scans.splice(index, 1);
-          })
-          .catch((e) => {
-            console.log(e.response);
-          });
+        this.$store.dispatch(`scans/${SCAN_DELETE}`, {
+          id_project: this.id_project,
+          id_scan: id_scan,
+          index: this.scans.indexOf(item)
+        });
+        //this.scans.splice(index, 1);
       }
     },
 
     openScan(item) {
       let id_scan = item.id;
-      this.$router.push("/scan=" + id_scan);
+      this.$router.push(`/scan=${id_scan}`);
     },
 
     renewScan(item) {
-      //let token = this.getToken();
       let id_scan = item.id;
-
-      axios
-        .put(constants.END_POINT_LOCAL + "/myproject/scan/" + id_scan)
-        .then(() => {
-          this.dialog = true;
-        })
-        .catch((error) => {
-          console.log(error.response);
-        });
-    },
-
-    getToken() {
-      let token = {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.token,
-        },
-      };
-      return token;
-    },
-  },
+      this.$store.dispatch(`scans/${SCAN_RELUNCH}`, id_scan).then(() => {
+        this.dialog = true;
+      });
+    }
+  }
 };
 </script>
 

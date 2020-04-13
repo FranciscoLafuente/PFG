@@ -1,0 +1,72 @@
+import { BotService } from "../common/api.service";
+import { ADD_BOT, FETCH_START, FETCH_END } from "./mutations.type";
+import { FETCH_BOTS, BOT_CREATE, BOT_DELETE, BOT_TOKEN } from "./actions.type";
+
+const state = {
+    bot: {
+        name: "",
+        ip: "",
+        type: [],
+        token: ""
+    },
+    listBots: [],
+    isLoading: true
+};
+
+const actions = {
+    async [FETCH_BOTS]({ commit }) {
+        commit(FETCH_START);
+        return BotService.get()
+            .then(r => {
+                commit(FETCH_END, r.data);
+            })
+            .catch(error => {
+                throw new Error(error);
+            });
+    },
+    async [BOT_CREATE]({ commit }, params) {
+        return BotService.create(params).then(r => {
+            commit(ADD_BOT, r.data);
+        });
+    },
+    async [BOT_DELETE](context, id) {
+        return BotService.remove(id);
+    },
+    async [BOT_TOKEN](context, id) {
+        return BotService.generateToken(id);
+    }
+};
+
+const mutations = {
+    [FETCH_START](state) {
+        state.isLoading = true;
+    },
+    [FETCH_END](state, data) {
+        state.listBots = data;
+        state.isLoading = false;
+    },
+    [ADD_BOT](state, bot) {
+        state.listBots = state.listBots.concat([bot]);
+    }
+};
+
+const getters = {
+    bots(state) {
+        return state.listBots;
+    },
+    name(state) {
+        let names = [];
+        state.listBots.forEach(element => {
+            names.push(element.name);
+        });
+        return names;
+    }
+};
+
+export default {
+    namespaced: true,
+    state,
+    actions,
+    mutations,
+    getters
+};

@@ -1,17 +1,19 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
-import Axios from "axios";
+import store from "./store/";
 import vuetify from "./plugins/vuetify";
 
-Vue.config.productionTip = false;
+import { CHECK_AUTH } from "./store/actions.type";
+import ApiService from "./common/api.service";
 
-Vue.prototype.$http = Axios;
-const token = localStorage.getItem("token");
-if (token) {
-    Vue.prototype.$http.defaults.headers.common["Authorization"] = token;
-}
+Vue.config.productionTip = false;
+ApiService.init();
+
+// Ensure we checked auth before each page load.
+router.beforeEach((to, from, next) =>
+    Promise.all([store.dispatch(CHECK_AUTH)]).then(next)
+);
 
 // eslint-disable-next-line
 delete L.Icon.Default.prototype._getIconUrl;

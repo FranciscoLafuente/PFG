@@ -1,18 +1,31 @@
 <template>
   <v-container>
-    <v-data-table :headers="headers" :items="bots" sort-by="Bot Name" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="bots"
+      sort-by="Bot Name"
+      class="elevation-1"
+    >
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <dialogToken :dialog="dialog" :tokenBot="tokenBot" @isShow="dialog = $event"></dialogToken>
+          <dialogToken
+            :dialog="dialog"
+            :tokenBot="tokenBot"
+            @isShow="dialog = $event"
+          ></dialogToken>
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-icon small class="button-add mr-2" @click="generateToken(item)">add</v-icon>
+        <v-icon small class="button-add mr-2" @click="generateToken(item)"
+          >add</v-icon
+        >
       </template>
       <template v-slot:item.delete="{ item }">
-        <v-icon small class="button-delete mr-2" @click="deleteItem(item)">delete</v-icon>
+        <v-icon small class="button-delete mr-2" @click="deleteItem(item)"
+          >delete</v-icon
+        >
       </template>
     </v-data-table>
     <div class="folder-button">
@@ -41,10 +54,15 @@
 </template>
 
 <script>
-import constants from "../constants";
-import axios from "axios";
-import dialogToken from "../components/dialog-generateToken-component";
-import dialogBot from "../components/dialog-bot-component";
+import dialogToken from "../components/DialogGenerateToken";
+import dialogBot from "../components/DialogBot.vue";
+import { mapGetters } from "vuex";
+import {
+  FETCH_BOTS,
+  BOT_CREATE,
+  BOT_TOKEN,
+  BOT_DELETE
+} from "../store/actions.type";
 
 export default {
   components: {
@@ -68,72 +86,45 @@ export default {
       { text: "Generate Token", value: "action", sortable: false },
       { text: "Delete Bot", value: "delete", sortable: false }
     ],
-    bots: [],
-    currentBot: Number,
-    editedItem: {},
+    editedItem: {
+      name: "",
+      ip: "",
+      type: []
+    },
     tokenBot: ""
   }),
 
+  mounted() {
+    this.$store.dispatch(`bots/${FETCH_BOTS}`);
+  },
+
   watch: {
     editedItem() {
-      if (this.editedItem.name != "") {
-        // && this.editItem.ip != "" && this.editedItem.type != []
+      if (
+        this.editedItem.name !== "" &&
+        this.editItem.ip != "" &&
+        this.editedItem.type !== []
+      ) {
         this.addBot();
       }
     }
   },
 
-  created() {
-    this.initialize();
+  computed: {
+    ...mapGetters({ bots: "bots/bots" })
   },
 
   methods: {
-    initialize() {
-      let token = this.getToken();
-      axios
-        .get(constants.END_POINT_LOCAL + "/bots", token)
-        .then(r => {
-          r.data.forEach(e => {
-            this.bots.push(e);
-          });
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
-    },
-
     addBot() {
-      let token = this.getToken();
-
-      axios
-        .post(constants.END_POINT_LOCAL + "/bots", this.editedItem, token)
-        .then(r => {
-          this.bots.push(r.data);
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
+      this.$store.dispatch(BOT_CREATE, this.editedItem);
     },
 
     generateToken(item) {
       if (!item.token) {
-        let user_token = this.getToken();
-        this.currentBot = item.id;
-        let index = this.bots.indexOf(item);
-
-        axios
-          .get(
-            constants.END_POINT_LOCAL + "/bots/" + this.currentBot,
-            user_token
-          )
-          .then(r => {
-            this.tokenBot = JSON.parse(JSON.stringify(r.data));
-            this.bots[index].token = this.tokenBot;
-          })
-          .catch(e => {
-            console.log(e.response);
-          });
-
+        this.$store.dispatch(BOT_TOKEN, item.id);
+        //let index = this.bots.indexOf(item);
+        //this.tokenBot = JSON.parse(JSON.stringify(r.data));
+        //this.bots[index].token = this.tokenBot;
         this.dialog = true;
       } else {
         this.alert = true;
@@ -141,29 +132,9 @@ export default {
     },
 
     deleteItem(item) {
-      const index = this.bots.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
-        let token = this.getToken();
-        let id = item.id;
-
-        axios
-          .delete(constants.END_POINT_LOCAL + "/bots/" + id, token)
-          .then(() => {
-            this.bots.splice(index, 1);
-          })
-          .catch(e => {
-            console.log(e.response);
-          });
+        this.$store.dispatch(BOT_DELETE, item.id);
       }
-    },
-
-    getToken() {
-      let token = {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.token
-        }
-      };
-      return token;
     }
   }
 };

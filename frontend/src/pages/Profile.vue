@@ -9,14 +9,18 @@
         <v-card-title>{{ title }}</v-card-title>
       </v-img>
 
-      <v-card-subtitle class="pb-0 display-2">{{ user.name | uppercase }}</v-card-subtitle>
+      <v-card-subtitle class="pb-0 display-2">{{
+        user.name | uppercase
+      }}</v-card-subtitle>
 
       <v-card-text class="text--primary">
         <div class="mb-2">Email: {{ user.email }}</div>
 
         <v-expansion-panels focusable>
           <v-expansion-panel v-for="p in user.projects" :key="p.name">
-            <v-expansion-panel-header>{{ p.name | uppercase }}</v-expansion-panel-header>
+            <v-expansion-panel-header>{{
+              p.name | uppercase
+            }}</v-expansion-panel-header>
             <v-expansion-panel-content>{{ p.scans }}</v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -31,7 +35,7 @@
 
 <script>
 import axios from "axios";
-import constants from "../constants";
+import constants from "../common/constants";
 
 export default {
   data: () => ({

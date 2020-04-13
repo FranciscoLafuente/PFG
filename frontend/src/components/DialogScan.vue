@@ -26,7 +26,11 @@
           ></v-textarea>
         </v-container>
         <v-container>
-          <v-select v-model="editedItem.bot" :items="bots" label="Bots"></v-select>
+          <v-select
+            v-model="editedItem.bot"
+            :items="bots"
+            label="Bots"
+          ></v-select>
         </v-container>
         <v-container fluid>
           <v-checkbox v-model="checkbox" label="Schedule"></v-checkbox>
@@ -51,7 +55,10 @@
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="date" @input="menu2 = false"></v-date-picker>
+                <v-date-picker
+                  v-model="date"
+                  @input="menu2 = false"
+                ></v-date-picker>
               </v-menu>
             </v-col>
             <v-col>
@@ -89,7 +96,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)"
+          >Cancel</v-btn
+        >
         <v-btn color="blue darken-1" text @click="save">Save</v-btn>
       </v-card-actions>
     </v-card>
@@ -97,11 +106,10 @@
 </template>
 
 <script>
-//mport Select from "../components/select-component";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
-import constants from "../constants";
+import constants from "../common/constants";
 
 const ip_address = helpers.regex("ip_address", constants.VALID_HOST_NAME);
 

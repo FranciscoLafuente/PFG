@@ -3,9 +3,7 @@
     <v-card :elevation="9">
       <form @keypress.enter="submit">
         <div>
-          <h1>
-            <em>Reset</em> Password
-          </h1>
+          <h1><em>Reset</em> Password</h1>
         </div>
 
         <v-text-field
@@ -17,7 +15,9 @@
           @blur="$v.form.email.$touch()"
         ></v-text-field>
         <v-container>
-          <v-btn color="blue darken-1" dark class="mr-4" @click="submit">Send email</v-btn>
+          <v-btn color="blue darken-1" dark class="mr-4" @click="submit"
+            >Send email</v-btn
+          >
         </v-container>
       </form>
     </v-card>
@@ -28,7 +28,7 @@
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
 import axios from "axios";
-import constants from "../constants";
+import constants from "../common/constants";
 
 export default {
   mixins: [validationMixin],

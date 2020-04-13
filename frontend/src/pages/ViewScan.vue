@@ -138,14 +138,14 @@
 
 <script>
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
-import constants from "../constants";
-import axios from "axios";
+import { mapGetters } from "vuex";
+import { ONE_SCAN_INFO } from "../store/actions.type";
 
 export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker,
+    LMarker
   },
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -158,50 +158,44 @@ export default {
     shizuka: [],
     suneo: {},
     gigante: {},
-    geo: {},
+    geo: {}
   }),
 
-  created() {
+  mounted() {
+    this.domain = this.$route.params.ip.toString();
+    let index = this.$route.params.index;
+    this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, index);
+
     this.initialize();
+  },
+
+  computed: {
+    ...mapGetters({ scan: "scans/oneScan" })
   },
 
   methods: {
     initialize() {
-      let token = this.getToken();
-      let id_scan = this.$route.params.id_scan.toString();
-      let host = this.$route.params.ip.toString();
-
-      axios
-        .get(
-          constants.END_POINT_LOCAL + "/scan/" + id_scan + "/host=" + host,
-          token
-        )
-        .then((r) => {
-          r.data.forEach((e) => {
-            if (e.type === "nobita") {
-              e.data.forEach((i) => {
-                this.nobita.push(i);
-              });
-            }
-            if (e.type === "shizuka") {
-              e.data.forEach((i) => {
-                this.shizuka.push(i.domain);
-              });
-            }
-            if (e.type === "suneo") {
-              this.suneo = e.data;
-            }
-            if (e.type === "geo") {
-              this.geo = e.data;
-              this.ip = e.data.ip;
-              this.domain = e.data.domain;
-              this.loadLocation(this.geo.lat, this.geo.lon);
-            }
+      this.scan.forEach(e => {
+        if (e.type === "nobita") {
+          e.data.forEach(i => {
+            this.nobita.push(i);
           });
-        })
-        .catch((e) => {
-          console.log(e.response);
-        });
+        }
+        if (e.type === "shizuka") {
+          e.data.forEach(i => {
+            this.shizuka.push(i.domain);
+          });
+        }
+        if (e.type === "suneo") {
+          this.suneo = e.data;
+        }
+        if (e.type === "geo") {
+          this.geo = e.data;
+          this.ip = e.data.ip;
+          this.domain = e.data.domain;
+          this.loadLocation(this.geo.lat, this.geo.lon);
+        }
+      });
     },
 
     loadLocation(lat, lon) {
@@ -209,17 +203,8 @@ export default {
         this.center = [lat, lon];
         this.markerLatLng = [lat, lon];
       }
-    },
-
-    getToken() {
-      let token = {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.token,
-        },
-      };
-      return token;
-    },
-  },
+    }
+  }
 };
 </script>
 

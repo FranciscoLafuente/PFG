@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="projects"
+      sort-by="Project Name"
+      class="elevation-1"
+    >
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -16,7 +21,9 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
-        <v-icon small class="mr-2" @click="visualizeScan(item)">visibility</v-icon>
+        <v-icon small class="mr-2" @click="visualizeScan(item)"
+          >visibility</v-icon
+        >
         <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
       </template>
     </v-data-table>
@@ -49,10 +56,16 @@
 </template>
 
 <script>
-import axios from "axios";
-import dialogScan from "../components/dialog-scan-component";
-import dialogProject from "../components/dialog-project-component";
-import constants from "../constants";
+import dialogScan from "../components/DialogScan";
+import dialogProject from "../components/DialogProject";
+import { mapGetters } from "vuex";
+import {
+  FETCH_PROJECTS,
+  PROJECT_CREATE,
+  PROJECT_DELETE,
+  FETCH_BOTS,
+  SCAN_CREATE
+} from "../store/actions.type";
 
 export default {
   components: {
@@ -74,9 +87,6 @@ export default {
       { text: "Public", value: "type" },
       { text: "Actions", value: "actions", sortable: false }
     ],
-    projects: [],
-    bots: [],
-    fullBots: [],
     currentProject: Number,
     index: Number,
     editedItem: {
@@ -92,128 +102,64 @@ export default {
     }
   }),
 
+  mounted() {
+    this.$store.dispatch(`project/${FETCH_PROJECTS}`);
+    this.$store.dispatch(`bots/${FETCH_BOTS}`);
+  },
+
   watch: {
     editedItem() {
       if (
-        this.editedItem.name != "" &&
-        this.editedItem.hosts != "" &&
-        this.editedItem.bots != 0
+        this.editedItem.name !== "" &&
+        this.editedItem.hosts !== "" &&
+        this.editedItem.bots !== 0
       ) {
         this.addScan();
       }
     },
 
     editProject() {
-      if (this.editProject.name != "") {
+      if (this.editProject.name !== "") {
         this.addProject();
       }
     }
   },
 
-  created() {
-    this.initialize();
+  computed: {
+    ...mapGetters({
+      projects: "project/projects",
+      bots: "bots/name"
+    })
   },
 
   methods: {
-    initialize() {
-      let token = this.getToken();
-      this.initializeBots(token);
-
-      axios
-        .get(constants.END_POINT_LOCAL + "/myproject", token)
-        .then(r => {
-          r.data.forEach(e => {
-            this.projects.push(e);
-          });
-        })
-        .catch(e => {
-          console.log(e.response);
-        });
-    },
-
-    initializeBots(token) {
-      axios
-        .get(constants.END_POINT_LOCAL + "/bots", token)
-        .then(r => {
-          r.data.forEach(e => {
-            this.bots.push(e.name);
-            this.fullBots.push(e);
-          });
-        })
-        .catch(error => {
-          console.log(error.response);
-        });
-    },
-
     addProject() {
-      let token = this.getToken();
+      this.$store.dispatch(`project/${PROJECT_CREATE}`, this.editProject);
+    },
 
-      axios
-        .post(constants.END_POINT_LOCAL + "/myproject", this.editProject, token)
-        .then(r => {
-          this.projects.push(r.data);
-        })
-        .catch(error => {
-          console.log(error.response);
+    deleteProject(item) {
+      if (confirm("Are you sure you want to delete this item?")) {
+        const index = this.projects.indexOf(item);
+        let id = item.id;
+        this.$store.dispatch(`project/${PROJECT_DELETE}`, {
+          id: id,
+          index: index
         });
+      }
     },
 
     addScan() {
-      let token = this.getToken();
       let id = this.currentProject;
-      let botId = "";
-      this.fullBots.forEach(b => {
-        if (this.editedItem.bot === b.name) {
-          botId = b.id;
-        }
-      });
-
-      let scan = {
-        name: this.editedItem.name,
-        bot: botId,
-        executiontime: this.editedItem.executiontime,
-        hosts: this.editedItem.hosts
-      };
-
-      axios
-        .post(constants.END_POINT_LOCAL + "/myproject/" + id, scan, token)
+      this.$store
+        .dispatch(`scans/${SCAN_CREATE}`, { id: id, scan: this.editedItem })
         .then(() => {
           this.createdScan = true;
-        })
-        .catch(error => {
-          console.log(error.response);
         });
     },
 
     visualizeScan(item) {
       let currentProject = item.id;
-      this.$router.push("/myproject/" + currentProject);
-    },
-
-    deleteProject(item) {
-      const index = this.projects.indexOf(item);
-      if (confirm("Are you sure you want to delete this item?")) {
-        let token = this.getToken();
-        let id = item.id;
-
-        axios
-          .delete(constants.END_POINT_LOCAL + "/myproject/" + id, token)
-          .then(() => {
-            this.projects.splice(index, 1);
-          })
-          .catch(error => {
-            console.log(error.response);
-          });
-      }
-    },
-
-    getToken() {
-      let token = {
-        headers: {
-          Authorization: "Bearer " + this.$store.state.token
-        }
-      };
-      return token;
+      this.$router.push(`/myproject/${currentProject}`);
     },
 
     editItem(item) {

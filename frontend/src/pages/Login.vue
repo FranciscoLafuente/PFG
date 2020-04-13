@@ -30,7 +30,9 @@
           @click:append="show = !show"
         ></v-text-field>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="login">login</v-btn>
+        <v-btn color="blue darken-1" dark class="mr-4" @click="login"
+          >login</v-btn
+        >
         <div>
           <router-link :to="{ path: 'forgot' }">Forgot Password?</router-link>
         </div>
@@ -57,6 +59,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email, minLength } from "vuelidate/lib/validators";
+import { LOGIN } from "../store/actions.type";
 
 export default {
   mixins: [validationMixin],
@@ -98,8 +101,8 @@ export default {
       let email = this.email;
       let password = this.password;
       this.$store
-        .dispatch("login", { email, password })
-        .then(() => this.$router.push("/"))
+        .dispatch(LOGIN, { email, password })
+        .then(() => this.$router.push({ name: "home" }))
         .catch(() => {
           this.dialog = true;
         });

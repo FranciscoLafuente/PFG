@@ -38,7 +38,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)"
+          >Cancel</v-btn
+        >
         <v-btn color="blue darken-1" text @click="save">Save</v-btn>
       </v-card-actions>
     </v-card>
@@ -49,8 +51,8 @@
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
-import Select from "../components/select-component";
-import constants from "../constants";
+import Select from "../components/Select";
+import constants from "../common/constants";
 
 const ip_address = helpers.regex("ip_address", constants.VALID_IP_ADDRESS);
 

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <Search class="bar-search"></Search>
-    <div v-if="isLoggedIn">
+    <div v-if="isAuthenticated">
       <v-btn class="folder-button" color="primary" dark fab>
         <router-link to="/myproject">
           <v-icon>folder_open</v-icon>
@@ -12,16 +12,15 @@
 </template>
 
 <script>
-import Search from "../components/search-component";
+import Search from "../components/Search";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
     Search
   },
   computed: {
-    isLoggedIn() {
-      return this.$store.getters.isLoggedIn;
-    }
+    ...mapGetters(["isAuthenticated"])
   }
 };
 </script>

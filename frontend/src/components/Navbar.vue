@@ -18,7 +18,7 @@
         </v-btn>
 
         <v-btn icon @click="logout()">
-          <v-icon v-if="!isLoggedIn">perm_identity</v-icon>
+          <v-icon v-if="!isAuthenticated">perm_identity</v-icon>
           <v-icon v-else>power_off</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -27,16 +27,17 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { LOGOUT } from "../store/actions.type";
+
 export default {
   computed: {
-    isLoggedIn() {
-      return this.$store.getters.isLoggedIn;
-    }
+    ...mapGetters(["isAuthenticated"])
   },
   methods: {
     logout: function() {
-      this.$store.dispatch("logout").then(() => {
-        this.$router.push("/login");
+      this.$store.dispatch(LOGOUT).then(() => {
+        this.$router.push({ name: "login" });
       });
     }
   }

@@ -28,27 +28,27 @@
 
 <script>
 //import axios from "axios";
-import Navbar from "./components/navbar-component";
-import Footer from "./components/footer-component";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 export default {
   name: "App",
 
   components: {
     Navbar,
-    Footer,
+    Footer
   },
   data: () => ({
-    dialog: false,
+    dialog: false
   }),
 
-  created: function () {
+  created: function() {
     let msg = "Token has expired";
     this.$http.interceptors.response.use(
-      (response) => {
+      response => {
         return response;
       },
-      (error) => {
+      error => {
         if (error.response.status === 401 && error.response.data.msg === msg) {
           this.dialog = true;
           this.$store.dispatch("logout").then(() => this.$router.push("/"));
@@ -56,7 +56,7 @@ export default {
         throw error;
       }
     );
-  },
+  }
 };
 </script>
 
