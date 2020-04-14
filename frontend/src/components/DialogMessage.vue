@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialogMsg" persistent max-width="195px">
+  <v-dialog v-model="dialogMsg" persistent max-width="260px">
     <v-card>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -7,7 +7,7 @@
           <v-icon>clear</v-icon>
         </v-btn>
       </v-card-actions>
-      <v-icon class="icon-error"> {{ icon }} </v-icon>
+      <v-icon class="icon-header" size="100"> {{ icon }} </v-icon>
       <v-card-title class="headline">
         <span class="title-dialog"> {{ title }} </span>
       </v-card-title>
