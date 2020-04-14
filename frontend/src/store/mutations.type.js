@@ -7,6 +7,7 @@ export const PURGE_AUTH = "logOut";
 export const SET_AUTH = "setUser";
 // BOT
 export const ADD_BOT = "addBot";
+export const DEL_BOT = "delBot";
 // SCANS
 export const ADD_SCAN = "addScan";
 export const DEL_SCAN = "delScan";

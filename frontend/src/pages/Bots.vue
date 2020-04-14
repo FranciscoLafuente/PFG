@@ -38,24 +38,27 @@
         <v-icon>add</v-icon>
       </v-btn>
     </div>
-    <v-dialog v-model="this.alert" persistent max-width="400px">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <span class="headline">This token already has been created</span>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="alert = !alert">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <dialogMessage
+      :dialogMsg="dialogMsg"
+      :title="msg_title"
+      :icon="msg_icon"
+      :message="msg_text"
+      @showMsg="dialogMsg = $event"
+    ></dialogMessage>
   </v-container>
 </template>
 
 <script>
 import dialogToken from "../components/DialogGenerateToken";
 import dialogBot from "../components/DialogBot.vue";
+import dialogMessage from "../components/DialogMessage";
+import {
+  TOKEN_TITLE,
+  TOKEN_ICON,
+  TOKEN_TEXT,
+  GENERIC_TITLE,
+  GENERIC_ICON
+} from "../common/dialogMsg";
 import { mapGetters } from "vuex";
 import {
   FETCH_BOTS,
@@ -67,13 +70,14 @@ import {
 export default {
   components: {
     dialogToken,
-    dialogBot
+    dialogBot,
+    dialogMessage
   },
   data: () => ({
     title: "Bots",
     dialog: false,
     dialogBot: false,
-    alert: false,
+    dialogMsg: false,
     headers: [
       {
         text: "Bot Name",
@@ -91,7 +95,10 @@ export default {
       ip: "",
       type: []
     },
-    tokenBot: ""
+    tokenBot: "",
+    msg_title: "",
+    msg_icon: "",
+    msg_text: ""
   }),
 
   mounted() {
@@ -102,7 +109,7 @@ export default {
     editedItem() {
       if (
         this.editedItem.name !== "" &&
-        this.editItem.ip != "" &&
+        this.editedItem.ip !== "" &&
         this.editedItem.type !== []
       ) {
         this.addBot();
@@ -116,25 +123,39 @@ export default {
 
   methods: {
     addBot() {
-      this.$store.dispatch(BOT_CREATE, this.editedItem);
+      this.$store
+        .dispatch(`bots/${BOT_CREATE}`, this.editedItem)
+        .catch(error => {
+          this.setMessage(GENERIC_TITLE, GENERIC_ICON, error);
+          this.dialogMsg = true;
+        });
     },
 
     generateToken(item) {
       if (!item.token) {
-        this.$store.dispatch(BOT_TOKEN, item.id);
-        //let index = this.bots.indexOf(item);
-        //this.tokenBot = JSON.parse(JSON.stringify(r.data));
-        //this.bots[index].token = this.tokenBot;
+        this.$store.dispatch(`bots/${BOT_TOKEN}`, item.id).then(res => {
+          this.tokenBot = JSON.parse(JSON.stringify(res.data));
+        });
         this.dialog = true;
       } else {
-        this.alert = true;
+        this.setMessage(TOKEN_TITLE, TOKEN_ICON, TOKEN_TEXT);
+        this.dialogMsg = true;
       }
     },
 
     deleteItem(item) {
       if (confirm("Are you sure you want to delete this item?")) {
-        this.$store.dispatch(BOT_DELETE, item.id);
+        this.$store.dispatch(`bots/${BOT_DELETE}`, {
+          id: item.id,
+          index: this.bots.indexOf(item)
+        });
       }
+    },
+
+    setMessage(title, icon, text) {
+      this.msg_title = title;
+      this.msg_icon = icon;
+      this.msg_text = text;
     }
   }
 };

@@ -1,5 +1,5 @@
 import { BotService } from "../common/api.service";
-import { ADD_BOT, FETCH_START, FETCH_END } from "./mutations.type";
+import { ADD_BOT, FETCH_START, FETCH_END, DEL_BOT } from "./mutations.type";
 import { FETCH_BOTS, BOT_CREATE, BOT_DELETE, BOT_TOKEN } from "./actions.type";
 
 const state = {
@@ -25,12 +25,20 @@ const actions = {
             });
     },
     async [BOT_CREATE]({ commit }, params) {
-        return BotService.create(params).then(r => {
-            commit(ADD_BOT, r.data);
-        });
+        return BotService.create(params)
+            .then(r => {
+                commit(ADD_BOT, r.data);
+            })
+            .catch(error => {
+                if (error.request.status === 400) {
+                    throw new Error(error.response.data.msg);
+                }
+            });
     },
-    async [BOT_DELETE](context, id) {
-        return BotService.remove(id);
+    async [BOT_DELETE]({ commit }, params) {
+        return BotService.remove(params.id).then(() => {
+            commit(DEL_BOT, params.index);
+        });
     },
     async [BOT_TOKEN](context, id) {
         return BotService.generateToken(id);
@@ -47,6 +55,9 @@ const mutations = {
     },
     [ADD_BOT](state, bot) {
         state.listBots = state.listBots.concat([bot]);
+    },
+    [DEL_BOT](state, index) {
+        state.listBots.splice(index, 1);
     }
 };
 

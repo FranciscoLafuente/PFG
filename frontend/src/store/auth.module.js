@@ -26,16 +26,15 @@ const getters = {
 
 const actions = {
     [LOGIN](context, credentials) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             ApiService.post("login", { user: credentials })
                 .then(({ data }) => {
                     context.commit(SET_AUTH, data);
-                    console.log(data);
-
                     resolve(data);
                 })
                 .catch(({ response }) => {
                     context.commit(SET_ERROR, response.data.errors);
+                    reject(response);
                 });
         });
     },

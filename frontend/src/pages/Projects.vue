@@ -37,27 +37,27 @@
         <v-icon>add</v-icon>
       </v-btn>
     </div>
-    <v-dialog v-model="createdScan" persistent max-width="195px">
-      <v-card>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="createdScan = false">
-            <v-icon>clear</v-icon>
-          </v-btn>
-        </v-card-actions>
-        <v-icon class="icon-error">done</v-icon>
-        <v-card-title class="headline">
-          <span class="title-dialog">Success!</span>
-        </v-card-title>
-        <v-card-text>The scan has been created successfully</v-card-text>
-      </v-card>
-    </v-dialog>
+    <dialogMessage
+      :dialogMsg="dialogMsg"
+      :title="msg_title"
+      :icon="msg_icon"
+      :message="msg_text"
+      @showMsg="dialogMsg = $event"
+    ></dialogMessage>
   </v-container>
 </template>
 
 <script>
 import dialogScan from "../components/DialogScan";
 import dialogProject from "../components/DialogProject";
+import dialogMessage from "../components/DialogMessage";
+import {
+  SUCCESS_TITLE,
+  SUCCESS_ICON,
+  SUCCESS_TEXT,
+  GENERIC_TITLE,
+  GENERIC_ICON
+} from "../common/dialogMsg";
 import { mapGetters } from "vuex";
 import {
   FETCH_PROJECTS,
@@ -70,13 +70,14 @@ import {
 export default {
   components: {
     dialogScan,
-    dialogProject
+    dialogProject,
+    dialogMessage
   },
   data: () => ({
     title: "My Projects",
     dialog: false,
     dialogPro: false,
-    createdScan: false,
+    dialogMsg: false,
     headers: [
       {
         text: "Project Name",
@@ -99,7 +100,10 @@ export default {
       name: "",
       type: true,
       scans: []
-    }
+    },
+    msg_title: "",
+    msg_icon: "",
+    msg_text: ""
   }),
 
   mounted() {
@@ -134,7 +138,12 @@ export default {
 
   methods: {
     addProject() {
-      this.$store.dispatch(`project/${PROJECT_CREATE}`, this.editProject);
+      this.$store
+        .dispatch(`project/${PROJECT_CREATE}`, this.editProject)
+        .catch(error => {
+          this.setMessage(GENERIC_TITLE, GENERIC_ICON, error);
+          this.dialogMsg = true;
+        });
     },
 
     deleteProject(item) {
@@ -153,7 +162,12 @@ export default {
       this.$store
         .dispatch(`scans/${SCAN_CREATE}`, { id: id, scan: this.editedItem })
         .then(() => {
-          this.createdScan = true;
+          this.setMessage(SUCCESS_TITLE, SUCCESS_ICON, SUCCESS_TEXT);
+          this.dialogMsg = true;
+        })
+        .catch(error => {
+          this.setMessage(GENERIC_TITLE, GENERIC_ICON, error);
+          this.dialogMsg = true;
         });
     },
 
@@ -167,6 +181,12 @@ export default {
       this.index = this.projects.indexOf(item);
 
       this.dialog = true;
+    },
+
+    setMessage(title, icon, text) {
+      this.msg_title = title;
+      this.msg_icon = icon;
+      this.msg_text = text;
     }
   }
 };

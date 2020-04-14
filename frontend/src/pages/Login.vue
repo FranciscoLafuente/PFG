@@ -38,21 +38,13 @@
         </div>
       </form>
     </v-card>
-    <v-dialog v-model="dialog" persistent max-width="195px">
-      <v-card>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog = false">
-            <v-icon>clear</v-icon>
-          </v-btn>
-        </v-card-actions>
-        <v-icon class="icon-error">lock</v-icon>
-        <v-card-title class="headline">
-          <span class="title-dialog">No Access!</span>
-        </v-card-title>
-        <v-card-text>Wrong email or password</v-card-text>
-      </v-card>
-    </v-dialog>
+    <dialogMessage
+      :dialogMsg="dialogMsg"
+      :title="msg_title"
+      :icon="msg_icon"
+      :message="msg_text"
+      @showMsg="dialogMsg = $event"
+    ></dialogMessage>
   </v-container>
 </template>
 
@@ -60,8 +52,11 @@
 import { validationMixin } from "vuelidate";
 import { required, email, minLength } from "vuelidate/lib/validators";
 import { LOGIN } from "../store/actions.type";
+import dialogMessage from "../components/DialogMessage";
+import { ACCESS_TITLE, ACCESS_ICON, ACCESS_TEXT } from "../common/dialogMsg";
 
 export default {
+  components: { dialogMessage },
   mixins: [validationMixin],
 
   validations: {
@@ -73,9 +68,11 @@ export default {
     email: "",
     password: "",
     show: false,
-
     form: {},
-    dialog: false
+    dialogMsg: false,
+    msg_title: ACCESS_TITLE,
+    msg_icon: ACCESS_ICON,
+    msg_text: ACCESS_TEXT
   }),
 
   computed: {
@@ -104,7 +101,7 @@ export default {
         .dispatch(LOGIN, { email, password })
         .then(() => this.$router.push({ name: "home" }))
         .catch(() => {
-          this.dialog = true;
+          this.dialogMsg = true;
         });
     }
   }

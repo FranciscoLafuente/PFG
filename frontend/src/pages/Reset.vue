@@ -31,7 +31,6 @@
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
 import axios from "axios";
-import constants from "../common/constants";
 
 export default {
   mixins: [validationMixin],
@@ -71,7 +70,7 @@ export default {
       };
 
       axios
-        .post(constants.END_POINT_LOCAL + "/reset", data, token)
+        .post("http://localhost:5000/" + "/reset", data, token)
         .catch(error => {
           console.log(error);
         });

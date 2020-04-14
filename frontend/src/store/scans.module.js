@@ -48,9 +48,15 @@ const actions = {
         context.dispatch(INFO_SAVE, response.data);
     },
     async [SCAN_CREATE]({ commit }, params) {
-        return ScanService.create(params.id, params.scan).then(r => {
-            commit(ADD_SCAN, r.data);
-        });
+        return ScanService.create(params.id, params.scan)
+            .then(r => {
+                commit(ADD_SCAN, r.data);
+            })
+            .catch(error => {
+                if (error.request.status === 400) {
+                    throw new Error(error.response.data.msg);
+                }
+            });
     },
     async [SCAN_DELETE]({ commit }, params) {
         return ScanService.delete(params.id_project, params.id_scan).then(() => {

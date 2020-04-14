@@ -17,12 +17,12 @@
         </v-container>
         <v-container>
           <v-textarea
-            v-model="hosts"
+            v-model="editedItem.hosts"
             :error-messages="hostsErrors"
             label="Hosts"
             clearable
-            @input="$v.hosts.$touch()"
-            @blur="$v.hosts.$touch()"
+            @input="$v.editedItem.hosts.$touch()"
+            @blur="$v.editedItem.hosts.$touch()"
           ></v-textarea>
         </v-container>
         <v-container>
@@ -99,7 +99,9 @@
         <v-btn color="blue darken-1" text @click="$emit('isShow', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+        <v-btn :disabled="isError()" color="blue darken-1" text @click="save"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -109,21 +111,18 @@
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
-import constants from "../common/constants";
+import { VALID_HOST_NAME } from "../common/constants";
 
-const ip_address = helpers.regex("ip_address", constants.VALID_HOST_NAME);
+const ip_address = helpers.regex("ip_address", VALID_HOST_NAME);
 
 export default {
-  components: {
-    //Select
-  },
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
-      name: { required }
-    },
-    hosts: { required, ip_address }
+      name: { required },
+      hosts: { required, ip_address }
+    }
   },
   props: ["dialog", "bots"],
   data: () => ({
@@ -138,7 +137,6 @@ export default {
       hosts: []
     },
     hosts: "",
-    selectedBots: [],
     date: new Date().toISOString().substr(0, 10),
     menu2: false,
     time: "",
@@ -154,9 +152,10 @@ export default {
     },
     hostsErrors() {
       const errors = [];
-      if (!this.$v.hosts.$dirty) return errors;
-      !this.$v.hosts.ip_address && errors.push("Must be valid host");
-      !this.$v.hosts.required && errors.push("At least one host is required");
+      if (!this.$v.editedItem.hosts.$dirty) return errors;
+      !this.$v.editedItem.hosts.ip_address && errors.push("Must be valid host");
+      !this.$v.editedItem.hosts.required &&
+        errors.push("At least one host is required");
       return errors;
     }
   },
@@ -164,14 +163,14 @@ export default {
   methods: {
     save() {
       if (this.date !== "" && this.time !== "") {
-        console.log("No ha detecta execution time");
         // If Scheduled
         this.editedItem.executiontime = this.date + " " + this.time;
       }
-      this.editedItem.hosts = this.hosts.split(",");
-      console.log(this.editedItem);
+      // Hosts string to array
+      this.editedItem.hosts = this.editedItem.hosts.split(",");
       this.$emit("newScan", this.editedItem);
       this.$emit("isShow", false);
+      // Reset editedItem
       this.editedItem = {
         name: "",
         bot: "",
@@ -180,10 +179,9 @@ export default {
       };
     },
 
-    dateNow() {
-      let time = new Date().toLocaleTimeString();
-      let date = new Date().toISOString().substr(0, 10);
-      return date + " " + time;
+    isError() {
+      // If there are errors or is empty return  false
+      return this.$v.editedItem.$error || !this.$v.editedItem.$dirty;
     }
   }
 };

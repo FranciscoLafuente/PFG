@@ -29,9 +29,15 @@ const actions = {
             });
     },
     async [PROJECT_CREATE]({ commit }, params) {
-        return ProjectService.create(params).then(r => {
-            commit(ADD_PROJECT, r.data);
-        });
+        return ProjectService.create(params)
+            .then(r => {
+                commit(ADD_PROJECT, r.data);
+            })
+            .catch(error => {
+                if (error.request.status === 400) {
+                    throw new Error(error.response.data.msg);
+                }
+            });
     },
     async [PROJECT_DELETE]({ commit }, params) {
         return ProjectService.remove(params.id).then(() => {

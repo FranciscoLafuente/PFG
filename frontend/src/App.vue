@@ -5,22 +5,13 @@
       <router-view />
     </div>
     <v-container class="container">
-      <v-dialog v-model="dialog" persistent max-width="195px">
-        <v-card>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="green darken-1" text @click="dialog = false">
-              <v-icon>clear</v-icon>
-            </v-btn>
-          </v-card-actions>
-          <v-icon class="icon-error">https</v-icon>
-          <v-card-title class="headline">Unauthorized</v-card-title>
-          <v-card-text
-            >The access token provided is expired. You need to login
-            again</v-card-text
-          >
-        </v-card>
-      </v-dialog>
+      <dialogMessage
+        :dialogMsg="dialogMsg"
+        :title="msg_title"
+        :icon="msg_icon"
+        :message="msg_text"
+        @showMsg="dialogMsg = $event"
+      ></dialogMessage>
     </v-container>
     <Footer></Footer>
   </v-app>
@@ -30,16 +21,22 @@
 //import axios from "axios";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import dialogMessage from "./components/DialogMessage";
+import { UN_TITLE, UN_ICON, UN_TEXT } from "./common/dialogMsg";
 
 export default {
   name: "App",
 
   components: {
     Navbar,
-    Footer
+    Footer,
+    dialogMessage
   },
   data: () => ({
-    dialog: false
+    dialogMsg: false,
+    msg_title: UN_TITLE,
+    msg_icon: UN_ICON,
+    msg_text: UN_TEXT
   }),
 
   created: function() {
@@ -50,7 +47,7 @@ export default {
       },
       error => {
         if (error.response.status === 401 && error.response.data.msg === msg) {
-          this.dialog = true;
+          this.dialogMsg = true;
           this.$store.dispatch("logout").then(() => this.$router.push("/"));
         }
         throw error;

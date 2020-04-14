@@ -41,7 +41,9 @@
         <v-btn color="blue darken-1" text @click="$emit('isShow', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+        <v-btn :disabled="isError()" color="blue darken-1" text @click="save"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -52,9 +54,9 @@ import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
 import Select from "../components/Select";
-import constants from "../common/constants";
+import { VALID_IP_ADDRESS, BOTS } from "../common/constants";
 
-const ip_address = helpers.regex("ip_address", constants.VALID_IP_ADDRESS);
+const ip_address = helpers.regex("ip_address", VALID_IP_ADDRESS);
 
 export default {
   components: {
@@ -71,7 +73,7 @@ export default {
   props: ["dialogBot"],
   data: () => ({
     formTitle: "New Bot",
-    bots: constants.BOTS,
+    bots: BOTS,
     selectedBots: [],
     editedItem: {
       name: "",
@@ -106,6 +108,11 @@ export default {
         ip: "",
         type: []
       };
+    },
+
+    isError() {
+      // If there are errors or is empty return  false
+      return this.$v.editedItem.$error || !this.$v.editedItem.$dirty;
     }
   }
 };

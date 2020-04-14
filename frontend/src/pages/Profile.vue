@@ -35,7 +35,6 @@
 
 <script>
 import axios from "axios";
-import constants from "../common/constants";
 
 export default {
   data: () => ({
@@ -65,7 +64,7 @@ export default {
       let token = this.getToken();
 
       axios
-        .get(constants.END_POINT_LOCAL + "/myprofile", token)
+        .get("http://localhost:5000/" + "/myprofile", token)
         .then(r => {
           this.user = r.data;
           r.data.projects.forEach(e => {

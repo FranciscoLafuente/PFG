@@ -16,14 +16,23 @@
           ></v-text-field>
         </v-container>
         <v-container fluid>
-          <v-select :items="items" v-model="editedItem.type" label="Type" clearable></v-select>
+          <v-select
+            :items="items"
+            v-model="editedItem.type"
+            label="Type"
+            clearable
+          ></v-select>
         </v-container>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
-        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)"
+          >Cancel</v-btn
+        >
+        <v-btn :disabled="isError()" color="blue darken-1" text @click="save"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -69,6 +78,11 @@ export default {
         type: true,
         scans: []
       };
+    },
+
+    isError() {
+      // If there are errors or is empty return  false
+      return this.$v.editedItem.$error || !this.$v.editedItem.$dirty;
     }
   }
 };

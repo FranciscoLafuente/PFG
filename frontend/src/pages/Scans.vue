@@ -13,32 +13,27 @@
         <v-icon small @click="deleteScan(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
-    <v-dialog v-model="dialog" persistent max-width="195px">
-      <v-card>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog = false">
-            <v-icon>clear</v-icon>
-          </v-btn>
-        </v-card-actions>
-        <v-icon class="icon-error">autorenew</v-icon>
-        <v-card-title class="headline">
-          <span class="title-dialog">Relunched!</span>
-        </v-card-title>
-        <v-card-text>The scan has been successfully relaunched</v-card-text>
-      </v-card>
-    </v-dialog>
+    <dialogMessage
+      :dialogMsg="dialogMsg"
+      :title="msg_title"
+      :icon="msg_icon"
+      :message="msg_text"
+      @showMsg="dialogMsg = $event"
+    ></dialogMessage>
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import { FETCH_SCANS, SCAN_RELUNCH, SCAN_DELETE } from "../store/actions.type";
+import dialogMessage from "../components/DialogMessage";
+import { RELUNCH_TITLE, RELUNCH_ICON, RELUNCH_TEXT } from "../common/dialogMsg";
 
 export default {
+  components: { dialogMessage },
   data: () => ({
     title: "SCANS",
-    dialog: false,
+    dialogMsg: false,
     headers: [
       {
         text: "Name",
@@ -49,7 +44,10 @@ export default {
       { text: "Date", value: "created" },
       { text: "Actions", value: "actions", sortable: false }
     ],
-    id_project: ""
+    id_project: "",
+    msg_title: RELUNCH_TITLE,
+    msg_icon: RELUNCH_ICON,
+    msg_text: RELUNCH_TEXT
   }),
 
   mounted() {
@@ -63,7 +61,6 @@ export default {
 
   methods: {
     deleteScan(item) {
-      //const index = this.scans.indexOf(item);
       if (confirm("Are you sure you want to delete this item?")) {
         let id_scan = item.id;
         this.$store.dispatch(`scans/${SCAN_DELETE}`, {
@@ -71,7 +68,6 @@ export default {
           id_scan: id_scan,
           index: this.scans.indexOf(item)
         });
-        //this.scans.splice(index, 1);
       }
     },
 
@@ -83,7 +79,7 @@ export default {
     renewScan(item) {
       let id_scan = item.id;
       this.$store.dispatch(`scans/${SCAN_RELUNCH}`, id_scan).then(() => {
-        this.dialog = true;
+        this.dialogMsg = true;
       });
     }
   }
