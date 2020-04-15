@@ -16,20 +16,19 @@ import VueWorldMap from "vue-world-map";
 
 export default {
   components: {
-    VueWorldMap,
+    VueWorldMap
   },
   props: {
-    visitedCountries: Object,
+    visitedCountries: Object
   },
-  data() {
-    return {
-      map: {
-        defaultCountryFillColor: "#999",
-        highColor: "grey",
-        lowColor: "grey",
-        countryStrokeColor: "white",
-      },
-    };
-  },
+
+  data: () => ({
+    map: {
+      defaultCountryFillColor: "#999",
+      highColor: "grey",
+      lowColor: "grey",
+      countryStrokeColor: "white"
+    }
+  })
 };
 </script>

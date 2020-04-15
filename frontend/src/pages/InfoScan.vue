@@ -1,7 +1,9 @@
 <template>
   <v-row class="container">
     <v-col class="col-map" cols="5">
-      <WorldMap :visitedCountries="visitedCountries"></WorldMap>
+      <keep-alive>
+        <WorldMap :visitedCountries="addToVisited(this.scans)"></WorldMap>
+      </keep-alive>
     </v-col>
     <v-col class="col-table" cols="7">
       <v-simple-table>
@@ -47,15 +49,21 @@ export default {
   created() {
     this.id_scan = this.$route.params.id_scan.toString();
     this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan);
-    // TODO: no carga la informacion en el mapa
+    console.log(this.visitedCountries);
+  },
+
+  deactivated() {
+    this.visitedCountries = {};
   },
 
   computed: {
-    ...mapGetters({ scans: "scans/geoInfo" }),
+    ...mapGetters({ scans: "scans/geoInfo" })
+  },
 
+  methods: {
     // Add visited countries to the map
-    addToVisited: function(name) {
-      name.scans.forEach(e => {
+    addToVisited(name) {
+      name.forEach(e => {
         let code = this.getCode(e.country);
         let country = {
           name: name,
@@ -63,11 +71,9 @@ export default {
         };
         this.$set(this.visitedCountries, country.code, 500);
       });
-      return true;
-    }
-  },
+      return this.visitedCountries;
+    },
 
-  methods: {
     getCode(country) {
       let code = "";
       this.countries.forEach(e => {
