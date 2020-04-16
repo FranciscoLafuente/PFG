@@ -2,11 +2,11 @@
   <div class="worldmap">
     <vue-world-map
       id="worldmap"
-      v-bind:countryData="visitedCountries"
-      v-bind:defaultCountryFillColor="map.defaultCountryFillColor"
-      v-bind:highColor="map.highColor"
-      v-bind:countryStrokeColor="map.countryStrokeColor"
-      v-bind:lowColor="map.lowColor"
+      :countryData="visitedCountries"
+      :defaultCountryFillColor="map.defaultCountryFillColor"
+      :highColor="map.highColor"
+      :countryStrokeColor="map.countryStrokeColor"
+      :lowColor="map.lowColor"
     ></vue-world-map>
   </div>
 </template>
