@@ -1,11 +1,6 @@
 <template>
   <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="projects"
-      sort-by="Project Name"
-      class="elevation-1"
-    >
+    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -21,9 +16,7 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
-        <v-icon small class="mr-2" @click="visualizeScan(item)"
-          >visibility</v-icon
-        >
+        <v-icon small class="mr-2" @click="visualizeScan(item)">visibility</v-icon>
         <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
       </template>
     </v-data-table>
@@ -173,7 +166,7 @@ export default {
 
     visualizeScan(item) {
       let currentProject = item.id;
-      this.$router.push(`/myproject/${currentProject}`);
+      this.$router.push(`/myproject=${currentProject}`);
     },
 
     editItem(item) {

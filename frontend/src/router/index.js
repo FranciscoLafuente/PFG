@@ -49,7 +49,7 @@ const routes = [{
         }
     },
     {
-        path: "/myproject/:id",
+        path: "/myproject=:id",
         name: "scans",
         component: () =>
             import ( /* webpackChunkName: "myproject" */ "../pages/Scans.vue"),
@@ -66,7 +66,7 @@ const routes = [{
         }
     },
     {
-        path: "/scan=:id_scan",
+        path: "/myproject=:id/scan=:id_scan",
         name: "info-scan",
         component: () =>
             import ( /* webpackChunkName: "myproject" */ "../pages/InfoScan.vue"),
@@ -83,7 +83,7 @@ const routes = [{
         }
     },
     {
-        path: "/scan=:id_scan/host=:ip/:index",
+        path: "/myproject=:id/scan=:id_scan/host=:ip/:index",
         name: "view_host",
         component: () =>
             import ( /* webpackChunkName: "myproject" */ "../pages/ViewScan.vue"),

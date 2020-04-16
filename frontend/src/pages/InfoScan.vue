@@ -14,9 +14,7 @@
           <tbody>
             <tr v-for="(s, index) in scans" :key="index">
               <td class="table-item">
-                <div class="item-ip" @click="redirectUser(index, s.domain)">
-                  {{ s.ip }}
-                </div>
+                <div class="item-ip" @click="redirectUser(index, s.domain)">{{ s.ip }}</div>
                 <div class="item-org">{{ s.org }}</div>
                 <div class="item-domain">{{ s.domain }}</div>
                 <div class="item-country">{{ s.country }}</div>
@@ -49,7 +47,6 @@ export default {
   created() {
     this.id_scan = this.$route.params.id_scan.toString();
     this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan);
-    console.log(this.visitedCountries);
   },
 
   deactivated() {
@@ -85,7 +82,10 @@ export default {
     },
 
     redirectUser(i, domain) {
-      this.$router.push(`/scan=${this.id_scan}_scan/host=${domain}/${i}`);
+      let id = this.$route.params.id.toString();
+      this.$router.push(
+        `/myproject=${id}/scan=${this.id_scan}/host=${domain}/${i}`
+      );
     }
   }
 };
