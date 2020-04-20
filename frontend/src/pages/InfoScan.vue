@@ -47,6 +47,8 @@ export default {
     this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan);
   },
 
+  mounted() {},
+
   computed: {
     ...mapGetters({ scans: "scans/geoInfo" })
   },
