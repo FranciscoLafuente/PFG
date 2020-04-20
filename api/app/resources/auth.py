@@ -1,11 +1,18 @@
 # coding=utf-8
 
 from flask import request, jsonify, render_template
-from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, decode_token)
+from flask_jwt_extended import (jwt_required, fresh_jwt_required, get_jwt_identity, create_access_token, decode_token)
 from . import resources
 from app.respository import views
 import datetime
 from app.email import send_email
+
+
+@resources.route('/user', methods=['GET'])
+@fresh_jwt_required
+def check_user():
+    token = request.headers['Authorization'].replace('Bearer ', '')
+    return jsonify({"access_token": token}), 200
 
 
 @resources.route('/signup', methods=['POST'])
@@ -21,9 +28,10 @@ def signup():
 def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
+    req = request.get_json()['user']
 
-    useremail = request.json.get('email', None)
-    password = request.json.get('password', None)
+    useremail = req.get('email', None)
+    password = req.get('password', None)
 
     if not useremail or not password:
         return jsonify({"msg": "Missing parameter"}), 400
@@ -86,4 +94,3 @@ def reset_password():
 @fresh_jwt_required
 def get_user():
     pass
-

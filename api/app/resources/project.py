@@ -49,9 +49,9 @@ def get_info(id_scan):
     return jsonify({'msg': "Don't found data"})
 
 
-@resources.route('/scan/<id_scan>/host=<domain>', methods=['GET'])
+@resources.route('/scan/host=<domain>', methods=['GET'])
 @fresh_jwt_required
-def get_all_info(id_scan, domain):
+def get_all_info(domain):
     response = get_all_data(domain)
     if response:
         return jsonify(response), 200
@@ -69,6 +69,11 @@ def add_project():
 
     if not project_name or not project_type:
         return jsonify({"msg": "Missing parameter"}), 400
+    # Convert project_type to Boolean
+    if project_type == 'True':
+        project_type = True
+    else:
+        project_type = False
 
     current_user = get_jwt_identity()
     project = views.ProjectManagement().create(name=project_name, type=project_type)
@@ -93,7 +98,8 @@ def add_scan(id):
     if not scan_name or not scan_bot or not scan_hosts:
         return jsonify({"msg": "Missing parameter"}), 400
     # Create scan
-    scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(scan_bot),
+    id_bot = views.BotManagement().get_id(name=scan_bot)
+    scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(id_bot),
                                             execution_time=scan_executiontime)
     if not scan_id:
         return jsonify({"msg": "The name is alredy in use"}), 400
@@ -148,7 +154,7 @@ def get_all_data(domain):
     # Create geoLocation
     ip = socket.gethostbyname(domain)
     views.GeoLocationManagement().create(ip=ip, domain=domain)
-    # Save all scans in a list
+    # Save all scans in a list without duplicates
     n = views.NobitaManagement().get_nobita(domain=domain)
     n_dict = dict({"type": "nobita", "data": n})
     shi = views.ShizukaManagement().get_shizuka(domain=domain)

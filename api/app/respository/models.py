@@ -15,7 +15,7 @@ class User(Document):
 
 class Project(Document):
     name = StringField(required=True, unique=True)
-    type = BooleanField(required=True)  # If is public
+    type = BooleanField(default=False, required=True)  # If is public
     scans = ListField()
     created = DateTimeField(default=datetime.datetime.utcnow)
 

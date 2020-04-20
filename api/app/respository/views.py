@@ -140,6 +140,10 @@ class BotManagement:
         except errors.NotUniqueError:
             return False
 
+    def get_id(self, **kwargs):
+        for b in Bot.objects(name=kwargs['name']):
+            return b.id
+
     def get_bots(self, **kwargs):
         list_bots = []
         for b in Bot.objects(email=kwargs['email']):
