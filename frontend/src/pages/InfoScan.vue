@@ -1,9 +1,7 @@
 <template>
   <v-row class="container">
     <v-col class="col-map" cols="5">
-      <keep-alive>
-        <WorldMap :visitedCountries="addToVisited(this.scans)"></WorldMap>
-      </keep-alive>
+      <WorldMap :visitedCountries="addToVisited(this.scans)"></WorldMap>
     </v-col>
     <v-col class="col-table" cols="7">
       <v-simple-table>
@@ -47,10 +45,6 @@ export default {
   created() {
     this.id_scan = this.$route.params.id_scan.toString();
     this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan);
-  },
-
-  deactivated() {
-    this.visitedCountries = {};
   },
 
   computed: {
