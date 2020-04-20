@@ -6,6 +6,7 @@ from . import resources
 from app.respository import views
 import datetime
 from app.email import send_email
+from ..static import messages as msg
 
 
 @resources.route('/user', methods=['GET'])
@@ -19,28 +20,28 @@ def check_user():
 def signup():
     user = views.UserManagement().create(request.json)
     if not user:
-        return jsonify({"msg": "The email is alredy in use"}), 400
+        return jsonify(msg.ALREADY_USE), 400
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/login', methods=['POST'])
 def login():
     if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify(msg.MISSING_JSON), 400
     req = request.get_json()['user']
 
     useremail = req.get('email', None)
     password = req.get('password', None)
 
     if not useremail or not password:
-        return jsonify({"msg": "Missing parameter"}), 400
+        return jsonify(msg.MISSING_PARAMETER), 400
 
     # Verify password and email
     check = views.UserManagement().check(email=useremail, password=password)
 
     if not check:
-        return jsonify({"msg": "Unregistered user or invalid password"}), 400
+        return jsonify(msg.UNREGISTERED), 400
 
     # Identity can be any data that is json serializable
     expires = datetime.timedelta(days=2)
@@ -54,11 +55,11 @@ def forgot_password():
     body = request.get_json()
     email = body.get('email')
     if not email:
-        return jsonify({"msg": "Missing parameter"}), 400
+        return jsonify(msg.MISSING_PARAMETER), 400
     user_email = views.UserManagement().exists(email=email)
 
     if not user_email:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify(msg.NO_DATA), 404
     expires = datetime.timedelta(hours=24)
     reset_token = create_access_token(identity=email, expires_delta=expires)
 
@@ -66,7 +67,7 @@ def forgot_password():
                text_body=render_template('email/reset_password.txt', url=url + reset_token),
                html_body=render_template('email/reset_password.html', url=url + reset_token))
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/reset', methods=['POST'])
@@ -77,17 +78,17 @@ def reset_password():
     password = body.get('password')
 
     if not reset_token or not password:
-        return jsonify({"msg": "Missing parameter"}), 400
+        return jsonify(msg.MISSING_PARAMETER), 400
 
     user_email = decode_token(reset_token)['identity']
     is_changed = views.UserManagement().change_password(email=user_email, password=password)
     if not is_changed:
-        return jsonify({"msg": "User not found"}), 404
+        return jsonify(msg.NO_DATA), 404
 
     send_email('[Shodita] Password reset successful', sender='shodita@shodita.com', recipients=[user_email],
                text_body='Password reset was successful', html_body='<p>Password reset was successful</p>')
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/myprofile', methods=['GET'])

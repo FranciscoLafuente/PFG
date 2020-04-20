@@ -8,7 +8,7 @@ from app.respository import views
 from bson import ObjectId
 import socket
 import builtwith
-from pprint import pprint
+from ..static import messages as msg
 
 
 @resources.route('/myproject', methods=['GET'])
@@ -46,7 +46,7 @@ def get_info(id_scan):
         list_response.append(get_all_data(d))
     if list_response:
         return jsonify(list_response), 200
-    return jsonify({'msg': "Don't found data"})
+    return jsonify(msg.NO_DATA)
 
 
 @resources.route('/scan/host=<domain>', methods=['GET'])
@@ -55,20 +55,20 @@ def get_all_info(domain):
     response = get_all_data(domain)
     if response:
         return jsonify(response), 200
-    return jsonify({'msg': "Don't found data"})
+    return jsonify(msg.NO_DATA)
 
 
 @resources.route('/myproject', methods=['POST'])
 @fresh_jwt_required
 def add_project():
     if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify(msg.MISSING_JSON), 400
 
     project_name = request.json.get('name', None)
     project_type = request.json.get('type', None)
 
     if not project_name or not project_type:
-        return jsonify({"msg": "Missing parameter"}), 400
+        return jsonify(msg.MISSING_PARAMETER), 400
     # Convert project_type to Boolean
     if project_type == 'True':
         project_type = True
@@ -78,7 +78,7 @@ def add_project():
     current_user = get_jwt_identity()
     project = views.ProjectManagement().create(name=project_name, type=project_type)
     if not project:
-        return jsonify({"msg": "The name is alredy in use"}), 400
+        return jsonify(msg.ALREADY_USE), 400
     views.UserManagement().add_project(user=current_user, id=ObjectId(project['id']))
 
     return jsonify(project), 200
@@ -88,7 +88,7 @@ def add_project():
 @fresh_jwt_required
 def add_scan(id):
     if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify(msg.MISSING_JSON), 400
 
     scan_name = request.json.get('name', None)
     scan_bot = request.json.get('bot', None)
@@ -96,22 +96,22 @@ def add_scan(id):
     scan_executiontime = request.json.get('executiontime', None)
 
     if not scan_name or not scan_bot or not scan_hosts:
-        return jsonify({"msg": "Missing parameter"}), 400
+        return jsonify(msg.MISSING_PARAMETER), 400
     # Create scan
     id_bot = views.BotManagement().get_id(name=scan_bot)
     scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(id_bot),
                                             execution_time=scan_executiontime)
     if not scan_id:
-        return jsonify({"msg": "The name is alredy in use"}), 400
+        return jsonify(msg.ALREADY_USE), 400
     views.ProjectManagement().add_scan(id=id, scan_id=scan_id)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/myproject/scan/<scan_id>', methods=['PUT'])
 def relunch(scan_id):
     views.ScanManagement().change_done(id=scan_id, value=False)
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/myproject/<id>', methods=['DELETE'])
@@ -128,9 +128,9 @@ def delete_project(id):
 
         views.ProjectManagement().delete(id=id)
         views.UserManagement().update_projects(email=current_user, projects=projects_new)
-        return jsonify({"msg": "Success!"}), 200
+        return jsonify(msg.SUCCESS), 200
 
-    return jsonify({"msg": "Project not found"}), 404
+    return jsonify(msg.NO_DATA), 404
 
 
 @resources.route('/myproject/<id_p>/<id_scan>', methods=['DELETE'])
@@ -146,7 +146,7 @@ def delete_scan(id_p, id_scan):
     views.ScanManagement().delete(id=id_scan)
     views.ProjectManagement().update_scans(id=id_p, scans=scans_new)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 def get_all_data(domain):

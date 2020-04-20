@@ -6,6 +6,7 @@ from . import resources
 from app.models import Bot, Scan, Nobita, Suneo, Shizuka, Gigante
 from app.respository import views
 import datetime
+from ..static import messages as msg
 
 
 @resources.route('/bots', methods=['GET'])
@@ -22,18 +23,18 @@ def get_bots():
 def create_bots():
     current_user = get_jwt_identity()
     if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+        return jsonify(msg.MISSING_JSON), 400
 
     bot_name = request.json.get('name', None)
     bot_ip = request.json.get('ip', None)
     bot_type = request.json.get('type', None)
 
     if not bot_name or not bot_ip or not bot_type:
-        return jsonify({"msg": "Missing parameter"}), 400
+        return jsonify(msg.MISSING_PARAMETER), 400
 
     bot = views.BotManagement().create(name=bot_name, email=current_user, ip=bot_ip, type=bot_type)
     if not bot:
-        return jsonify({"msg": "The name is alredy in use"}), 400
+        return jsonify(msg.ALREADY_USE), 400
 
     return jsonify(bot), 200
 
@@ -52,8 +53,8 @@ def generate_token_bot(id_bot):
 def delete_bot(id_bot):
     if id_bot:
         views.BotManagement().delete(id=id_bot)
-        return jsonify({"msg": "Success!"}), 200
-    return jsonify({"msg": "Bot not found"}), 404
+        return jsonify(msg.SUCCESS), 200
+    return jsonify(msg.NO_DATA), 404
 
 
 # CONNECT WITH BOTS (CEMENT)
@@ -66,7 +67,7 @@ def login_bots():
     # Search if the bot exists in database
     type_bot = views.BotManagement().search_bot(id=bot_id, ip=bot_ip)
     if not type_bot:
-        return jsonify({"msg": "Unregistered bot"}), 400
+        return jsonify(msg.UNREGISTERED), 400
 
     expires = datetime.timedelta(days=2)
     token_bot = create_access_token(identity=bot_id, fresh=True, expires_delta=expires,
@@ -89,11 +90,11 @@ def scans_by_bot():
 def save_nobita():
     data = request.json
     if not data:
-        return jsonify({"msg": "The received data is empty"}), 400
+        return jsonify(msg.NO_DATA), 400
     for d in data:
         views.NobitaManagement().create(data=d)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/bots/shizuka', methods=['POST'])
@@ -101,11 +102,11 @@ def save_nobita():
 def save_shizuka():
     data = request.json
     if not data:
-        return jsonify({"msg": "The received data is empty"}), 400
+        return jsonify(msg.NO_DATA), 400
     for d in data:
         views.ShizukaManagement().create(data=d)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/bots/suneo', methods=['POST'])
@@ -113,10 +114,10 @@ def save_shizuka():
 def save_suneo():
     data = request.json
     if not data:
-        return jsonify({"msg": "The received data is empty"}), 400
+        return jsonify(msg.NO_DATA), 400
     views.SuneoManagement().create(data=data)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/bots/gigante', methods=['POST'])
@@ -124,14 +125,14 @@ def save_suneo():
 def save_gigante():
     data = request.json
     if not data:
-        return jsonify({"msg": "The received data is empty"}), 400
+        return jsonify(msg.NO_DATA), 400
     views.GiganteManagement().create(data=data)
 
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/bots/update_done/<scan_id>', methods=['PUT'])
 @fresh_jwt_required
 def update_done(scan_id):
     views.ScanManagement().change_done(id=scan_id, value=True)
-    return jsonify({"msg": "Success!"}), 200
+    return jsonify(msg.SUCCESS), 200
