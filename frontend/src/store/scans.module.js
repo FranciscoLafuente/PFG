@@ -6,7 +6,7 @@ import {
     FETCH_END,
     FETCH_END_GEO,
     FETCH_END_INFO,
-    ONE_SCAN
+    ONE_SCAN,
 } from "./mutations.type";
 import {
     FETCH_SCANS,
@@ -15,7 +15,7 @@ import {
     SCAN_RELUNCH,
     SCAN_DELETE,
     INFO_SAVE,
-    ONE_SCAN_INFO
+    ONE_SCAN_INFO,
 } from "./actions.type";
 
 const state = {
@@ -23,23 +23,23 @@ const state = {
         name: "",
         bots: 0,
         executiontime: 0,
-        hosts: ""
+        hosts: "",
     },
     listScans: [],
     geoInfo: [],
     allInfo: [],
     oneScan: [],
-    isLoading: true
+    isLoading: true,
 };
 
 const actions = {
     async [FETCH_SCANS]({ commit }, id) {
         commit(FETCH_START);
         return ScanService.get(id)
-            .then(r => {
+            .then((r) => {
                 commit(FETCH_END, r.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 throw new Error(error);
             });
     },
@@ -49,10 +49,10 @@ const actions = {
     },
     async [SCAN_CREATE]({ commit }, params) {
         return ScanService.create(params.id, params.scan)
-            .then(r => {
+            .then((r) => {
                 commit(ADD_SCAN, r.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 if (error.request.status === 400) {
                     throw new Error(error.response.data.msg);
                 }
@@ -68,9 +68,9 @@ const actions = {
     },
     [INFO_SAVE](context, data) {
         context.commit(FETCH_START);
-        data.forEach(element => {
+        data.forEach((element) => {
             context.commit(FETCH_END_INFO, element);
-            element.forEach(e => {
+            element.forEach((e) => {
                 if (e.type === "geo") {
                     context.commit(FETCH_END_GEO, e.data);
                 }
@@ -79,7 +79,7 @@ const actions = {
     },
     [ONE_SCAN_INFO](context, index) {
         context.commit(ONE_SCAN, index);
-    }
+    },
 };
 
 const mutations = {
@@ -108,7 +108,7 @@ const mutations = {
     },
     [ONE_SCAN](state, index) {
         state.oneScan = state.allInfo[index];
-    }
+    },
 };
 
 const getters = {
@@ -120,7 +120,7 @@ const getters = {
     },
     oneScan(state) {
         return state.oneScan;
-    }
+    },
 };
 
 export default {
@@ -128,5 +128,5 @@ export default {
     state,
     actions,
     mutations,
-    getters
+    getters,
 };

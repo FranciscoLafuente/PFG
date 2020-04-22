@@ -139,7 +139,7 @@
 <script>
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import { mapGetters } from "vuex";
-import { ONE_SCAN_INFO } from "../store/actions.type";
+import { FETCH_INFO, ONE_SCAN_INFO } from "../store/actions.type";
 
 export default {
   components: {
@@ -162,11 +162,14 @@ export default {
   }),
 
   created() {
+    this.id_scan = this.$route.params.id_scan.toString();
     this.domain = this.$route.params.ip.toString();
-    let index = this.$route.params.index;
-    this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, index);
 
-    this.initialize();
+    this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan).then(() => {
+      let index = this.$route.params.index;
+      this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, index);
+      this.initialize();
+    });
   },
 
   computed: {
