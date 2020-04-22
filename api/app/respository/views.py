@@ -153,6 +153,15 @@ class BotManagement:
                 )))
         return list_bots
 
+    def get_all_bots(self):
+        list_bots = []
+        for b in Bot.objects:
+            list_bots.append(
+                json.loads(JSONEncoder().encode(
+                    dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
+                )))
+        return list_bots
+
     def add_token(self, **kwargs):
         for b in Bot.objects(id=kwargs['id']):
             Bot.objects(id=b.id).update(set__token=kwargs['token'])
@@ -214,6 +223,9 @@ class ShizukaManagement:
         try:
             shi.save()
         except errors.NotUniqueError:
+            pass
+        except errors.OperationError:
+            print("In Shizuka bot, the data is too large")
             pass
 
     def get_shizuka(self, **kwargs):

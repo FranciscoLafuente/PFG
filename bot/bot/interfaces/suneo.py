@@ -33,7 +33,12 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
 
     def get_target(self, domain):
         self.app.log.info("BOT SUNEO")
-        self.ip = socket.gethostbyname(domain)
+        try:
+            self.ip = socket.gethostbyname(domain)
+        except socket.gaierror as e:
+            print(e)
+            return
+
         url = "http://" + domain
         self.app.log.info("Generate URL: " + str(url))
         user_agent = {'User-Agent': 'Mozilla 5.10'}

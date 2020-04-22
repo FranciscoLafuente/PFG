@@ -6,7 +6,7 @@ from . import resources
 from app.respository import views
 import datetime
 from app.email import send_email
-from ..static import messages as msg
+from app.static import messages as msg
 
 
 @resources.route('/user', methods=['GET'])

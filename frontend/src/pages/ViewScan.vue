@@ -145,7 +145,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker
+    LMarker,
   },
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -158,10 +158,10 @@ export default {
     shizuka: [],
     suneo: {},
     gigante: {},
-    geo: {}
+    geo: {},
   }),
 
-  mounted() {
+  created() {
     this.domain = this.$route.params.ip.toString();
     let index = this.$route.params.index;
     this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, index);
@@ -170,19 +170,19 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ scan: "scans/oneScan" })
+    ...mapGetters({ scan: "scans/oneScan" }),
   },
 
   methods: {
     initialize() {
-      this.scan.forEach(e => {
+      this.scan.forEach((e) => {
         if (e.type === "nobita") {
-          e.data.forEach(i => {
+          e.data.forEach((i) => {
             this.nobita.push(i);
           });
         }
         if (e.type === "shizuka") {
-          e.data.forEach(i => {
+          e.data.forEach((i) => {
             this.shizuka.push(i.domain);
           });
         }
@@ -203,8 +203,8 @@ export default {
         this.center = [lat, lon];
         this.markerLatLng = [lat, lon];
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

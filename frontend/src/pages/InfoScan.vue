@@ -1,8 +1,5 @@
 <template>
   <v-row class="container">
-    <v-col class="col-map" cols="5">
-      <WorldMap :visitedCountries="addToVisited(this.scans)"></WorldMap>
-    </v-col>
     <v-col class="col-table" cols="7">
       <v-simple-table>
         <template v-slot:default>
@@ -12,7 +9,9 @@
           <tbody>
             <tr v-for="(s, index) in scans" :key="index">
               <td class="table-item">
-                <div class="item-ip" @click="redirectUser(index, s.domain)">{{ s.ip }}</div>
+                <div class="item-ip" @click="redirectUser(index, s.domain)">
+                  {{ s.ip }}
+                </div>
                 <div class="item-org">{{ s.org }}</div>
                 <div class="item-domain">{{ s.domain }}</div>
                 <div class="item-country">{{ s.country }}</div>
@@ -26,20 +25,14 @@
 </template>
 
 <script>
-import WorldMap from "../components/Map";
-import Countries from "../common/countries";
 import { mapGetters } from "vuex";
 import { FETCH_INFO } from "../store/actions.type";
 
 export default {
-  components: {
-    WorldMap
-  },
   data: () => ({
     id_scan: "",
-    countries: Countries,
     visitedCountries: {},
-    scanInfo: []
+    scanInfo: [],
   }),
 
   created() {
@@ -50,40 +43,17 @@ export default {
   mounted() {},
 
   computed: {
-    ...mapGetters({ scans: "scans/geoInfo" })
+    ...mapGetters({ scans: "scans/geoInfo" }),
   },
 
   methods: {
-    // Add visited countries to the map
-    addToVisited(name) {
-      name.forEach(e => {
-        let code = this.getCode(e.country);
-        let country = {
-          name: name,
-          code: code
-        };
-        this.$set(this.visitedCountries, country.code, 500);
-      });
-      return this.visitedCountries;
-    },
-
-    getCode(country) {
-      let code = "";
-      this.countries.forEach(e => {
-        if (e.name === country) {
-          code = e.code;
-        }
-      });
-      return code;
-    },
-
     redirectUser(i, domain) {
       let id = this.$route.params.id.toString();
       this.$router.push(
         `/myproject=${id}/scan=${this.id_scan}/host=${domain}/${i}`
       );
-    }
-  }
+    },
+  },
 };
 </script>
 

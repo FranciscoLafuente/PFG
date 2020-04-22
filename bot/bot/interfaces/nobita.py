@@ -14,7 +14,7 @@ class NobitaInterface(Interface):
         interface = 'nobitaIf'
 
     @abstractmethod
-    def pscan(self, ip_address):
+    def pscan(self, address, ip_address):
         """"""
         pass
 
@@ -58,10 +58,9 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
         self.port_scanner = []
         self.domain = ""
 
-    def pscan(self, address):
-        self.app.log.info("BOT NOBITA")
+    def pscan(self, address, ip_address):
         self.domain = address
-        ip_address = socket.gethostbyname(address)
+
         queue = Queue()
         mode = 3
         self.get_ports(mode, queue)
@@ -80,7 +79,6 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
         for thread in thread_list:
             thread.join()
 
-        self.app.log.info("Scanning completed")
         return self.port_scanner
 
     def connect(self, ip_address, port):

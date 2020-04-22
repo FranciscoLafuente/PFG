@@ -13,7 +13,7 @@ class ShizukaV2Interface(Interface):
         interface = 'shizukaV2If'
 
     @abstractmethod
-    def get_domain(self, target):
+    def get_domain(self, target, ip):
         """
 
         :param target:
@@ -30,9 +30,7 @@ class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
         super().__init__(**kw)
         self.response = []
 
-    def get_domain(self, target):
-        self.app.log.info("BOT SHIZUKA")
-        ip = socket.gethostbyname(target)
+    def get_domain(self, target, ip):
         url = "https://www.robtex.net/?dns=" + str(target) + "&rev=1"
         req = urllib.Request(url, headers={'User-Agent': "Magic Browser"})
         html = urllib.urlopen(req).read()

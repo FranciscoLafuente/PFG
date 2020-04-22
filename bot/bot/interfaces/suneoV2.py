@@ -13,7 +13,7 @@ class SuneoV2Interface(Interface):
         interface = 'suneoV2If'
 
     @abstractmethod
-    def get_cms(self, domain):
+    def get_cms(self, domain, ip):
         """"""
         pass
 
@@ -25,9 +25,7 @@ class SuneoV2Handler(SuneoV2Interface, Handler, ABC):
     def __init__(self, **kw):
         super().__init__(**kw)
 
-    def get_cms(self, domain):
-        self.app.log.info("BOT SUNEO")
-        ip = socket.gethostbyname(domain)
+    def get_cms(self, domain, ip):
         try:
             website = builtwith.parse('https://' + domain)
         except UnicodeDecodeError:

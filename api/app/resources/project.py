@@ -3,12 +3,11 @@
 from flask import request, jsonify
 from flask_jwt_extended import (fresh_jwt_required, get_jwt_identity)
 from . import resources
-from app.models import Scan, Project, AllBots
 from app.respository import views
 from bson import ObjectId
 import socket
 import builtwith
-from ..static import messages as msg
+from app.static import messages as msg
 
 
 @resources.route('/myproject', methods=['GET'])

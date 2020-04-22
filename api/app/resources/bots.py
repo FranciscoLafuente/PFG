@@ -3,10 +3,9 @@
 from flask import request, jsonify
 from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
 from . import resources
-from app.models import Bot, Scan, Nobita, Suneo, Shizuka, Gigante
 from app.respository import views
 import datetime
-from ..static import messages as msg
+from app.static import messages as msg
 
 
 @resources.route('/bots', methods=['GET'])
@@ -59,9 +58,15 @@ def delete_bot(id_bot):
 
 # CONNECT WITH BOTS (CEMENT)
 
+@resources.route('/bots/tokens', methods=['GET'])
+def get_token_bots():
+    bots = views.BotManagement().get_all_bots()
+    return jsonify(bots)
+
+
 @resources.route('/bots/login', methods=['POST'])
 @jwt_required
-def login_bots():
+def login_bot():
     bot_ip = request.remote_addr
     bot_id = get_jwt_identity()
     # Search if the bot exists in database

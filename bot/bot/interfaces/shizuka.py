@@ -40,7 +40,12 @@ class ShizukaHandler(ShizukaInterface, Handler, ABC):
         self.response = []
 
     def ipreverse(self, target):
-        ip = socket.gethostbyname(target)
+        try:
+            ip = socket.gethostbyname(target)
+        except socket.gaierror as e:
+            print(e)
+            return
+
         url = 'https://viewdns.info/reverseip/?host=' + target + '&t=1'
 
         self.app.log.info("Obtaining the associated domains of " + target + "\n")
