@@ -47,6 +47,15 @@ def generate_token_bot(id_bot):
     return jsonify(token_bot), 200
 
 
+@resources.route('/bots/<id_bot>', methods=['PUT'])
+@fresh_jwt_required
+def renew_token_bot(id_bot):
+    token_bot = create_access_token(identity=id_bot, expires_delta=False)
+    views.BotManagement().add_token(id=id_bot, token=token_bot)
+
+    return jsonify(token_bot), 200
+
+
 @resources.route('/bots/<id_bot>', methods=['DELETE'])
 @fresh_jwt_required
 def delete_bot(id_bot):

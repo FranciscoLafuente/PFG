@@ -100,4 +100,7 @@ export const BotService = {
     generateToken(slug) {
         return ApiService.query(`bots/${slug}`);
     },
+    renewToken(id) {
+        return ApiService.put(`bots/${id}`);
+    },
 };

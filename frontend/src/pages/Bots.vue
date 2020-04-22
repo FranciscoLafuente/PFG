@@ -18,14 +18,17 @@
         </v-toolbar>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-icon small class="button-add mr-2" @click="generateToken(item)"
-          >add</v-icon
-        >
+        <div class="action-icons">
+          <v-icon small class="mr-2" @click="generateToken(item)">add</v-icon>
+          <v-icon small class="mr-2" @click="renewToken(item)"
+            >autorenew</v-icon
+          >
+        </div>
       </template>
-      <template v-slot:item.delete="{ item }">
-        <v-icon small class="button-delete mr-2" @click="deleteItem(item)"
-          >delete</v-icon
-        >
+      <template class="delete-icon" v-slot:item.delete="{ item }">
+        <div class="delete-icon">
+          <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
+        </div>
       </template>
     </v-data-table>
     <div class="folder-button">
@@ -57,21 +60,25 @@ import {
   TOKEN_ICON,
   TOKEN_TEXT,
   GENERIC_TITLE,
-  GENERIC_ICON
+  GENERIC_ICON,
+  RELUNCH_TITLE,
+  RELUNCH_ICON,
+  RELUNCH_TEXT,
 } from "../common/dialogMsg";
 import { mapGetters } from "vuex";
 import {
   FETCH_BOTS,
   BOT_CREATE,
   BOT_TOKEN,
-  BOT_DELETE
+  BOT_DELETE,
+  TOKEN_RELUNCH,
 } from "../store/actions.type";
 
 export default {
   components: {
     dialogToken,
     dialogBot,
-    dialogMessage
+    dialogMessage,
   },
   data: () => ({
     title: "Bots",
@@ -83,22 +90,22 @@ export default {
         text: "Bot Name",
         align: "left",
         sortable: true,
-        value: "name"
+        value: "name",
       },
       { text: "IPs", value: "ip" },
       { text: "Type Bot", value: "type" },
-      { text: "Generate Token", value: "action", sortable: false },
-      { text: "Delete Bot", value: "delete", sortable: false }
+      { text: "Generate/Renew Token", value: "action", sortable: false },
+      { text: "Delete Bot", value: "delete", sortable: false },
     ],
     editedItem: {
       name: "",
       ip: "",
-      type: []
+      type: [],
     },
     tokenBot: "",
     msg_title: "",
     msg_icon: "",
-    msg_text: ""
+    msg_text: "",
   }),
 
   mounted() {
@@ -114,18 +121,18 @@ export default {
       ) {
         this.addBot();
       }
-    }
+    },
   },
 
   computed: {
-    ...mapGetters({ bots: "bots/bots" })
+    ...mapGetters({ bots: "bots/bots" }),
   },
 
   methods: {
     addBot() {
       this.$store
         .dispatch(`bots/${BOT_CREATE}`, this.editedItem)
-        .catch(error => {
+        .catch((error) => {
           this.setMessage(GENERIC_TITLE, GENERIC_ICON, error);
           this.dialogMsg = true;
         });
@@ -133,7 +140,7 @@ export default {
 
     generateToken(item) {
       if (!item.token) {
-        this.$store.dispatch(`bots/${BOT_TOKEN}`, item.id).then(res => {
+        this.$store.dispatch(`bots/${BOT_TOKEN}`, item.id).then((res) => {
           this.tokenBot = JSON.parse(JSON.stringify(res.data));
         });
         this.dialog = true;
@@ -147,17 +154,26 @@ export default {
       if (confirm("Are you sure you want to delete this item?")) {
         this.$store.dispatch(`bots/${BOT_DELETE}`, {
           id: item.id,
-          index: this.bots.indexOf(item)
+          index: this.bots.indexOf(item),
         });
       }
+    },
+
+    renewToken(item) {
+      let id = item.id;
+
+      this.$store.dispatch(`bots/${TOKEN_RELUNCH}`, id).then(() => {
+        this.setMessage(RELUNCH_TITLE, RELUNCH_ICON, RELUNCH_TEXT);
+        this.dialogMsg = true;
+      });
     },
 
     setMessage(title, icon, text) {
       this.msg_title = title;
       this.msg_icon = icon;
       this.msg_text = text;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -180,14 +196,16 @@ export default {
   position: absolute;
 }
 
-.button-add {
+.action-icons {
   display: flex;
-  margin-left: 2em;
+  justify-content: center;
+  align-items: center;
 }
 
-.button-delete {
+.delete-icon {
   display: flex;
-  margin-left: 1.5em;
+  justify-content: center;
+  align-items: center;
 }
 
 .v-btn--icon.v-size--default .v-icon,

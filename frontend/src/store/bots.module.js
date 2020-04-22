@@ -1,35 +1,41 @@
 import { BotService } from "../common/api.service";
 import { ADD_BOT, FETCH_START, FETCH_END, DEL_BOT } from "./mutations.type";
-import { FETCH_BOTS, BOT_CREATE, BOT_DELETE, BOT_TOKEN } from "./actions.type";
+import {
+    FETCH_BOTS,
+    BOT_CREATE,
+    BOT_DELETE,
+    BOT_TOKEN,
+    TOKEN_RELUNCH,
+} from "./actions.type";
 
 const state = {
     bot: {
         name: "",
         ip: "",
         type: [],
-        token: ""
+        token: "",
     },
     listBots: [],
-    isLoading: true
+    isLoading: true,
 };
 
 const actions = {
     async [FETCH_BOTS]({ commit }) {
         commit(FETCH_START);
         return BotService.get()
-            .then(r => {
+            .then((r) => {
                 commit(FETCH_END, r.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 throw new Error(error);
             });
     },
     async [BOT_CREATE]({ commit }, params) {
         return BotService.create(params)
-            .then(r => {
+            .then((r) => {
                 commit(ADD_BOT, r.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 if (error.request.status === 400) {
                     throw new Error(error.response.data.msg);
                 }
@@ -42,7 +48,10 @@ const actions = {
     },
     async [BOT_TOKEN](context, id) {
         return BotService.generateToken(id);
-    }
+    },
+    [TOKEN_RELUNCH](context, id) {
+        return BotService.renewToken(id);
+    },
 };
 
 const mutations = {
@@ -58,7 +67,7 @@ const mutations = {
     },
     [DEL_BOT](state, index) {
         state.listBots.splice(index, 1);
-    }
+    },
 };
 
 const getters = {
@@ -67,11 +76,11 @@ const getters = {
     },
     name(state) {
         let names = [];
-        state.listBots.forEach(element => {
+        state.listBots.forEach((element) => {
             names.push(element.name);
         });
         return names;
-    }
+    },
 };
 
 export default {
@@ -79,5 +88,5 @@ export default {
     state,
     actions,
     mutations,
-    getters
+    getters,
 };

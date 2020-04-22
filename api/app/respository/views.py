@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Project, Scan, Bot, HostIp, Nobita, Shizuka, Suneo, Gigante, GeoLocation
+from .models import User, Project, Scan, Bot, Nobita, Shizuka, Suneo, Gigante, GeoLocation
 import json
 from bson import ObjectId
 import datetime
@@ -172,25 +172,6 @@ class BotManagement:
     def search_bot(self, **kwargs):
         for b in Bot.objects(id=kwargs['id'], ip=kwargs['ip']):
             return b.type
-
-
-class HostIpManagement:
-
-    def create(self, **kwargs):
-        h = HostIp(domain=kwargs['domain'], ip=kwargs['ip'])
-        try:
-            h.save()
-            return True
-        except errors.NotUniqueError:
-            return False
-
-    def get_host(self, **kwargs):
-        for h in HostIp.objects(domain=kwargs['domain']):
-            return dict({'id': h.id, 'domain': h.domain, 'ip': h.ip, 'created': h.created})
-
-    def get_domain(self, **kwargs):
-        for h in HostIp.objects(id=kwargs['id']):
-            return h.domain
 
 
 class NobitaManagement:

@@ -13,6 +13,7 @@ export const FETCH_BOTS = "fetchBots";
 export const BOT_CREATE = "botCreate";
 export const BOT_DELETE = "botDelete";
 export const BOT_TOKEN = "botToken";
+export const TOKEN_RELUNCH = "tokenRelunch";
 // SCAN
 export const FETCH_SCANS = "fetchScans";
 export const FETCH_INFO = "fetchInfo";

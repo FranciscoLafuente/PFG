@@ -18,7 +18,7 @@ export const TOKEN_TEXT = "This token already has been created";
 // Reluch scan
 export const RELUNCH_TITLE = "Relunched!";
 export const RELUNCH_ICON = "autorenew";
-export const RELUNCH_TEXT = "The scan has been successfully relaunched";
+export const RELUNCH_TEXT = "The item has been successfully relaunched";
 // Generic
 export const GENERIC_TITLE = "Error";
 export const GENERIC_ICON = "error_outline";
