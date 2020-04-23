@@ -69,7 +69,7 @@ class ProjectManagement:
     def project(self, **kwargs):
         for p in Project.objects(id=kwargs['id']):
             return json.loads(JSONEncoder().encode(
-                dict({'id': p.id, 'name': p.name, 'type': p.type})
+                dict({'id': p.id, 'name': p.name, 'type': p.type, 'scans': p.scans})
             ))
 
     def add_scan(self, **kwargs):
