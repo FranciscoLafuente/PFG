@@ -19,12 +19,6 @@ import {
 } from "./actions.type";
 
 const state = {
-    scan: {
-        name: "",
-        bots: 0,
-        executiontime: 0,
-        hosts: "",
-    },
     listScans: [],
     geoInfo: [],
     allInfo: [],

@@ -53,8 +53,8 @@ export const ProjectService = {
     get() {
         return ApiService.query("myproject");
     },
-    getScans(slug) {
-        return ApiService.get("myproject", slug);
+    getScans(id) {
+        return ApiService.get("myproject", id);
     },
     create(params) {
         return ApiService.post("myproject", params);

@@ -9,12 +9,6 @@ import {
 } from "./actions.type";
 
 const state = {
-    bot: {
-        name: "",
-        ip: "",
-        type: [],
-        token: "",
-    },
     listBots: [],
     isLoading: true,
 };
