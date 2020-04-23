@@ -159,6 +159,8 @@ export default {
     suneo: {},
     gigante: {},
     geo: {},
+    listNobita: [],
+    aux: [],
   }),
 
   created() {
@@ -199,6 +201,25 @@ export default {
           this.loadLocation(this.geo.lat, this.geo.lon);
         }
       });
+      // Sort nobita by created field to get the last scan
+      this.nobita.sort((a, b) =>
+        a.created < b.created ? 1 : b.created < a.created ? -1 : 0
+      );
+      // Delete scans duplicates
+      let aux = this.deleteDuplicates(this.nobita);
+      // Reorder by port
+      this.nobita = aux.sort((a, b) =>
+        a.port > b.port ? 1 : b.port > a.port ? -1 : 0
+      );
+    },
+
+    deleteDuplicates(array) {
+      const uniquePorts = Array.from(new Set(array.map((a) => a.port))).map(
+        (port) => {
+          return array.find((a) => a.port === port);
+        }
+      );
+      return uniquePorts;
     },
 
     loadLocation(lat, lon) {

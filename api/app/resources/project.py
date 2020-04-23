@@ -159,7 +159,7 @@ def get_all_data(domain):
     # Create geoLocation
     ip = socket.gethostbyname(domain)
     views.GeoLocationManagement().create(ip=ip, domain=domain)
-    # Save all scans in a list without duplicates
+    # Save all scans in a list
     n = views.NobitaManagement().get_nobita(domain=domain)
     n_dict = dict({"type": "nobita", "data": n})
     shi = views.ShizukaManagement().get_shizuka(domain=domain)

@@ -5,7 +5,6 @@ from bson import ObjectId
 import datetime
 import requests
 from mongoengine import errors
-from pprint import pprint
 
 
 class UserManagement:
@@ -191,7 +190,8 @@ class NobitaManagement:
         for n in Nobita.objects(domain=kwargs['domain']):
             nobita_list.append(
                 json.loads(JSONEncoder().encode(
-                    dict({'ip': n.ip, 'domain': n.domain, 'port': n.port, 'banner': n.banner})
+                    dict({'ip': n.ip, 'domain': n.domain, 'port': n.port, 'banner': n.banner,
+                          'created': n.created.strftime("%Y-%m-%d %H:%M:%S")})
                 ))
             )
         return nobita_list
