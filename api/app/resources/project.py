@@ -125,7 +125,13 @@ def delete_project(id):
             if p != id_obj:
                 projects_new.append(p)
 
+        # Delete the scans that the project owns
+        scans = views.ProjectManagement().scans_id(id=id)
+        for scan in scans:
+            views.ScanManagement().delete(id=ObjectId(scan))
+        # Delete project
         views.ProjectManagement().delete(id=id)
+        # Delete user project
         views.UserManagement().update_projects(email=current_user, projects=projects_new)
         return jsonify(msg.SUCCESS), 200
 
