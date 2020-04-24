@@ -11,7 +11,6 @@
             v-model="editedItem.name"
             label="Bot name"
             :error-messages="nameErrors"
-            :counter="8"
             @input="$v.editedItem.name.$touch()"
             @blur="$v.editedItem.name.$touch()"
           ></v-text-field>
@@ -51,7 +50,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, maxLength } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
 import Select from "../components/Select";
 import { VALID_IP_ADDRESS, BOTS } from "../common/constants";
@@ -60,15 +59,15 @@ const ip_address = helpers.regex("ip_address", VALID_IP_ADDRESS);
 
 export default {
   components: {
-    Select
+    Select,
   },
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
-      name: { required, maxLength: maxLength(8) },
-      ip: { required, ip_address }
-    }
+      name: { required },
+      ip: { required, ip_address },
+    },
   },
   props: ["dialogBot"],
   data: () => ({
@@ -78,15 +77,13 @@ export default {
     editedItem: {
       name: "",
       ip: "",
-      type: []
-    }
+      type: [],
+    },
   }),
   computed: {
     nameErrors() {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
-      !this.$v.editedItem.name.maxLength &&
-        errors.push("Name must be at most 8 characters long");
       !this.$v.editedItem.name.required && errors.push("Name is required.");
       return errors;
     },
@@ -96,7 +93,7 @@ export default {
       !this.$v.editedItem.ip.ip_address && errors.push("Must be valid ip");
       !this.$v.editedItem.ip.required && errors.push("Ip is required");
       return errors;
-    }
+    },
   },
 
   methods: {
@@ -106,15 +103,15 @@ export default {
       this.editedItem = {
         name: "",
         ip: "",
-        type: []
+        type: [],
       };
     },
 
     isError() {
       // If there are errors or is empty return  false
       return this.$v.editedItem.$error || !this.$v.editedItem.$dirty;
-    }
-  }
+    },
+  },
 };
 </script>
 
