@@ -16,6 +16,7 @@ import {
     SCAN_DELETE,
     INFO_SAVE,
     ONE_SCAN_INFO,
+    SCAN_EDIT,
 } from "./actions.type";
 
 const state = {
@@ -56,6 +57,9 @@ const actions = {
         return ScanService.delete(params.id_project, params.id_scan).then(() => {
             commit(DEL_SCAN, params.index);
         });
+    },
+    [SCAN_EDIT](context, params) {
+        return ScanService.renameBot(params.id, params.name);
     },
     [SCAN_RELUNCH](context, id) {
         return ScanService.update(id);

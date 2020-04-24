@@ -113,6 +113,10 @@ class ScanManagement:
         for s in Scan.objects(id=kwargs['id']):
             Scan.objects(id=s.id).update(set__done=kwargs['value'])
 
+    def cahnge_bot(self, **kwargs):
+        for s in Scan.objects(id=kwargs['id']):
+            Scan.objects(id=s.id).update(set__bot=kwargs['bot'])
+
     def delete(self, **kwargs):
         Scan.objects(id=kwargs['id']).delete()
 

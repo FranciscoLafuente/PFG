@@ -15,6 +15,10 @@ export const ACCESS_TEXT = "Wrong email or password";
 export const TOKEN_TITLE = "Already Generated!";
 export const TOKEN_ICON = "error_outline";
 export const TOKEN_TEXT = "This token already has been created";
+// Rename bot on scan
+export const RENAME_TITLE = "Renamed";
+export const RENAME_ICON = "publish";
+export const RENAME_TEXT = "The scan has been successfully renamed";
 // Reluch scan
 export const RELUNCH_TITLE = "Relunched!";
 export const RELUNCH_ICON = "autorenew";

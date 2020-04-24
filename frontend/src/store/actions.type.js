@@ -18,6 +18,7 @@ export const TOKEN_RELUNCH = "tokenRelunch";
 export const FETCH_SCANS = "fetchScans";
 export const FETCH_INFO = "fetchInfo";
 export const SCAN_CREATE = "scanCreate";
+export const SCAN_EDIT = "scanEdit";
 export const SCAN_RELUNCH = "scanRelunch";
 export const SCAN_DELETE = "scanDelete";
 export const INFO_SAVE = "infoSave";

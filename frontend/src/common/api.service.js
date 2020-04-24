@@ -75,9 +75,10 @@ export const ScanService = {
         return ApiService.get("scan/host=", domain);
     },
     create(id, payload) {
-        console.log("en ScanService payload", payload);
-
         return ApiService.post(`myproject/${id}`, payload);
+    },
+    renameBot(id, name) {
+        return ApiService.post(`myproject/scan/${id}`, name);
     },
     update(id) {
         return ApiService.put(`myproject/scan/${id}`);

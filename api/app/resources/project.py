@@ -107,7 +107,21 @@ def add_scan(id):
     return jsonify(msg.SUCCESS), 200
 
 
+@resources.route('/myproject/scan/<scan_id>', methods=['POST'])
+@fresh_jwt_required
+def edit_bot(scan_id):
+    print(request.json)
+    if not request.is_json:
+        return jsonify(msg.MISSING_JSON), 400
+    scan_bot = request.json.get('bot', None)
+    # Get bot id and change it on scan
+    bot_id = views.BotManagement().get_id(name=scan_bot)
+    views.ScanManagement().cahnge_bot(id=scan_id, bot=bot_id)
+    return jsonify(msg.SUCCESS), 200
+
+
 @resources.route('/myproject/scan/<scan_id>', methods=['PUT'])
+@fresh_jwt_required
 def relunch(scan_id):
     views.ScanManagement().change_done(id=scan_id, value=False)
     return jsonify(msg.SUCCESS), 200
