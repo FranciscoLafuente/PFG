@@ -74,6 +74,15 @@ export const ScanService = {
     getAllInfo(domain) {
         return ApiService.get("scan/host=", domain);
     },
+    getBotInfo(name, id) {
+        return ApiService.get(`bot/${name}`, id);
+    },
+    getTimeLine(id_scan, domain) {
+        return ApiService.get(`scan/${id_scan}`, domain);
+    },
+    getResult(id_scan, domain, num) {
+        return ApiService.get(`scan/${id_scan}/${domain}`, num)
+    },
     create(id, payload) {
         return ApiService.post(`myproject/${id}`, payload);
     },

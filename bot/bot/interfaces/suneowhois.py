@@ -13,7 +13,7 @@ class SuneoWhoisInterface(Interface):
         interface = 'suneowhoisIf'
 
     @abstractmethod
-    def get_target(self, target):
+    def bot_scan(self, target):
         """
 
         :param target:
@@ -30,7 +30,7 @@ class SuneoWhoisHandler(SuneoWhoisInterface, Handler, ABC):
         super().__init__(**kw)
         self.response = []
 
-    def get_target(self, target):
+    def bot_scan(self, target):
         self.app.log.info("BOT SUNEOWHOIS")
         self.app.log.info("Domain: " + target)
         w = whois.whois(target)

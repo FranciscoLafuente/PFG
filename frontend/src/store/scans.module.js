@@ -5,8 +5,9 @@ import {
     FETCH_START,
     FETCH_END,
     FETCH_END_GEO,
-    FETCH_END_INFO,
     ONE_SCAN,
+    SAVE_TIMELINE,
+    FULL_SCAN
 } from "./mutations.type";
 import {
     FETCH_SCANS,
@@ -17,12 +18,15 @@ import {
     INFO_SAVE,
     ONE_SCAN_INFO,
     SCAN_EDIT,
+    FETCH_TIMELINE,
+    SAVE_FULL_SCAN
 } from "./actions.type";
 
 const state = {
     listScans: [],
     geoInfo: [],
-    allInfo: [],
+    scansTLine: [],
+    fullScan: {},
     oneScan: [],
     isLoading: true,
 };
@@ -42,6 +46,15 @@ const actions = {
         const response = await ScanService.getInfo(id);
         context.dispatch(INFO_SAVE, response.data);
     },
+    async [FETCH_TIMELINE]({ commit }, params) {
+        commit(FETCH_START);
+        return ScanService.getTimeLine(params.id_scan, params.domain).then(r => {
+                commit(SAVE_TIMELINE, r.data);
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
+    },
     async [SCAN_CREATE]({ commit }, params) {
         return ScanService.create(params.id, params.scan)
             .then((r) => {
@@ -58,6 +71,18 @@ const actions = {
             commit(DEL_SCAN, params.index);
         });
     },
+    async [ONE_SCAN_INFO]({ commit }, params) {
+        return ScanService.getResult(params.id_scan, params.domain, params.num).then(res => {
+            let scan_list = [];
+            res.data['results'].forEach(e => {
+                return ScanService.getBotInfo(Object.keys(e), Object.values(e)).then(r => {
+                    console.log("IN SCANS MODULE", r.data);
+                    scan_list.push(r.data)
+                })
+            })
+            commit(ONE_SCAN, scan_list)
+        })
+    },
     [SCAN_EDIT](context, params) {
         return ScanService.renameBot(params.id, params.name);
     },
@@ -66,24 +91,21 @@ const actions = {
     },
     [INFO_SAVE](context, data) {
         context.commit(FETCH_START);
-        data.forEach((element) => {
-            context.commit(FETCH_END_INFO, element);
-            element.forEach((e) => {
-                if (e.type === "geo") {
-                    context.commit(FETCH_END_GEO, e.data);
-                }
-            });
+        data.forEach(element => {
+            let id_geo = element.results[0]['geo']
+            return ScanService.getBotInfo('geo', id_geo).then(geo => {
+                context.commit(FETCH_END_GEO, geo.data['results'][0]);
+            })
         });
     },
-    [ONE_SCAN_INFO](context, index) {
-        context.commit(ONE_SCAN, index);
-    },
+    [SAVE_FULL_SCAN](context, scan) {
+        context.commit(FULL_SCAN, scan)
+    }
 };
 
 const mutations = {
     [FETCH_START](state) {
         state.geoInfo = [];
-        state.allInfo = [];
         state.isLoading = true;
     },
     [FETCH_END](state, data) {
@@ -94,18 +116,21 @@ const mutations = {
         state.geoInfo = state.geoInfo.concat([data]);
         state.isLoading = false;
     },
-    [FETCH_END_INFO](state, data) {
-        state.allInfo = state.allInfo.concat([data]);
-        state.isLoading = false;
-    },
     [ADD_SCAN](state, scan) {
         state.listScans = state.listScans.concat([scan]);
     },
     [DEL_SCAN](state, index) {
         state.listScans.splice(index, 1);
     },
-    [ONE_SCAN](state, index) {
-        state.oneScan = state.allInfo[index];
+    [SAVE_TIMELINE](state, data) {
+        state.scansTLine = data;
+        state.isLoading = false;
+    },
+    [FULL_SCAN](state, scan) {
+        state.fullScan = scan;
+    },
+    [ONE_SCAN](state, scan) {
+        state.oneScan = scan;
     },
 };
 
@@ -116,9 +141,15 @@ const getters = {
     geoInfo(state) {
         return state.geoInfo;
     },
+    timeline(state) {
+        return state.scansTLine;
+    },
+    fullScan(state) {
+        return state.fullScan;
+    },
     oneScan(state) {
         return state.oneScan;
-    },
+    }
 };
 
 export default {

@@ -11,7 +11,7 @@ class GiganteInterface(Interface):
         interface = 'giganteIf'
 
     @abstractmethod
-    def check_ssh(self, target):
+    def bot_scan(self, target):
         """
         Check if the passwords are valid
         :param target: The ip to check
@@ -29,7 +29,9 @@ class GiganteHandler(GiganteInterface, Handler, ABC):
         self.passwords = ["123456", "root", "admin", "12345"]
         self.response = ""
 
-    def check_ssh(self, target):
+    def bot_scan(self, *args):
+        target = args[0]
+
         paramiko.util.log_to_file("filename.log")
         fail = 0
         user = "root"

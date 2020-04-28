@@ -17,9 +17,11 @@ export const TOKEN_RELUNCH = "tokenRelunch";
 // SCAN
 export const FETCH_SCANS = "fetchScans";
 export const FETCH_INFO = "fetchInfo";
+export const FETCH_TIMELINE = "fetchTimeline";
 export const SCAN_CREATE = "scanCreate";
 export const SCAN_EDIT = "scanEdit";
 export const SCAN_RELUNCH = "scanRelunch";
 export const SCAN_DELETE = "scanDelete";
 export const INFO_SAVE = "infoSave";
 export const ONE_SCAN_INFO = "oneScanInfo";
+export const SAVE_FULL_SCAN = "saveFullScan"

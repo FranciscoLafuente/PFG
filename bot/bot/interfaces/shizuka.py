@@ -13,19 +13,8 @@ class ShizukaInterface(Interface):
         interface = 'shizukaIf'
 
     @abstractmethod
-    def ipreverse(self, target):
+    def bot_scan(self, *args):
         """
-
-        :param target:
-        :return:
-        """
-        pass
-
-    @abstractmethod
-    def remove_tags(self, text):
-        """
-
-        :param text:
         :return:
         """
         pass
@@ -37,34 +26,28 @@ class ShizukaHandler(ShizukaInterface, Handler, ABC):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.response = []
+        self.results = []
 
-    def ipreverse(self, target):
-        try:
-            ip = socket.gethostbyname(target)
-        except socket.gaierror as e:
-            print(e)
-            return
-
-        url = 'https://viewdns.info/reverseip/?host=' + target + '&t=1'
-
-        self.app.log.info("Obtaining the associated domains of " + target + "\n")
-
+    def bot_scan(self, *args):
+        target = args[0]
+        ip = args[1]
+        url = "https://www.robtex.net/?dns=" + str(target) + "&rev=1"
         req = urllib.Request(url, headers={'User-Agent': "Magic Browser"})
         html = urllib.urlopen(req).read()
         soup = BeautifulSoup(html, features="html.parser")
 
         table = soup.find_all("td")
-        table = self.remove_tags(str(table))
+        table = self.__remove_tags(str(table))
         data = table.split(",")
         for d in data:
-            if len(d) > 50 or d.find(".") < 0:
-                pass
-            else:
-                self.response.append({'ip': ip, 'target': target, 'domain': d})
+            if len(d) > 10:
+                d = d.replace("[", "")
+                d = d.replace(" ", "")
+                d = d.replace("]", "")
+                self.results.append(d)
 
-        return self.response
+        return {'bot': 'shizuka', 'ip': ip, 'domain': target, 'results': self.results}
 
-    def remove_tags(self, text):
+    def __remove_tags(self, text):
         TAG_RE = re.compile(r'<[^>]+>')
         return TAG_RE.sub('', text)

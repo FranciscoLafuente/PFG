@@ -4,6 +4,7 @@ from flask import request, jsonify
 from flask_jwt_extended import (fresh_jwt_required, get_jwt_identity)
 from . import resources
 from app.respository import views
+from app.respository import generic_model
 from bson import ObjectId
 import socket
 import builtwith
@@ -36,24 +37,41 @@ def get_scans(id_p):
 @resources.route('/scan/<id_scan>', methods=['GET'])
 @fresh_jwt_required
 def get_info(id_scan):
-    list_domain = []
     list_response = []
     hosts = views.ScanManagement().get_scan(id=id_scan)['hosts']
     for h in hosts:
-        list_domain.append(h)
-    for d in list_domain:
-        list_response.append(get_all_data(d))
+        scan = views.ScansDataManagement().one_scan(scan=id_scan, domain=h)
+        list_response.append(scan)
     if list_response:
         return jsonify(list_response), 200
     return jsonify(msg.NO_DATA)
 
 
-@resources.route('/scan/host=<domain>', methods=['GET'])
+@resources.route('/bot/<name>/<id>', methods=['GET'])
 @fresh_jwt_required
-def get_all_info(domain):
-    response = get_all_data(domain)
-    if response:
-        return jsonify(response), 200
+def bot_info(name, id):
+    res = generic_model.Generic().read(name=name, id=id)
+    return jsonify(res), 200
+
+
+@resources.route('/scan/<id_scan>/<domain>', methods=['GET'])
+@fresh_jwt_required
+def get_timeline(id_scan, domain):
+    list_time = []
+    scans = views.ScansDataManagement().get_scans(scan=id_scan, domain=domain)
+    if not scans:
+        return jsonify(msg.NO_DATA)
+    for s in scans:
+        list_time.append(s)
+    return jsonify(list_time), 200
+
+
+@resources.route('/scan/<id_scan>/<domain>/<num>', methods=['GET'])
+@fresh_jwt_required
+def get_specific_scan(id_scan, domain, num):
+    scan = views.ScansDataManagement().one_scan(scan=id_scan, domain=domain)
+    if scan:
+        return jsonify(scan), 200
     return jsonify(msg.NO_DATA)
 
 
@@ -110,7 +128,6 @@ def add_scan(id):
 @resources.route('/myproject/scan/<scan_id>', methods=['POST'])
 @fresh_jwt_required
 def edit_bot(scan_id):
-    print(request.json)
     if not request.is_json:
         return jsonify(msg.MISSING_JSON), 400
     scan_bot = request.json.get('bot', None)
@@ -171,8 +188,10 @@ def delete_scan(id_p, id_scan):
 def get_all_data(domain):
     list_data = []
     # Create geoLocation
+    '''
     ip = socket.gethostbyname(domain)
     views.GeoLocationManagement().create(ip=ip, domain=domain)
+    '''
     # Save all scans in a list
     n = views.NobitaManagement().get_nobita(domain=domain)
     n_dict = dict({"type": "nobita", "data": n})

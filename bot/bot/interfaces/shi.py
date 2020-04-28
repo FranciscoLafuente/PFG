@@ -8,12 +8,12 @@ from bs4 import BeautifulSoup
 import socket
 
 
-class ShizukaV2Interface(Interface):
+class ShiInterface(Interface):
     class Meta:
-        interface = 'shizukaV2If'
+        interface = 'shiIf'
 
     @abstractmethod
-    def get_domain(self, target, ip):
+    def ipreverse(self, target):
         """
 
         :param target:
@@ -21,33 +21,50 @@ class ShizukaV2Interface(Interface):
         """
         pass
 
+    @abstractmethod
+    def remove_tags(self, text):
+        """
 
-class ShizukaV2Handler(ShizukaV2Interface, Handler, ABC):
+        :param text:
+        :return:
+        """
+        pass
+
+
+class ShiHandler(ShiInterface, Handler, ABC):
     class Meta:
-        label = 'shizukaV2'
+        label = 'shi'
 
     def __init__(self, **kw):
         super().__init__(**kw)
         self.response = []
 
-    def get_domain(self, target, ip):
-        url = "https://www.robtex.net/?dns=" + str(target) + "&rev=1"
+    def ipreverse(self, target):
+        try:
+            ip = socket.gethostbyname(target)
+        except socket.gaierror as e:
+            print(e)
+            return
+
+        url = 'https://viewdns.info/reverseip/?host=' + target + '&t=1'
+
+        self.app.log.info("Obtaining the associated domains of " + target + "\n")
+
         req = urllib.Request(url, headers={'User-Agent': "Magic Browser"})
         html = urllib.urlopen(req).read()
         soup = BeautifulSoup(html, features="html.parser")
 
         table = soup.find_all("td")
-        table = self.__remove_tags(str(table))
+        table = self.remove_tags(str(table))
         data = table.split(",")
         for d in data:
-            if len(d) > 10:
-                d = d.replace("[", "")
-                d = d.replace(" ", "")
-                d = d.replace("]", "")
+            if len(d) > 50 or d.find(".") < 0:
+                pass
+            else:
                 self.response.append({'ip': ip, 'target': target, 'domain': d})
 
         return self.response
 
-    def __remove_tags(self, text):
+    def remove_tags(self, text):
         TAG_RE = re.compile(r'<[^>]+>')
         return TAG_RE.sub('', text)

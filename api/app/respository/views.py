@@ -1,9 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Project, Scan, Bot, Nobita, Shizuka, Suneo, Gigante, GeoLocation
+from .models import User, Project, Scan, ScansData, Bot, Nobita, Shizuka, Suneo, Gigante, GeoLocation
 import json
 from bson import ObjectId
 import datetime
-import requests
 from mongoengine import errors
 
 
@@ -131,6 +130,52 @@ class ScanManagement:
         return scans_list
 
 
+class ScansDataManagement:
+
+    def create(self, **kwargs):
+        try:
+            s = ScansData(scan_user=kwargs['scan'], domain=kwargs['domain'])
+            s.save()
+            return s.id
+        except Exception as e:
+            print("[ScansData]")
+            print("Exception", e)
+
+    def store_results(self, **kwargs):
+        try:
+            for s in ScansData.objects(id=kwargs['id']):
+                ScansData.objects(id=s.id).update(push__results=kwargs['list'])
+        except Exception as e:
+            print("[ScansData]")
+            print("Exception", e)
+
+    def get_scans(self, **kwargs):
+        list_scans = []
+        try:
+            for s in ScansData.objects(scan_user=kwargs['scan'], domain=kwargs['domain']):
+                list_scans.append(
+                    json.loads(JSONEncoder().encode(
+                        dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
+                              'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
+                    ))
+                )
+            return list_scans
+        except Exception as e:
+            print(['ScansData'])
+            print('Exception', e)
+
+    def one_scan(self, **kwargs):
+        try:
+            for s in ScansData.objects(scan_user=kwargs['scan'], domain=kwargs['domain']):
+                return json.loads(JSONEncoder().encode(
+                    dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
+                          'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
+                ))
+        except Exception as e:
+            print(['ScansData'])
+            print('Exception', e)
+
+
 class BotManagement:
 
     def create(self, **kwargs):
@@ -187,7 +232,7 @@ class NobitaManagement:
             banner=kwargs['data']['banner'],
         )
         n.save()
-        return n
+        return n.id
 
     def get_nobita(self, **kwargs):
         nobita_list = []
@@ -204,14 +249,18 @@ class NobitaManagement:
 class ShizukaManagement:
 
     def create(self, **kwargs):
-        shi = Shizuka(ip=kwargs['data']['ip'], target=kwargs['data']['target'], domain=kwargs['data']['domain'])
         try:
+            shi = Shizuka(ip=kwargs['data']['ip'], target=kwargs['data']['target'], domain=kwargs['data']['domain'])
             shi.save()
-        except errors.NotUniqueError:
+            return shi.id
+        except errors.NotUniqueError as e:
             pass
-        except errors.OperationError:
-            print("In Shizuka bot, the data is too large")
-            pass
+        except errors.OperationError as e:
+            print("[Shizuka in Views]")
+            print("Exception", e)
+        except Exception as e:
+            print("[Shizuka in Views]")
+            print("Exception", e)
 
     def get_shizuka(self, **kwargs):
         shizuka_list = []
@@ -227,12 +276,16 @@ class ShizukaManagement:
 class SuneoManagement:
 
     def create(self, **kwargs):
-        su = Suneo(ip=kwargs['data']['ip'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'],
-                   technologies=kwargs['data']['technologies'])
         try:
+            su = Suneo(ip=kwargs['data']['ip'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'],
+                       technologies=kwargs['data']['technologies'])
             su.save()
-        except errors.NotUniqueError:
+            return su.id
+        except errors.NotUniqueError as err:
             pass
+        except Exception as e:
+            print("[Suneo in Views]")
+            print("Exception", e)
 
     def get_suneo(self, **kwargs):
         for su in Suneo.objects(domain=kwargs['domain']):
@@ -254,39 +307,36 @@ class GiganteManagement:
 class GeoLocationManagement:
 
     def create(self, **kwargs):
-        g = geo_ip(kwargs['domain'])
-        geo = GeoLocation(
-            ip=kwargs['ip'],
-            domain=kwargs['domain'],
-            country=g['country'],
-            org=g['org'],
-            city=g['city'],
-            region_name=g['regionName'],
-            isp=g['isp'],
-            lat=g['lat'],
-            lon=g['lon'],
-            zip=g['zip'],
-        )
         try:
+            geo = GeoLocation(
+                ip=kwargs['data']['ip'],
+                domain=kwargs['data']['domain'],
+                continent=kwargs['data']['continent'],
+                country=kwargs['data']['country'],
+                organization=kwargs['data']['organization'],
+                latitude=kwargs['data']['latitude'],
+                longitude=kwargs['data']['longitude'],
+            )
             geo.save()
+            return geo.id
         except errors.NotUniqueError:
             pass
+        except Exception as e:
+            print("[GeoLocation in Views]")
+            print("Exception", e)
 
     def get_geo(self, **kwargs):
-        for g in GeoLocation.objects(domain=kwargs['domain']):
-            return json.loads(JSONEncoder().encode(
-                dict({
-                    'ip': g.ip, 'domain': g.domain, 'country': g.country, 'org': g.org, 'city': g.city,
-                    'region_name': g.region_name, 'isp': g.isp, 'lat': g.lat, 'lon': g.lon, 'zip': g.zip
-                })
-            ))
-
-
-def geo_ip(ip):
-    url = "http://ip-api.com/json/" + ip
-    response = requests.get(url)
-    json_obj = response.json()
-    return json_obj
+        try:
+            for g in GeoLocation.objects(domain=kwargs['domain']):
+                return json.loads(JSONEncoder().encode(
+                    dict({
+                        'ip': g.ip, 'domain': g.domain, 'country': g.country, 'organization': g.organization,
+                        'latitude': g.latitude, 'longitude': g.longitude
+                    })
+                ))
+        except Exception as e:
+            print("[GeoLocation in Views]")
+            print("Exception", e)
 
 
 class JSONEncoder(json.JSONEncoder):

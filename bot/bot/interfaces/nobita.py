@@ -14,37 +14,7 @@ class NobitaInterface(Interface):
         interface = 'nobitaIf'
 
     @abstractmethod
-    def pscan(self, address, ip_address):
-        """"""
-        pass
-
-    @abstractmethod
-    def connect(self, ip_address, port):
-        """"""
-        pass
-
-    @abstractmethod
-    def get_ports(self, mode, queue):
-        """"""
-        pass
-
-    @abstractmethod
-    def worker(self, target, queue):
-        """"""
-        pass
-
-    @abstractmethod
-    def save_scan(self, ip_address, port, result):
-        """"""
-        pass
-
-    @abstractmethod
-    def format_text(self, text):
-        """"""
-        pass
-
-    @abstractmethod
-    def geo_ip(self, ip):
+    def bot_scan(self, *args):
         """"""
         pass
 
@@ -55,11 +25,11 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.port_scanner = []
-        self.domain = ""
+        self.results = []
 
-    def pscan(self, address, ip_address):
-        self.domain = address
+    def bot_scan(self, *args):
+        domain = args[0]
+        ip_address = args[1]
 
         queue = Queue()
         mode = 3
@@ -79,7 +49,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
         for thread in thread_list:
             thread.join()
 
-        return self.port_scanner
+        return {'bot': 'nobita', 'ip': ip_address, 'domain': domain, 'results': self.results}
 
     def connect(self, ip_address, port):
         target = ip_address
@@ -102,7 +72,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             banner = self.format_text(json_obj)
             # If the response is 0, it's mean that the connection is succesfull
             if con is 0:
-                self.save_scan(ip_address, port, banner)
+                self.save_scan(port, banner)
                 return True
             return False
         except:
@@ -126,17 +96,8 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
             if self.connect(target, port):
                 self.app.log.info("[-] Port {} is open".format(port))
 
-    def geo_ip(self, ip):
-        try:
-            url = "http://ip-api.com/json/" + str(ip)
-            response = requests.get(url)
-            json_obj = response.json()
-            return json_obj
-        except:
-            pass
-
-    def save_scan(self, ip_address, port, result):
-        self.port_scanner.append({'ip': ip_address, 'domain': self.domain, 'port': port, 'banner': result})
+    def save_scan(self, port, result):
+        self.results.append({'port': port, 'banner': result})
 
     def format_text(self, text):
         text = str(text).replace('\\r\\n', "\n")

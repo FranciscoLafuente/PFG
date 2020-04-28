@@ -29,6 +29,13 @@ class Scan(Document):
     done = BooleanField(default=False, required=True)
 
 
+class ScansData(Document):
+    scan_user = ObjectIdField(required=True)
+    domain = StringField(required=True)
+    results = ListField()
+    created = DateTimeField(default=datetime.datetime.utcnow)
+
+
 class Bot(Document):
     name = StringField(required=True, unique=True)
     email = EmailField(required=True)
@@ -78,12 +85,9 @@ class Gigante(Document):
 class GeoLocation(Document):
     ip = StringField(unique=True)
     domain = StringField(unique=True)
+    continent = StringField()
     country = StringField()
-    org = StringField()
-    city = StringField()
-    region_name = StringField()
-    isp = StringField()
-    lat = FloatField()
-    lon = FloatField()
-    zip = StringField()
+    organization = StringField()
+    latitude = FloatField()
+    longitude = FloatField()
     created = DateTimeField(default=datetime.datetime.utcnow)

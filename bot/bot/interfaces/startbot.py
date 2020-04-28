@@ -7,7 +7,7 @@ import base64
 
 class ScansInterface(Interface):
     class Meta:
-        interface = 'startbot'
+        interface = 'connectApiIf'
 
     @abstractmethod
     def get_scan(self):
@@ -35,40 +35,11 @@ class ScansInterface(Interface):
         pass
 
     @abstractmethod
-    def send_nobita(self, data):
+    def send_data(self, **kwargs):
         """
-
-        :param data:
+        :param kwargs:
         :return:
         """
-        pass
-
-    @abstractmethod
-    def send_shizuka(self, data):
-        """
-
-        :param data:
-        :return:
-        """
-        pass
-
-    @abstractmethod
-    def send_suneo(self, data):
-        """
-
-        :param data:
-        :return:
-        """
-        pass
-
-    @abstractmethod
-    def send_gigante(self, data):
-        """
-
-        :param data:
-        :return:
-        """
-        pass
 
     @abstractmethod
     def update_done(self, scan_id):
@@ -82,7 +53,7 @@ class ScansInterface(Interface):
 
 class ScansHandler(ScansInterface, Handler, ABC):
     class Meta:
-        label = 'connect'
+        label = 'connectApi'
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -108,7 +79,8 @@ class ScansHandler(ScansInterface, Handler, ABC):
             id_bot = token_decode['identity']
 
             return type_bots, id_bot
-        except:
+        except Exception as e:
+            self.app.log.error("Exception when trying to login bot:", e)
             self.app.log.error(self.access_token['msg'])
 
     def stract_scans(self, id_bot):
@@ -116,31 +88,14 @@ class ScansHandler(ScansInterface, Handler, ABC):
                                                                                               + self.access_token})
         return response.json()
 
-    def send_nobita(self, data):
-        response = requests.post("http://localhost:5000/bots/nobita", json=data,
-                                 headers={'Authorization': 'Bearer ' + self.access_token})
-        self.app.log.info("Nobita bot: " + response.json()['msg'])
-        print()
-        return
-
-    def send_shizuka(self, data):
-        response = requests.post("http://localhost:5000/bots/shizuka", json=data,
-                                 headers={'Authorization': 'Bearer ' + self.access_token})
-        self.app.log.info("Shizuka bot: " + response.json()['msg'])
-        print()
-        return
-
-    def send_suneo(self, data):
-        response = requests.post("http://localhost:5000/bots/suneo", json=data,
-                                 headers={'Authorization': 'Bearer ' + self.access_token})
-        self.app.log.info("Suneo bot: " + response.json()['msg'])
-        print()
-
-    def send_gigante(self, data):
-        response = requests.post("http://localhost:5000/bots/gigante", json=data,
-                                 headers={'Authorization': 'Bearer ' + self.access_token})
-        self.app.log.info("Gigante bot: " + response.json()['msg'])
-        print()
+    def send_data(self, **kwargs):
+        self.app.log.info("Sending data to database...")
+        try:
+            response = requests.post("http://localhost:5000/bots/data/" + kwargs['id'] + "/" + kwargs['domain'],
+                                     json=kwargs['data'], headers={'Authorization': 'Bearer ' + self.access_token})
+            self.app.log.info("Backend response: " + response.json()['msg'])
+        except Exception as e:
+            self.app.log.error("Exception when sending data:", e)
 
     def update_done(self, scan_id):
         response = requests.put("http://localhost:5000/bots/update_done/" + scan_id,

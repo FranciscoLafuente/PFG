@@ -67,3 +67,7 @@ $ make docker
 
 $ docker run -it bot --help
 ```
+
+### To install geoip
+pip install maxminddb-geolite2
+

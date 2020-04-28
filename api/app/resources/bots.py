@@ -4,8 +4,10 @@ from flask import request, jsonify
 from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
 from . import resources
 from app.respository import views
+from app.respository import generic_model
 import datetime
 from app.static import messages as msg
+from pprint import pprint
 
 
 @resources.route('/bots', methods=['GET'])
@@ -97,6 +99,27 @@ def scans_by_bot():
     bot_scans = views.ScanManagement().scans_by_bot(bot=bot_id)
 
     return jsonify(bot_scans), 200
+
+
+@resources.route('/bots/data/<id_scan>/<domain>', methods=['POST'])
+@fresh_jwt_required
+def save_data(id_scan, domain):
+    data = request.json
+    if not data:
+        return jsonify(msg.NO_DATA), 400
+
+    db_id = views.ScansDataManagement().create(scan=id_scan, domain=domain)
+    for item in data:
+        if not item:
+            return jsonify(msg.SUCCESS), 200
+        bot_name = item['bot']
+        id = generic_model.Generic().create(name=bot_name, data=item)
+        if id:
+            # Save data in a dict
+            scan = {bot_name: id}
+            views.ScansDataManagement().store_results(id=db_id, list=scan)
+
+    return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/bots/nobita', methods=['POST'])

@@ -3,9 +3,10 @@ from cement.core.exc import CaughtSignal
 
 from core.exc import BotError
 from interfaces.startbot import ScansInterface, ScansHandler
+from interfaces.geo import GeoInterface, GeoHandler
 from interfaces.nobita import NobitaInterface, NobitaHandler
-from interfaces.shizukaV2 import ShizukaV2Interface, ShizukaV2Handler
-from interfaces.suneoV2 import SuneoV2Interface, SuneoV2Handler
+from interfaces.shizuka import ShizukaInterface, ShizukaHandler
+from interfaces.suneo import SuneoInterface, SuneoHandler
 from interfaces.gigante import GiganteInterface, GiganteHandler
 from interfaces.suneowhois import SuneoWhoisInterface, SuneoWhoisHandler
 
@@ -57,20 +58,24 @@ class Bot(App):
         # set the log handler
         log_handler = 'colorlog'
 
+        # Funcion que llame al back para recuperar los handlers y los interfaces
+
         # register handlers
         handlers = [
             ScansHandler,
+            GeoHandler,
             NobitaHandler,
-            ShizukaV2Handler,
-            SuneoV2Handler,
+            ShizukaHandler,
+            SuneoHandler,
             GiganteHandler,
             SuneoWhoisHandler
         ]
         interfaces = [
             ScansInterface,
+            GeoInterface,
             NobitaInterface,
-            ShizukaV2Interface,
-            SuneoV2Interface,
+            ShizukaInterface,
+            SuneoInterface,
             GiganteInterface,
             SuneoWhoisInterface
         ]
@@ -87,50 +92,39 @@ def main():
     with Bot() as app:
         try:
             app.run()
-            # Access to database
-            g = app.handler.get('startbot', 'connect', setup=True)
-            # Get Scans of api
-            type_bot, scans = g.get_scan()
-            # Bots
-            n = app.handler.get('nobitaIf', 'nobita', setup=True)
-            shi = app.handler.get('shizukaV2If', 'shizukaV2', setup=True)
-            su = app.handler.get('suneoV2If', 'suneoV2', setup=True)
-            gi = app.handler.get('giganteIf', 'gigante', setup=True)
-            sw = app.handler.get('suneowhoisIf', 'suneowhois', setup=True)
-            # TODO: El bot gigante tiene que conectarse con la api para guardar sus resultados
-            #  suneowhois hay que ver como buscar en libreborme con lo obtenido mediante ipwhois
+            # To compare dates
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            list_to_send = []
+            # Access to database
+            c = app.handler.get('connectApiIf', 'connectApi', setup=True)
+            # Get Scans of api
+            type_bot, scans = c.get_scan()
+            # Geo handler
+            geo = app.handler.get('geoIf', 'geo', setup=True)
+
             for s in scans:
                 if s['executionTime'] < now and not s['done']:
                     for host in s['hosts']:
-                        # Get the ip
-                        ip = get_ip(host)
-                        if 'Nobita' in type_bot:
-                            app.log.info("BOT NOBITA")
-                            data = n.pscan(host, ip)
+                        for tp in type_bot:
+                            # Get the ip
+                            ip = get_ip(host)
+                            # Save data geo
+                            data = geo.get_geo(ip, host)
+                            list_to_send.append(data)
+                            # Launch bot scan
+                            app.log.info("BOT " + tp)
+                            b = app.handler.get(tp + "If", tp, setup=True)
+                            data = b.bot_scan(host, ip)
                             app.log.info("Scanning completed")
-                            g.send_nobita(data)
-                        if 'Shizuka' in type_bot:
-                            app.log.info("BOT SHIZUKA")
-                            data = shi.get_domain(host, ip)
-                            app.log.info("Scanning completed")
-                            g.send_shizuka(data)
-                        if 'Suneo' in type_bot:
-                            app.log.info("BOT SUNEO")
-                            data = su.get_cms(host, ip)
-                            app.log.info("Scanning completed")
-                            g.send_suneo(data)
-                        if 'Gigante' in type_bot:
-                            app.log.info("BOT GIGANTE")
-                            data = gi.check_ssh(host)
-                            app.log.info("Scanning completed")
-                        if 'SuneoWhois' in type_bot:
-                            sw.get_target(host)
-                            pass
-                    # Update done field in bots collection
+                            list_to_send.append(data)
+
+                    # Send data to api
+                    c.send_data(data=list_to_send, id=s['id'], domain=host)
                     data = s['id']
-                    g.update_done(data)
-                if s['done']:
+                    # Update done field in bots collection
+                    # c.update_done(data)
+
+                elif s['done']:
                     app.log.info("The scan already done")
 
         except AssertionError as e:

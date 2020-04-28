@@ -22,8 +22,8 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>City</td>
-                    <td v-if="geo.city">{{ geo.city }}</td>
+                    <td>Continent</td>
+                    <td v-if="geo.continent">{{ geo.continent }}</td>
                     <td v-else>--</td>
                   </tr>
                   <tr>
@@ -33,22 +33,7 @@
                   </tr>
                   <tr>
                     <td>Organization</td>
-                    <td v-if="geo.org">{{ geo.org }}</td>
-                    <td v-else>--</td>
-                  </tr>
-                  <tr>
-                    <td>ISP</td>
-                    <td v-if="geo.isp">{{ geo.isp }}</td>
-                    <td v-else>--</td>
-                  </tr>
-                  <tr>
-                    <td>Region Name</td>
-                    <td v-if="geo.region_name">{{ geo.region_name }}</td>
-                    <td v-else>--</td>
-                  </tr>
-                  <tr>
-                    <td>ZIP</td>
-                    <td v-if="geo.zip">{{ geo.zip }}</td>
+                    <td v-if="geo.organization">{{ geo.organization }}</td>
                     <td v-else>--</td>
                   </tr>
                 </tbody>
@@ -92,9 +77,7 @@
                       class="suneo-tech-item"
                       v-for="(tech, index) in suneo.technologies"
                       :key="index"
-                    >
-                      {{ tech }}
-                    </div>
+                    >{{ tech }}</div>
                   </div>
                   <div v-else>--</div>
                 </div>
@@ -145,7 +128,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker,
+    LMarker
   },
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -160,7 +143,7 @@ export default {
     gigante: {},
     geo: {},
     listNobita: [],
-    aux: [],
+    aux: []
   }),
 
   created() {
@@ -175,19 +158,19 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ scan: "scans/oneScan" }),
+    ...mapGetters({ scan: "scans/oneScan" })
   },
 
   methods: {
     initialize() {
-      this.scan.forEach((e) => {
+      this.scan.forEach(e => {
         if (e.type === "nobita") {
-          e.data.forEach((i) => {
+          e.data.forEach(i => {
             this.nobita.push(i);
           });
         }
         if (e.type === "shizuka") {
-          e.data.forEach((i) => {
+          e.data.forEach(i => {
             this.shizuka.push(i.domain);
           });
         }
@@ -214,9 +197,9 @@ export default {
     },
 
     deleteDuplicates(array) {
-      const uniquePorts = Array.from(new Set(array.map((a) => a.port))).map(
-        (port) => {
-          return array.find((a) => a.port === port);
+      const uniquePorts = Array.from(new Set(array.map(a => a.port))).map(
+        port => {
+          return array.find(a => a.port === port);
         }
       );
       return uniquePorts;
@@ -227,8 +210,8 @@ export default {
         this.center = [lat, lon];
         this.markerLatLng = [lat, lon];
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
