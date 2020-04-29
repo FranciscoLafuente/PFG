@@ -115,7 +115,7 @@ def add_scan(id):
     if not scan_name or not scan_bot or not scan_hosts:
         return jsonify(msg.MISSING_PARAMETER), 400
     # Create scan
-    id_bot = views.BotManagement().get_id(name=scan_bot)
+    id_bot = views.MyBotsManagement().get_id(name=scan_bot)
     scan_id = views.ScanManagement().create(name=scan_name, hosts=scan_hosts, bot=ObjectId(id_bot),
                                             execution_time=scan_executiontime)
     if not scan_id:
@@ -132,7 +132,7 @@ def edit_bot(scan_id):
         return jsonify(msg.MISSING_JSON), 400
     scan_bot = request.json.get('bot', None)
     # Get bot id and change it on scan
-    bot_id = views.BotManagement().get_id(name=scan_bot)
+    bot_id = views.MyBotsManagement().get_id(name=scan_bot)
     views.ScanManagement().cahnge_bot(id=scan_id, bot=bot_id)
     return jsonify(msg.SUCCESS), 200
 

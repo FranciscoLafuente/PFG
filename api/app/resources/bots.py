@@ -14,7 +14,7 @@ from pprint import pprint
 @fresh_jwt_required
 def get_bots():
     current_user = get_jwt_identity()
-    list_bots = views.BotManagement().get_bots(email=current_user)
+    list_bots = views.MyBotsManagement().get_bots(email=current_user)
 
     return jsonify(list_bots), 200
 
@@ -33,7 +33,7 @@ def create_bots():
     if not bot_name or not bot_ip or not bot_type:
         return jsonify(msg.MISSING_PARAMETER), 400
 
-    bot = views.BotManagement().create(name=bot_name, email=current_user, ip=bot_ip, type=bot_type)
+    bot = views.MyBotsManagement().create(name=bot_name, email=current_user, ip=bot_ip, type=bot_type)
     if not bot:
         return jsonify(msg.ALREADY_USE), 400
 
@@ -44,7 +44,7 @@ def create_bots():
 @fresh_jwt_required
 def generate_token_bot(id_bot):
     token_bot = create_access_token(identity=id_bot, expires_delta=False)
-    views.BotManagement().add_token(id=id_bot, token=token_bot)
+    views.MyBotsManagement().add_token(id=id_bot, token=token_bot)
 
     return jsonify(token_bot), 200
 
@@ -53,7 +53,7 @@ def generate_token_bot(id_bot):
 @fresh_jwt_required
 def renew_token_bot(id_bot):
     token_bot = create_access_token(identity=id_bot, expires_delta=False)
-    views.BotManagement().add_token(id=id_bot, token=token_bot)
+    views.MyBotsManagement().add_token(id=id_bot, token=token_bot)
 
     return jsonify(token_bot), 200
 
@@ -62,7 +62,7 @@ def renew_token_bot(id_bot):
 @fresh_jwt_required
 def delete_bot(id_bot):
     if id_bot:
-        views.BotManagement().delete(id=id_bot)
+        views.MyBotsManagement().delete(id=id_bot)
         return jsonify(msg.SUCCESS), 200
     return jsonify(msg.NO_DATA), 404
 
@@ -71,7 +71,7 @@ def delete_bot(id_bot):
 
 @resources.route('/bots/tokens', methods=['GET'])
 def get_token_bots():
-    bots = views.BotManagement().get_all_bots()
+    bots = views.MyBotsManagement().get_all_bots()
     return jsonify(bots)
 
 
@@ -81,7 +81,7 @@ def login_bot():
     bot_ip = request.remote_addr
     bot_id = get_jwt_identity()
     # Search if the bot exists in database
-    type_bot = views.BotManagement().search_bot(id=bot_id, ip=bot_ip)
+    type_bot = views.MyBotsManagement().search_bot(id=bot_id, ip=bot_ip)
     if not type_bot:
         return jsonify(msg.UNREGISTERED), 400
 

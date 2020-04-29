@@ -20,9 +20,39 @@
                   <h3 class="text-left">{{ item.bot }}</h3>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in item.results" :key="index">
-                    <td>{{ item }}</td>
+                  <tr v-if="item.bot === 'geo'">
+                    <td v-for="(element, index) in item.results" :key="index">
+                      <div v-for="(e, i) in element" :key="i">
+                        <span class="subtitle-2">{{ i }}:&emsp;</span>
+                        <span>{{ e }}</span>
+                      </div>
+                    </td>
                   </tr>
+                  <div v-if="item.bot === 'nobita'">
+                    <div v-for="(element, index) in item.results" :key="index">
+                      <div v-for="(e, i) in element" :key="i">
+                        <tr>
+                          <td class="subtitle-2">{{ i }}:</td>
+                          <td>{{ e }}</td>
+                        </tr>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-if="item.bot === 'shizuka'">
+                    <tr v-for="(element, index) in item.results" :key="index">
+                      <span class="body-2">{{ element }}</span>
+                    </tr>
+                  </div>
+                  <div v-if="item.bot === 'suneo'">
+                    <div v-for="(element, index) in item.results" :key="index">
+                      <div v-for="(e, i) in element" :key="i">
+                        <tr>
+                          <td class="subtitle-2">{{ i }}:</td>
+                          <td>{{ e }}</td>
+                        </tr>
+                      </div>
+                    </div>
+                  </div>
                 </tbody>
               </template>
             </v-simple-table>
@@ -69,8 +99,7 @@ export default {
       domain: this.domain,
       num: num
     };
-    this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, params).then(() => {});
-    this.initialize();
+    this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, params);
   },
 
   computed: {
@@ -78,13 +107,7 @@ export default {
   },
 
   methods: {
-    initialize() {
-      console.log("Initialize in ViewScan -scan-", this.scan);
-
-      Array.from(this.scan).forEach(e => {
-        console.log("Inside forEach e", e);
-      });
-    },
+    initialize() {},
 
     loadLocation(lat, lon) {
       if (lat !== undefined || lon !== undefined) {

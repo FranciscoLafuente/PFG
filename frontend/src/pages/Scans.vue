@@ -10,7 +10,12 @@
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editScan(item)">create</v-icon>
         <v-icon small class="mr-2" @click="renewScan(item)">autorenew</v-icon>
-        <v-icon small class="mr-2" @click="openScan(item)">visibility</v-icon>
+        <v-icon
+          small
+          class="mr-2"
+          @click="openScan(item)"
+          :disabled="item.done === false"
+        >visibility</v-icon>
         <v-icon small @click="deleteScan(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
@@ -24,9 +29,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogEdit = false"
-            >Cancel</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="dialogEdit = false">Cancel</v-btn>
           <v-btn color="blue darken-1" text @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -48,7 +51,7 @@ import {
   SCAN_RELUNCH,
   SCAN_DELETE,
   FETCH_BOTS,
-  SCAN_EDIT,
+  SCAN_EDIT
 } from "../store/actions.type";
 import dialogMessage from "../components/DialogMessage";
 import {
@@ -57,7 +60,7 @@ import {
   RELUNCH_TEXT,
   RENAME_TITLE,
   RENAME_ICON,
-  RENAME_TEXT,
+  RENAME_TEXT
 } from "../common/dialogMsg";
 
 export default {
@@ -71,17 +74,17 @@ export default {
         text: "Name",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "name"
       },
       { text: "Date", value: "created" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     newBot: "",
     id_project: "",
     select_scan: "",
     msg_title: "",
     msg_icon: "",
-    msg_text: "",
+    msg_text: ""
   }),
 
   mounted() {
@@ -91,7 +94,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ scans: "scans/scans", bots: "bots/name" }),
+    ...mapGetters({ scans: "scans/scans", bots: "bots/name" })
   },
 
   methods: {
@@ -121,7 +124,7 @@ export default {
         this.$store.dispatch(`scans/${SCAN_DELETE}`, {
           id_project: this.id_project,
           id_scan: id_scan,
-          index: this.scans.indexOf(item),
+          index: this.scans.indexOf(item)
         });
       }
     },
@@ -131,8 +134,8 @@ export default {
       let params = {
         id: this.select_scan,
         name: {
-          bot: this.newBot,
-        },
+          bot: this.newBot
+        }
       };
       this.$store.dispatch(`scans/${SCAN_EDIT}`, params).then(() => {
         this.msg_title = RENAME_TITLE;
@@ -140,8 +143,8 @@ export default {
         this.msg_text = RENAME_TEXT;
         this.dialogMsg = true;
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

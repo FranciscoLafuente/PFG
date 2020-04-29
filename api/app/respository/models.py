@@ -36,7 +36,7 @@ class ScansData(Document):
     created = DateTimeField(default=datetime.datetime.utcnow)
 
 
-class Bot(Document):
+class MyBots(Document):
     name = StringField(required=True, unique=True)
     email = EmailField(required=True)
     ip = StringField(required=True)

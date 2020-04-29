@@ -66,6 +66,23 @@ const routes = [{
         },
     },
     {
+        path: "/uploadBot",
+        name: "upload_bot",
+        component: () =>
+            import ( /* webpackChunkName: "Upload Bot" */ "../pages/UploadBot.vue"),
+        meta: {
+            Auth: true,
+            title: "Upload Bot",
+        },
+        beforeEnter: (to, from, next) => {
+            if (!window.localStorage.getItem("access_token")) {
+                next(false);
+            } else {
+                next();
+            }
+        },
+    },
+    {
         path: "/myproject=:id/scan=:id_scan",
         name: "info-scan",
         component: () =>

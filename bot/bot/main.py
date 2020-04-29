@@ -94,7 +94,6 @@ def main():
             app.run()
             # To compare dates
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            list_to_send = []
             # Access to database
             c = app.handler.get('connectApiIf', 'connectApi', setup=True)
             # Get Scans of api
@@ -103,14 +102,15 @@ def main():
             geo = app.handler.get('geoIf', 'geo', setup=True)
 
             for s in scans:
+                list_to_send = []
                 if s['executionTime'] < now and not s['done']:
                     for host in s['hosts']:
+                        # Get the ip
+                        ip = get_ip(host)
+                        # Save data geo
+                        data = geo.get_geo(ip, host)
+                        list_to_send.append(data)
                         for tp in type_bot:
-                            # Get the ip
-                            ip = get_ip(host)
-                            # Save data geo
-                            data = geo.get_geo(ip, host)
-                            list_to_send.append(data)
                             # Launch bot scan
                             app.log.info("BOT " + tp)
                             b = app.handler.get(tp + "If", tp, setup=True)
@@ -122,7 +122,7 @@ def main():
                     c.send_data(data=list_to_send, id=s['id'], domain=host)
                     data = s['id']
                     # Update done field in bots collection
-                    # c.update_done(data)
+                    c.update_done(data)
 
                 elif s['done']:
                     app.log.info("The scan already done")

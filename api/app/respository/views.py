@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Project, Scan, ScansData, Bot, Nobita, Shizuka, Suneo, Gigante, GeoLocation
+from .models import User, Project, Scan, ScansData, MyBots, Nobita, Shizuka, Suneo, Gigante, GeoLocation
 import json
 from bson import ObjectId
 import datetime
@@ -105,7 +105,8 @@ class ScanManagement:
     def get_scan(self, **kwargs):
         for s in Scan.objects(id=kwargs['id']):
             return json.loads(JSONEncoder().encode(
-                dict({'id': s.id, 'name': s.name, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
+                dict({'id': s.id, 'name': s.name, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S"),
+                      'done': s.done})
             ))
 
     def change_done(self, **kwargs):
@@ -176,10 +177,10 @@ class ScansDataManagement:
             print('Exception', e)
 
 
-class BotManagement:
+class MyBotsManagement:
 
     def create(self, **kwargs):
-        b = Bot(name=kwargs['name'], email=kwargs['email'], ip=kwargs['ip'], type=kwargs['type'])
+        b = MyBots(name=kwargs['name'], email=kwargs['email'], ip=kwargs['ip'], type=kwargs['type'])
         try:
             b.save()
             return json.loads(JSONEncoder().encode(
@@ -189,12 +190,12 @@ class BotManagement:
             return False
 
     def get_id(self, **kwargs):
-        for b in Bot.objects(name=kwargs['name']):
+        for b in MyBots.objects(name=kwargs['name']):
             return b.id
 
     def get_bots(self, **kwargs):
         list_bots = []
-        for b in Bot.objects(email=kwargs['email']):
+        for b in MyBots.objects(email=kwargs['email']):
             list_bots.append(
                 json.loads(JSONEncoder().encode(
                     dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
@@ -203,7 +204,7 @@ class BotManagement:
 
     def get_all_bots(self):
         list_bots = []
-        for b in Bot.objects:
+        for b in MyBots.objects:
             list_bots.append(
                 json.loads(JSONEncoder().encode(
                     dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
@@ -211,14 +212,14 @@ class BotManagement:
         return list_bots
 
     def add_token(self, **kwargs):
-        for b in Bot.objects(id=kwargs['id']):
-            Bot.objects(id=b.id).update(set__token=kwargs['token'])
+        for b in MyBots.objects(id=kwargs['id']):
+            MyBots.objects(id=b.id).update(set__token=kwargs['token'])
 
     def delete(self, **kwargs):
-        Bot.objects(id=kwargs['id']).delete()
+        MyBots.objects(id=kwargs['id']).delete()
 
     def search_bot(self, **kwargs):
-        for b in Bot.objects(id=kwargs['id'], ip=kwargs['ip']):
+        for b in MyBots.objects(id=kwargs['id'], ip=kwargs['ip']):
             return b.type
 
 

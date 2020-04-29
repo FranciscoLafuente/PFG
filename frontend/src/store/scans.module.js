@@ -7,7 +7,7 @@ import {
     FETCH_END_GEO,
     ONE_SCAN,
     SAVE_TIMELINE,
-    FULL_SCAN
+    FULL_SCAN,
 } from "./mutations.type";
 import {
     FETCH_SCANS,
@@ -19,7 +19,7 @@ import {
     ONE_SCAN_INFO,
     SCAN_EDIT,
     FETCH_TIMELINE,
-    SAVE_FULL_SCAN
+    SAVE_FULL_SCAN,
 } from "./actions.type";
 
 const state = {
@@ -48,7 +48,8 @@ const actions = {
     },
     async [FETCH_TIMELINE]({ commit }, params) {
         commit(FETCH_START);
-        return ScanService.getTimeLine(params.id_scan, params.domain).then(r => {
+        return ScanService.getTimeLine(params.id_scan, params.domain)
+            .then((r) => {
                 commit(SAVE_TIMELINE, r.data);
             })
             .catch((error) => {
@@ -72,16 +73,21 @@ const actions = {
         });
     },
     async [ONE_SCAN_INFO]({ commit }, params) {
-        return ScanService.getResult(params.id_scan, params.domain, params.num).then(res => {
+        return ScanService.getResult(
+            params.id_scan,
+            params.domain,
+            params.num
+        ).then((res) => {
             let scan_list = [];
-            res.data['results'].forEach(e => {
-                return ScanService.getBotInfo(Object.keys(e), Object.values(e)).then(r => {
-                    console.log("IN SCANS MODULE", r.data);
-                    scan_list.push(r.data)
-                })
-            })
-            commit(ONE_SCAN, scan_list)
-        })
+            res.data["results"].forEach((e) => {
+                return ScanService.getBotInfo(Object.keys(e), Object.values(e)).then(
+                    (r) => {
+                        scan_list.push(r.data);
+                    }
+                );
+            });
+            commit(ONE_SCAN, scan_list);
+        });
     },
     [SCAN_EDIT](context, params) {
         return ScanService.renameBot(params.id, params.name);
@@ -91,16 +97,16 @@ const actions = {
     },
     [INFO_SAVE](context, data) {
         context.commit(FETCH_START);
-        data.forEach(element => {
-            let id_geo = element.results[0]['geo']
-            return ScanService.getBotInfo('geo', id_geo).then(geo => {
-                context.commit(FETCH_END_GEO, geo.data['results'][0]);
-            })
+        data.forEach((element) => {
+            let id_geo = element.results[0]["geo"];
+            return ScanService.getBotInfo("geo", id_geo).then((geo) => {
+                context.commit(FETCH_END_GEO, geo.data["results"][0]);
+            });
         });
     },
     [SAVE_FULL_SCAN](context, scan) {
-        context.commit(FULL_SCAN, scan)
-    }
+        context.commit(FULL_SCAN, scan);
+    },
 };
 
 const mutations = {
@@ -149,7 +155,7 @@ const getters = {
     },
     oneScan(state) {
         return state.oneScan;
-    }
+    },
 };
 
 export default {
