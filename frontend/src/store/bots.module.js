@@ -6,6 +6,7 @@ import {
     BOT_DELETE,
     BOT_TOKEN,
     TOKEN_RELUNCH,
+    BOT_UPLOAD,
 } from "./actions.type";
 
 const state = {
@@ -45,6 +46,9 @@ const actions = {
     },
     [TOKEN_RELUNCH](context, id) {
         return BotService.renewToken(id);
+    },
+    [BOT_UPLOAD](context, params) {
+        return BotService.addBot(params.name, params.file);
     },
 };
 

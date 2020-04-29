@@ -11,7 +11,7 @@
           <router-link to="myproject">My Projects</router-link>
         </v-btn>
         <v-btn color="blue darken-1" text>
-          <router-link to="bots">Bots</router-link>
+          <router-link to="bots">My Bots</router-link>
         </v-btn>
         <v-btn icon>
           <router-link to="uploadBot">

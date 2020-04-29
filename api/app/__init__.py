@@ -9,12 +9,16 @@ mongo = PyMongo()
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 mail = Mail()
+UPLOAD_FOLDER = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
+ALLOWED_EXTENSIONS = {'py'}
 
 
 def create_app(config_name):
     app = Flask(__name__)
     # Setup the Flask-JWT-Extended extension
     app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
     jwt = JWTManager(app)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)

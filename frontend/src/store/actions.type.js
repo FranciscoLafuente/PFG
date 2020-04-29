@@ -14,6 +14,7 @@ export const BOT_CREATE = "botCreate";
 export const BOT_DELETE = "botDelete";
 export const BOT_TOKEN = "botToken";
 export const TOKEN_RELUNCH = "tokenRelunch";
+export const BOT_UPLOAD = "botUpload";
 // SCAN
 export const FETCH_SCANS = "fetchScans";
 export const FETCH_INFO = "fetchInfo";
@@ -24,4 +25,4 @@ export const SCAN_RELUNCH = "scanRelunch";
 export const SCAN_DELETE = "scanDelete";
 export const INFO_SAVE = "infoSave";
 export const ONE_SCAN_INFO = "oneScanInfo";
-export const SAVE_FULL_SCAN = "saveFullScan"
+export const SAVE_FULL_SCAN = "saveFullScan";

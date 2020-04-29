@@ -140,7 +140,7 @@ const routes = [{
             import ( /* webpackChunkName: "bots" */ "../pages/Bots.vue"),
         meta: {
             Auth: true,
-            title: "Bots",
+            title: "My Bots",
         },
         beforeEnter: (to, from, next) => {
             if (!window.localStorage.getItem("access_token")) {

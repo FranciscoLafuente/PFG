@@ -2,12 +2,15 @@
 
 from flask import request, jsonify
 from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
+from flask import current_app as app
+from werkzeug.utils import secure_filename
 from . import resources
 from app.respository import views
 from app.respository import generic_model
 import datetime
 from app.static import messages as msg
 from pprint import pprint
+import os
 
 
 @resources.route('/bots', methods=['GET'])
@@ -173,3 +176,16 @@ def save_gigante():
 def update_done(scan_id):
     views.ScanManagement().change_done(id=scan_id, value=True)
     return jsonify(msg.SUCCESS), 200
+
+
+@resources.route('/upload/<name>', methods=['POST'])
+@fresh_jwt_required
+def upload_file(name):
+    if request.data:
+        f = open(app.config['UPLOAD_FOLDER'] + name + ".py", "w+")
+        for line in request.data:
+            f.write(line)
+        f.close()
+        return jsonify(msg.SUCCESS), 200
+    else:
+        return jsonify(msg.NO_DATA), 400

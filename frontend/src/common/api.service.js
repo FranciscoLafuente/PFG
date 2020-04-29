@@ -32,6 +32,12 @@ const ApiService = {
         return Vue.axios.post(`${resource}`, params);
     },
 
+    upload(resource, file) {
+        return Vue.axios.post(`${resource}`, file, {
+            headers: { "Content-Type": "text/x-python" },
+        });
+    },
+
     update(resource, slug, params) {
         return Vue.axios.put(`${resource}/${slug}`, params);
     },
@@ -81,7 +87,7 @@ export const ScanService = {
         return ApiService.get(`scan/${id_scan}`, domain);
     },
     getResult(id_scan, domain, num) {
-        return ApiService.get(`scan/${id_scan}/${domain}`, num)
+        return ApiService.get(`scan/${id_scan}/${domain}`, num);
     },
     create(id, payload) {
         return ApiService.post(`myproject/${id}`, payload);
@@ -112,5 +118,8 @@ export const BotService = {
     },
     renewToken(id) {
         return ApiService.put(`bots/${id}`);
+    },
+    addBot(name, file) {
+        return ApiService.upload(`upload/${name}`, file);
     },
 };

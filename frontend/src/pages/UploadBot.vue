@@ -1,51 +1,75 @@
 <template>
   <v-container>
     <v-card :elevation="9" class="form-card">
-      <form @keypress.enter="login" class="form-data">
-        <div>
+      <form enctype="multipart/form-data" @keypress.enter="upload" class="form-data">
+        <div class="my-3">
           <h1>
-            Login with
+            {{ title }}
             <em>Shodita</em>
           </h1>
         </div>
 
-        <v-text-field
-          v-model="email"
-          :error-messages="emailErrors"
-          label="E-mail"
-          prepend-icon="email"
-          required
-          @input="$v.email.$touch()"
-          @blur="$v.email.$touch()"
-        ></v-text-field>
+        <v-text-field v-model="name" label="Bot name" prepend-icon="adb" required></v-text-field>
 
         <v-file-input
-          :rules="rules"
-          multiple
-          accept=".py"
+          v-model="file"
+          accept="text/x-python"
           placeholder="Pick an field"
-          prepend-icon="adb"
+          prepend-icon="attach_file"
           label="Bot"
         ></v-file-input>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="login">login</v-btn>
-        <div>
-          <router-link :to="{ path: 'forgot' }">Forgot Password?</router-link>
+        <v-btn color="blue darken-1" dark class="mr-4" @click="upload">Upload</v-btn>
+        <div class="description">
+          <h4>Description</h4>
+          <p
+            class="paragraph"
+          >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea numquam, tempore dignissimos sed, repellendus excepturi aliquam aut, sunt natus similique qui. Unde omnis veniam inventore, animi et magni soluta labore!</p>
         </div>
       </form>
     </v-card>
+    <dialogMessage
+      :dialogMsg="dialogMsg"
+      :title="msg_title"
+      :icon="msg_icon"
+      :message="msg_text"
+      @showMsg="dialogMsg = $event"
+    ></dialogMessage>
   </v-container>
 </template>
 
 
 <script>
+import dialogMessage from "../components/DialogMessage";
+import { UPLOAD_TITLE, UPLOAD_ICON, UPLOAD_TEXT } from "../common/dialogMsg";
+import { BOT_UPLOAD } from "../store/actions.type";
+
 export default {
+  components: { dialogMessage },
   data: () => ({
-    rules: [
-      value =>
-        !value || value.size < 2000000 || "File size should be less than 2 MB!"
-    ]
-  })
+    dialogMsg: false,
+    title: "Add your own bot to",
+    name: "",
+    file: {},
+    msg_title: "",
+    msg_icon: "",
+    msg_text: ""
+  }),
+
+  methods: {
+    upload() {
+      let params = {
+        name: this.name,
+        file: this.file
+      };
+      this.$store.dispatch(`bots/${BOT_UPLOAD}`, params).then(() => {
+        this.msg_title = UPLOAD_TITLE;
+        this.msg_icon = UPLOAD_ICON;
+        this.msg_text = UPLOAD_TEXT;
+        this.dialogMsg = true;
+      });
+    }
+  }
 };
 </script>
 
@@ -99,5 +123,14 @@ a:active {
 
 .title-dialog {
   margin: auto;
+}
+
+.description {
+  text-align: left;
+  margin: 2em;
+}
+.paragraph {
+  color: #888;
+  font-size: 14px;
 }
 </style>

@@ -26,3 +26,7 @@ export const RELUNCH_TEXT = "The item has been successfully relaunched";
 // Generic
 export const GENERIC_TITLE = "Error";
 export const GENERIC_ICON = "error_outline";
+// Bot upload
+export const UPLOAD_TITLE = "Upload!";
+export const UPLOAD_ICON = "publish";
+export const UPLOAD_TEXT = "The file has been successfully uploaded";
