@@ -8,7 +8,7 @@ import urllib.request as urllib
 from pprint import pprint
 
 
-class SuneoWhoisInterface(Interface):
+class SuneowhoisInterface(Interface):
     class Meta:
         interface = 'suneowhoisIf'
 
@@ -22,7 +22,7 @@ class SuneoWhoisInterface(Interface):
         pass
 
 
-class SuneoWhoisHandler(SuneoWhoisInterface, Handler, ABC):
+class SuneowhoisHandler(SuneowhoisInterface, Handler, ABC):
     class Meta:
         label = 'suneowhois'
 

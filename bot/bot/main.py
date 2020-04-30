@@ -2,23 +2,22 @@ from cement import App, TestApp, init_defaults, Interface, Handler
 from cement.core.exc import CaughtSignal
 
 from core.exc import BotError
-from interfaces.startbot import ScansInterface, ScansHandler
-from interfaces.geo import GeoInterface, GeoHandler
-from interfaces.nobita import NobitaInterface, NobitaHandler
-from interfaces.shizuka import ShizukaInterface, ShizukaHandler
-from interfaces.suneo import SuneoInterface, SuneoHandler
-from interfaces.gigante import GiganteInterface, GiganteHandler
-from interfaces.suneowhois import SuneoWhoisInterface, SuneoWhoisHandler
 
+from importlib import import_module
 import datetime
+from os import scandir
 import os
 import socket
 
 # configuration defaults
 CONFIG = init_defaults('bot')
+RUTA = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
+hand_list = []
+if_list = []
 
 
 def get_ip(domain):
+    """ get the ip from the domain """
     try:
         ip = socket.gethostbyname(domain)
         return ip
@@ -27,8 +26,38 @@ def get_ip(domain):
         return
 
 
+def ls(ruta=RUTA):
+    """ Get all bots in the interfaces directory """
+    return [arch.name for arch in scandir(ruta) if arch.is_file()]
+
+
+def do_imports():
+    files = ls()
+    for file in files:
+        if '__init__' not in file:
+            s = file.replace('.py', '')
+            upper = s.title()
+            first = 'interfaces.' + s
+            handler = upper + 'Handler'
+            interface = upper + 'Interface'
+            # Dynamic import
+            i = dynamic_import(first, interface)
+            h = dynamic_import(first, handler)
+            # Add to list
+            hand_list.append(h)
+            if_list.append(i)
+
+
+def dynamic_import(abs_module_path, class_name):
+    module_object = import_module(abs_module_path)
+
+    target_class = getattr(module_object, class_name)
+
+    return target_class
+
+
 class Bot(App):
-    """Mi BOT App primary application."""
+    """ Mi BOT App primary application. """
 
     class Meta:
         label = 'bot'
@@ -60,25 +89,9 @@ class Bot(App):
 
         # Funcion que llame al back para recuperar los handlers y los interfaces
 
-        # register handlers
-        handlers = [
-            ScansHandler,
-            GeoHandler,
-            NobitaHandler,
-            ShizukaHandler,
-            SuneoHandler,
-            GiganteHandler,
-            SuneoWhoisHandler
-        ]
-        interfaces = [
-            ScansInterface,
-            GeoInterface,
-            NobitaInterface,
-            ShizukaInterface,
-            SuneoInterface,
-            GiganteInterface,
-            SuneoWhoisInterface
-        ]
+        # Register handlers and interfaces
+        handlers = hand_list
+        interfaces = if_list
 
 
 class BotTest(TestApp, Bot):
@@ -92,15 +105,19 @@ def main():
     with Bot() as app:
         try:
             app.run()
+            do_imports()
+            for e in if_list:
+                app.interface.define(e)
+            for e in hand_list:
+                app.handler.register(e)
             # To compare dates
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # Access to database
-            c = app.handler.get('connectApiIf', 'connectApi', setup=True)
+            c = app.handler.get('manageIf', 'manage', setup=True)
             # Get Scans of api
             type_bot, scans = c.get_scan()
             # Geo handler
             geo = app.handler.get('geoIf', 'geo', setup=True)
-
             for s in scans:
                 list_to_send = []
                 if s['executionTime'] < now and not s['done']:

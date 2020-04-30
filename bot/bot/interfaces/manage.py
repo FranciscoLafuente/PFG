@@ -5,9 +5,9 @@ import jwt
 import base64
 
 
-class ScansInterface(Interface):
+class ManageInterface(Interface):
     class Meta:
-        interface = 'connectApiIf'
+        interface = 'manageIf'
 
     @abstractmethod
     def get_scan(self):
@@ -51,9 +51,9 @@ class ScansInterface(Interface):
         pass
 
 
-class ScansHandler(ScansInterface, Handler, ABC):
+class ManageHandler(ManageInterface, Handler, ABC):
     class Meta:
-        label = 'connectApi'
+        label = 'manage'
 
     def __init__(self, **kw):
         super().__init__(**kw)
