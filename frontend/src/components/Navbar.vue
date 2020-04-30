@@ -8,18 +8,18 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn color="blue darken-1" text>
-          <router-link to="myproject">My Projects</router-link>
+          <router-link to="/myproject">My Projects</router-link>
         </v-btn>
         <v-btn color="blue darken-1" text>
-          <router-link to="bots">My Bots</router-link>
+          <router-link to="/bots">My Bots</router-link>
         </v-btn>
         <v-btn icon>
-          <router-link to="uploadBot">
+          <router-link to="/uploadBot">
             <v-icon>adb</v-icon>
           </router-link>
         </v-btn>
         <v-btn color="blue darken-1" text>
-          <router-link to="signup">Sign up</router-link>
+          <router-link to="/signup">Sign up</router-link>
         </v-btn>
 
         <v-btn icon @click="logout()">

@@ -1,30 +1,25 @@
 <template>
-  <v-row class="container">
-    <v-col class="col-table" cols="7">
-      <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <h2 class="text-left">Scans:</h2>
-          </thead>
-          <tbody>
-            <tr v-for="(s, index) in scans" :key="index">
-              <td class="table-item">
-                <div class="item-ip" @click="redirectUser(index, s.domain)">{{ s.ip }}</div>
-                <div class="item-org">{{ s.organization }}</div>
-                <div class="item-domain">{{ s.domain }}</div>
-                <div class="item-country">{{ s.country }}</div>
-              </td>
-              <td>
-                <v-btn icon large color="blue darken-1" @click="toTimeLine(index, s.domain)">
-                  <v-icon>event</v-icon>
-                </v-btn>
-              </td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
-    </v-col>
-  </v-row>
+  <div class="container">
+    <v-card v-for="(s, index) in scans" :key="index" class="mx-auto" max-width="400">
+      <v-row dense>
+        <v-col cols="9">
+          <v-card-text>
+            <div class="item-ip" @click="redirectUser(index, s.domain)">{{ s.ip }}</div>
+            <div class="item-org">{{ s.organization }}</div>
+            <div class="item-domain">{{ s.domain }}</div>
+            <div class="item-country">{{ s.country }}</div>
+          </v-card-text>
+        </v-col>
+        <v-col cols="3" class="second-col">
+          <v-card-actions>
+            <v-btn icon large color="blue darken-1" @click="toTimeLine(index, s.domain)">
+              <v-icon>event</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-col>
+      </v-row>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -75,8 +70,10 @@ h3 {
   padding: 2em;
 }
 
-.col-map {
-  padding: 1em;
+.second-col {
+  justify-content: center;
+  text-align: center;
+  display: flex;
 }
 
 .col-table {
