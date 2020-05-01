@@ -103,7 +103,7 @@ const routes = [{
         path: "/myproject=:id/scan=:id_scan/host=:ip/:index",
         name: "view_host",
         component: () =>
-            import ( /* webpackChunkName: "View Host" */ "../pages/ViewScan2.vue"),
+            import ( /* webpackChunkName: "View Host" */ "../pages/ViewScan.vue"),
         meta: {
             Auth: true,
             title: "View Host",

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="main-container">
+  <v-container fluid>
     <v-row dense>
       <v-col cols="4">
         <v-card class="mx-auto" max-width="300">
@@ -73,8 +73,8 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  margin: 5em;
+.cards-container {
+  padding: 2em;
 }
 
 .scan-col {
