@@ -19,9 +19,11 @@
           label="Bot"
         ></v-file-input>
 
+        <v-textarea v-model="description" prepend-icon="reorder" label="Bot description"></v-textarea>
+
         <v-btn color="blue darken-1" dark class="mr-4" @click="upload">Upload</v-btn>
         <div class="description">
-          <h4>Description</h4>
+          <h4>How upload</h4>
           <p
             class="paragraph"
           >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea numquam, tempore dignissimos sed, repellendus excepturi aliquam aut, sunt natus similique qui. Unde omnis veniam inventore, animi et magni soluta labore!</p>
@@ -51,6 +53,7 @@ export default {
     title: "Add your own bot to",
     name: "",
     file: {},
+    description: "",
     msg_title: "",
     msg_icon: "",
     msg_text: ""
