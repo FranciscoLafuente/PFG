@@ -1,25 +1,37 @@
 <template>
-  <div class="container">
-    <v-card v-for="(s, index) in scans" :key="index" class="mx-auto" max-width="400">
-      <v-row dense>
-        <v-col cols="9">
-          <v-card-text>
-            <div class="item-ip" @click="redirectUser(index, s.domain)">{{ s.ip }}</div>
-            <div class="item-org">{{ s.organization }}</div>
-            <div class="item-domain">{{ s.domain }}</div>
-            <div class="item-country">{{ s.country }}</div>
-          </v-card-text>
-        </v-col>
-        <v-col cols="3" class="second-col">
-          <v-card-actions>
-            <v-btn icon large color="blue darken-1" @click="toTimeLine(index, s.domain)">
-              <v-icon>event</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-col>
-      </v-row>
-    </v-card>
-  </div>
+  <v-container fluid>
+    <v-row dense>
+      <v-col cols="4">
+        <v-card class="mx-auto" max-width="300">
+          <v-card-title>Description</v-card-title>
+          <v-card-text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia corrupti facilis delectus consectetur cum aliquid ad modi! Optio ipsum velit nam! Atque explicabo exercitationem saepe repellat pariatur odio laborum nulla?</v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="8" class="scan-col">
+        <div class="sub-container">
+          <v-card v-for="(s, index) in scans" :key="index" class="mx-auto" min-width="400">
+            <v-row dense>
+              <v-col cols="9">
+                <v-card-text>
+                  <div class="item-ip" @click="redirectUser(index, s.domain)">{{ s.ip }}</div>
+                  <div class="item-org">{{ s.organization }}</div>
+                  <div class="item-domain">{{ s.domain }}</div>
+                  <div class="item-country">{{ s.country }}</div>
+                </v-card-text>
+              </v-col>
+              <v-col cols="3" class="second-col">
+                <v-card-actions>
+                  <v-btn icon large color="blue darken-1" @click="toTimeLine(index, s.domain)">
+                    <v-icon>event</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -66,8 +78,14 @@ h3 {
   font-family: "Helvetica", sans-serif;
 }
 
-.container {
+.sub-container {
   padding: 2em;
+}
+
+.scan-col {
+  justify-content: start;
+  text-align: start;
+  display: flex;
 }
 
 .second-col {
