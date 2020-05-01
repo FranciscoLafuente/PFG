@@ -1,66 +1,58 @@
 <template>
-  <div class="container-map">
-    <l-map class="map" :zoom="zoom" :center="center">
-      <l-tile-layer :url="url"></l-tile-layer>
-      <l-marker :lat-lng="markerLatLng"></l-marker>
-    </l-map>
-    <v-container class="container-tables">
-      <v-container class="container-header">
-        <h2>
-          <v-icon>public</v-icon>
-          <small class="title-domain">{{ domain }}</small>
-        </h2>
-      </v-container>
-      <v-container>
-        <v-row v-for="(item, i) in scan" :key="i">
-          <v-col cols="6">
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <h3 class="text-left">{{ item.bot }}</h3>
-                </thead>
-                <tbody>
-                  <tr v-if="item.bot === 'geo'">
-                    <td v-for="(element, index) in item.results" :key="index">
-                      <div v-for="(e, i) in element" :key="i">
-                        <span class="subtitle-2">{{ i }}:&emsp;</span>
-                        <span>{{ e }}</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <div v-if="item.bot === 'nobita'">
-                    <div v-for="(element, index) in item.results" :key="index">
-                      <div v-for="(e, i) in element" :key="i">
-                        <tr>
-                          <td class="subtitle-2">{{ i }}:</td>
-                          <td>{{ e }}</td>
-                        </tr>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-if="item.bot === 'shizuka'">
-                    <tr v-for="(element, index) in item.results" :key="index">
-                      <span class="body-2">{{ element }}</span>
-                    </tr>
-                  </div>
-                  <div v-if="item.bot === 'suneo'">
-                    <div v-for="(element, index) in item.results" :key="index">
-                      <div v-for="(e, i) in element" :key="i">
-                        <tr>
-                          <td class="subtitle-2">{{ i }}:</td>
-                          <td>{{ e }}</td>
-                        </tr>
-                      </div>
-                    </div>
-                  </div>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-col>
-        </v-row>
-      </v-container>
+  <v-card class="my-4 mx-auto" max-width="1200">
+    <v-container class="container-map">
+      <l-map class="map" :zoom="zoom" :center="center">
+        <l-tile-layer :url="url"></l-tile-layer>
+        <l-marker :lat-lng="markerLatLng"></l-marker>
+      </l-map>
     </v-container>
-  </div>
+    <v-container class="container-tables">
+      <v-card-title>
+        <v-icon>public</v-icon>
+        <small class="title-domain">{{ domain }}</small>
+      </v-card-title>
+      <v-card-text>
+        <v-card class="my-2" v-for="(item, i) in scan" :key="i">
+          <v-card-title>{{ item.bot }}</v-card-title>
+          <v-card-text class="text-subcard">
+            <div v-if="item.bot === 'geo'">
+              <div v-for="(element, index) in item.results" :key="index">
+                <div v-for="(e, i) in element" :key="i">
+                  <span class="subtitle-2">{{ i }}:&emsp;</span>
+                  <span>{{ e }}</span>
+                </div>
+              </div>
+            </div>
+            <div v-if="item.bot === 'nobita'">
+              <div v-for="(element, index) in item.results" :key="index">
+                <div v-for="(e, i) in element" :key="i">
+                  <div>
+                    <span class="subtitle-2">{{ i }}:</span>
+                    <span>{{ e }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="item.bot === 'shizuka'">
+              <div v-for="(element, index) in item.results" :key="index">
+                <span class="body-2">{{ element }}</span>
+              </div>
+            </div>
+            <div v-if="item.bot === 'suneo'">
+              <div v-for="(element, index) in item.results" :key="index">
+                <div v-for="(e, i) in element" :key="i">
+                  <div>
+                    <span class="subtitle-2">{{ i }}:</span>
+                    <span>{{ e }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-card-text>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -120,11 +112,6 @@ export default {
 </script>
 
 <style>
-h2,
-h3 {
-  font-family: "Helvetica", sans-serif;
-}
-
 .container-map {
   height: 300px;
   width: 100%;
@@ -144,6 +131,10 @@ h3 {
   padding-left: 10px;
   font-weight: 400;
   color: #999;
+}
+
+.text-subcard {
+  text-align: left;
 }
 
 .suneo-tech {
