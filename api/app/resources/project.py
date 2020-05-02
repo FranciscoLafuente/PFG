@@ -42,6 +42,7 @@ def get_info(id_scan):
     for h in hosts:
         scan = views.ScansDataManagement().one_scan(scan=id_scan, domain=h)
         list_response.append(scan)
+        print("LIST RESPONSE", list_response)
     if list_response:
         return jsonify(list_response), 200
     return jsonify(msg.NO_DATA)

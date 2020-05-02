@@ -135,9 +135,16 @@ class ScansDataManagement:
 
     def create(self, **kwargs):
         try:
-            s = ScansData(scan_user=kwargs['scan'], domain=kwargs['domain'])
+            s = ScansData(scan_user=kwargs['scan'])
+            s.domain = kwargs['data']['domain']
+            s.ip = kwargs['data']['ip']
+            s.country = kwargs['data']['country']
+            s.continent = kwargs['data']['continent']
+            s.latitude = kwargs['data']['latitude']
+            s.longitude = kwargs['data']['longitude']
+            s.organization = kwargs['data']['organization']
             s.save()
-            return s.id
+            return json.loads(JSONEncoder().encode({'id': s.id}))
         except Exception as e:
             print("[ScansData]")
             print("Exception", e)
@@ -157,7 +164,9 @@ class ScansDataManagement:
                 list_scans.append(
                     json.loads(JSONEncoder().encode(
                         dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
-                              'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
+                              'created': s.created.strftime("%Y-%m-%d %H:%M:%S"), 'ip': s.ip, 'country': s.country,
+                              'continent': s.continent, 'latitude': s.latitude, 'longitude': s.longitude,
+                              'organization': s.organization})
                     ))
                 )
             return list_scans
@@ -170,7 +179,9 @@ class ScansDataManagement:
             for s in ScansData.objects(scan_user=kwargs['scan'], domain=kwargs['domain']):
                 return json.loads(JSONEncoder().encode(
                     dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
-                          'created': s.created.strftime("%Y-%m-%d %H:%M:%S")})
+                          'created': s.created.strftime("%Y-%m-%d %H:%M:%S"), 'ip': s.ip, 'country': s.country,
+                          'continent': s.continent, 'latitude': s.latitude, 'longitude': s.longitude,
+                          'organization': s.organization})
                 ))
         except Exception as e:
             print(['ScansData'])

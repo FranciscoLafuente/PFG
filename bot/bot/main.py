@@ -126,20 +126,22 @@ def main():
                         ip = get_ip(host)
                         # Save data geo
                         data = geo.get_geo(ip, host)
-                        list_to_send.append(data)
+                        id_db = c.send_geo(data=data, id=s['id'], domain=host)
+                        print("ID***", id_db['id'])
                         for tp in type_bot:
                             # Launch bot scan
                             app.log.info("BOT " + tp)
                             b = app.handler.get(tp + "If", tp, setup=True)
                             data = b.bot_scan(host, ip)
+                            d = dict({tp: data})
                             app.log.info("Scanning completed")
-                            list_to_send.append(data)
+                            list_to_send.append(d)
 
                     # Send data to api
-                    c.send_data(data=list_to_send, id=s['id'], domain=host)
-                    data = s['id']
+                    c.send_data(data=list_to_send, id=id_db['id'])
+                    scan_id = s['id']
                     # Update done field in bots collection
-                    c.update_done(data)
+                    #c.update_done(scan_id)
 
                 elif s['done']:
                     app.log.info("The scan already done")

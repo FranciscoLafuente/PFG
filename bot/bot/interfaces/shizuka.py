@@ -46,7 +46,7 @@ class ShizukaHandler(ShizukaInterface, Handler, ABC):
                 d = d.replace("]", "")
                 self.results.append(d)
 
-        return {'bot': 'shizuka', 'ip': ip, 'domain': target, 'results': self.results}
+        return self.results
 
     def __remove_tags(self, text):
         TAG_RE = re.compile(r'<[^>]+>')

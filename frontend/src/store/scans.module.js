@@ -5,7 +5,6 @@ import {
     FETCH_START,
     FETCH_END,
     FETCH_END_GEO,
-    ONE_SCAN,
     SAVE_TIMELINE,
     FULL_SCAN,
 } from "./mutations.type";
@@ -16,7 +15,6 @@ import {
     SCAN_RELUNCH,
     SCAN_DELETE,
     INFO_SAVE,
-    ONE_SCAN_INFO,
     SCAN_EDIT,
     FETCH_TIMELINE,
     SAVE_FULL_SCAN,
@@ -44,7 +42,8 @@ const actions = {
     },
     async [FETCH_INFO](context, id) {
         const response = await ScanService.getInfo(id);
-        context.dispatch(INFO_SAVE, response.data);
+        context.commit(FULL_SCAN, response.data);
+        //context.dispatch(INFO_SAVE, response.data);
     },
     async [FETCH_TIMELINE]({ commit }, params) {
         commit(FETCH_START);
@@ -72,23 +71,6 @@ const actions = {
             commit(DEL_SCAN, params.index);
         });
     },
-    async [ONE_SCAN_INFO]({ commit }, params) {
-        return ScanService.getResult(
-            params.id_scan,
-            params.domain,
-            params.num
-        ).then((res) => {
-            let scan_list = [];
-            res.data["results"].forEach((e) => {
-                return ScanService.getBotInfo(Object.keys(e), Object.values(e)).then(
-                    (r) => {
-                        scan_list.push(r.data);
-                    }
-                );
-            });
-            commit(ONE_SCAN, scan_list);
-        });
-    },
     [SCAN_EDIT](context, params) {
         return ScanService.renameBot(params.id, params.name);
     },
@@ -97,11 +79,10 @@ const actions = {
     },
     [INFO_SAVE](context, data) {
         context.commit(FETCH_START);
+        context.commit(FULL_SCAN, data);
         data.forEach((element) => {
-            let id_geo = element.results[0]["geo"];
-            return ScanService.getBotInfo("geo", id_geo).then((geo) => {
-                context.commit(FETCH_END_GEO, geo.data["results"][0]);
-            });
+            let geo = element.results[0]["geo"];
+            context.commit(FETCH_END_GEO, geo["results"][0]);
         });
     },
     [SAVE_FULL_SCAN](context, scan) {
@@ -135,9 +116,6 @@ const mutations = {
     [FULL_SCAN](state, scan) {
         state.fullScan = scan;
     },
-    [ONE_SCAN](state, scan) {
-        state.oneScan = scan;
-    },
 };
 
 const getters = {
@@ -154,7 +132,7 @@ const getters = {
         return state.fullScan;
     },
     oneScan(state) {
-        return state.oneScan;
+        return state.fullScan[0]["results"];
     },
 };
 

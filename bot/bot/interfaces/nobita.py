@@ -49,7 +49,7 @@ class NobitaHandler(NobitaInterface, Handler, ABC):
         for thread in thread_list:
             thread.join()
 
-        return {'bot': 'nobita', 'ip': ip_address, 'domain': domain, 'results': self.results}
+        return self.results
 
     def connect(self, ip_address, port):
         target = ip_address

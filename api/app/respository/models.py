@@ -29,9 +29,8 @@ class Scan(Document):
     done = BooleanField(default=False, required=True)
 
 
-class ScansData(Document):
+class ScansData(DynamicDocument):
     scan_user = ObjectIdField(required=True)
-    domain = StringField(required=True)
     results = ListField()
     created = DateTimeField(default=datetime.datetime.utcnow)
 

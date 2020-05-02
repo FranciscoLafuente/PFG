@@ -115,6 +115,8 @@ export default {
 
     openScan(item) {
       let id_scan = item.id;
+      console.log("Scan ID", id_scan);
+
       this.$router.push(`/myproject=${this.id_project}/scan=${id_scan}`);
     },
 

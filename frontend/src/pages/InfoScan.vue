@@ -53,7 +53,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ scans: "scans/geoInfo" })
+    ...mapGetters({ scans: "scans/fullScan" })
   },
 
   methods: {

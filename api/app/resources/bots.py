@@ -104,23 +104,27 @@ def scans_by_bot():
     return jsonify(bot_scans), 200
 
 
-@resources.route('/bots/data/<id_scan>/<domain>', methods=['POST'])
+@resources.route('/bots/geo/<id_scan>', methods=['POST'])
 @fresh_jwt_required
-def save_data(id_scan, domain):
+def save_geo(id_scan):
+    data = request.json
+    if not data:
+        return jsonify(msg.NO_DATA), 400
+    db_id = views.ScansDataManagement().create(scan=id_scan, data=data)
+    return jsonify(db_id), 200
+
+
+@resources.route('/bots/data/<id_scan>', methods=['POST'])
+@fresh_jwt_required
+def save_data(id_scan):
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
 
-    db_id = views.ScansDataManagement().create(scan=id_scan, domain=domain)
     for item in data:
         if not item:
             return jsonify(msg.SUCCESS), 200
-        bot_name = item['bot']
-        id = generic_model.Generic().create(name=bot_name, data=item)
-        if id:
-            # Save data in a dict
-            scan = {bot_name: id}
-            views.ScansDataManagement().store_results(id=db_id, list=scan)
+        views.ScansDataManagement().store_results(id=id_scan, list=item)
 
     return jsonify(msg.SUCCESS), 200
 

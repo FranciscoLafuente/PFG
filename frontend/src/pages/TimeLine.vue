@@ -62,6 +62,7 @@ export default {
 
   methods: {
     redirectUser(item, i) {
+      // TODO: AQUI NO HAY QUE HACER ESTA LLAMADA, SIMPLEMENTE SE REDIRECCIONA Y SE LLAMA EN EL NUEVO CONPONENTE
       this.$store.dispatch(`scans/${SAVE_FULL_SCAN}`, item.results);
 
       this.$router.push(

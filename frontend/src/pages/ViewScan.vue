@@ -12,22 +12,23 @@
         <small class="title-domain">{{ domain }}</small>
       </v-card-title>
       <v-card-text>
-        <v-card class="my-2" v-for="(item, i) in scan" :key="i">
-          <v-card-title>{{ item.bot }}</v-card-title>
-          <v-card-text class="text-subcard">
-            <div v-if="item.bot === 'geo'">
-              <div v-for="(element, index) in item.results" :key="index">
-                <div v-for="(e, i) in element" :key="i">
-                  <span class="subtitle-2">{{ i }}:&emsp;</span>
-                  <span>{{ e }}</span>
-                </div>
-              </div>
+        <v-card>
+          <v-card-title>Geo</v-card-title>
+          <v-card-text>
+            <div class="text-subcard" v-for="(element, index) in geoFormat" :key="index">
+              <span class="subtitle-2">{{ index }}:&nbsp;&nbsp;</span>
+              <span>{{ element }}</span>
             </div>
+          </v-card-text>
+        </v-card>
+        <v-card class="my-2" v-for="(item, i) in scansFormat" :key="i">
+          <v-card-title>{{ item.bot.charAt(0).toUpperCase() + item.bot.substr(1) }}</v-card-title>
+          <v-card-text class="text-subcard">
             <div v-if="item.bot === 'nobita'">
               <div v-for="(element, index) in item.results" :key="index">
                 <div v-for="(e, i) in element" :key="i">
                   <div>
-                    <span class="subtitle-2">{{ i }}:</span>
+                    <span class="subtitle-2">{{ i }}:&nbsp;&nbsp;</span>
                     <span>{{ e }}</span>
                   </div>
                 </div>
@@ -42,7 +43,7 @@
               <div v-for="(element, index) in item.results" :key="index">
                 <div v-for="(e, i) in element" :key="i">
                   <div>
-                    <span class="subtitle-2">{{ i }}:</span>
+                    <span class="subtitle-2">{{ i }}:&nbsp;&nbsp;</span>
                     <span>{{ e }}</span>
                   </div>
                 </div>
@@ -58,7 +59,7 @@
 <script>
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import { mapGetters } from "vuex";
-import { ONE_SCAN_INFO } from "../store/actions.type";
+import { FETCH_INFO } from "../store/actions.type";
 
 export default {
   components: {
@@ -73,33 +74,48 @@ export default {
     markerLatLng: [40.4168, -3.70379],
     domain: String,
     ip: String,
-    nobita: [],
-    shizuka: [],
-    suneo: {},
-    gigante: {},
-    geo: {},
-    listNobita: [],
-    aux: []
+    scansFormat: [],
+    geoFormat: {}
   }),
 
   created() {
     let id_scan = this.$route.params.id_scan.toString();
     this.domain = this.$route.params.ip.toString();
-    let num = this.$route.params.index.toString();
-    let params = {
-      id_scan: id_scan,
-      domain: this.domain,
-      num: num
-    };
-    this.$store.dispatch(`scans/${ONE_SCAN_INFO}`, params);
+    //let num = this.$route.params.index.toString();
+
+    this.$store.dispatch(`scans/${FETCH_INFO}`, id_scan).then(() => {
+      this.initialize();
+    });
   },
 
   computed: {
-    ...mapGetters({ scan: "scans/oneScan" })
+    ...mapGetters({
+      scan: "scans/oneScan",
+      geo: "scans/fullScan"
+    })
   },
 
   methods: {
-    initialize() {},
+    initialize() {
+      this.scan.forEach(e => {
+        let s = {
+          bot: Object.keys(e)[0],
+          results: Object.values(e)[0]
+        };
+        this.scansFormat.push(s);
+      });
+      this.geo.forEach(e => {
+        let dict = {
+          continent: e["continent"],
+          country: e["country"],
+          organization: e["organization"]
+        };
+        this.geoFormat = dict;
+        console.log("GEO FORMAT", this.geoFormat);
+
+        this.loadLocation(e[("latitude", e["longitude"])]);
+      });
+    },
 
     loadLocation(lat, lon) {
       if (lat !== undefined || lon !== undefined) {

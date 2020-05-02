@@ -43,7 +43,7 @@ class SuneoHandler(SuneoInterface, Handler, ABC):
                 technologies.append(e)
         # Technologies without duplicates elements
         r = dict({'cms': cms, 'technologies': list(set(technologies))})
-        return json.loads(JSONEncoder().encode({'bot': 'suneo', 'ip': ip, 'domain': domain, 'results': [r]}))
+        return [r]
 
 
 class JSONEncoder(json.JSONEncoder):

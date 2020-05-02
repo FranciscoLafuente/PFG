@@ -42,6 +42,14 @@ class ManageInterface(Interface):
         """
 
     @abstractmethod
+    def send_geo(self, **kwargs):
+        """
+
+        :param kwargs:
+        :return:
+        """
+
+    @abstractmethod
     def update_done(self, scan_id):
         """
 
@@ -88,11 +96,21 @@ class ManageHandler(ManageInterface, Handler, ABC):
                                                                                               + self.access_token})
         return response.json()
 
+    def send_geo(self, **kwargs):
+        self.app.log.info("Sending geo info to database...")
+        try:
+            response = requests.post("http://localhost:5000/bots/geo/" + kwargs['id'],
+                                     json=kwargs['data'], headers={'Authorization': 'Bearer ' + self.access_token})
+            self.app.log.info("Save in database")
+            return response.json()
+        except Exception as e:
+            self.app.log.error("Exception when sending data:", e)
+
     def send_data(self, **kwargs):
         self.app.log.info("Sending data to database...")
         try:
-            response = requests.post("http://localhost:5000/bots/data/" + kwargs['id'] + "/" + kwargs['domain'],
-                                     json=kwargs['data'], headers={'Authorization': 'Bearer ' + self.access_token})
+            response = requests.post("http://localhost:5000/bots/data/" + kwargs['id'], json=kwargs['data'],
+                                     headers={'Authorization': 'Bearer ' + self.access_token})
             self.app.log.info("Backend response: " + response.json()['msg'])
         except Exception as e:
             self.app.log.error("Exception when sending data:", e)
