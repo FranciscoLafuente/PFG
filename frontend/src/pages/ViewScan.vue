@@ -111,8 +111,6 @@ export default {
           organization: e["organization"]
         };
         this.geoFormat = dict;
-        console.log("GEO FORMAT", this.geoFormat);
-
         this.loadLocation(e[("latitude", e["longitude"])]);
       });
     },
