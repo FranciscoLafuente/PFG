@@ -4,6 +4,7 @@ import json
 from bson import ObjectId
 import datetime
 from mongoengine import errors
+from mongoengine.queryset.visitor import Q
 
 
 class UserManagement:
@@ -149,6 +150,19 @@ class ScansDataManagement:
             print("[ScansData]")
             print("Exception", e)
 
+    def get_by_id(self, **kwargs):
+        try:
+            for s in ScansData.objects(id=kwargs['id']):
+                return json.loads(JSONEncoder().encode(
+                    dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
+                          'created': s.created.strftime("%Y-%m-%d %H:%M:%S"), 'ip': s.ip, 'country': s.country,
+                          'continent': s.continent, 'latitude': s.latitude, 'longitude': s.longitude,
+                          'organization': s.organization})
+                ))
+        except Exception as e:
+            print("[ScansData]")
+            print("Exception", e)
+
     def store_results(self, **kwargs):
         try:
             for s in ScansData.objects(id=kwargs['id']):
@@ -183,6 +197,27 @@ class ScansDataManagement:
                           'continent': s.continent, 'latitude': s.latitude, 'longitude': s.longitude,
                           'organization': s.organization})
                 ))
+        except Exception as e:
+            print(['ScansData'])
+            print('Exception', e)
+
+    def search(self, **kwargs):
+        #print(kwargs['searchText'])
+        list_scans = []
+        try:
+            for s in ScansData.objects(
+                    Q(continent=kwargs['searchText']) | Q(country=kwargs['searchText'])
+                    | Q(organization=kwargs['searchText']) | Q(domain=kwargs['searchText'])
+            ):
+                list_scans.append(
+                    json.loads(JSONEncoder().encode(
+                        dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
+                              'created': s.created.strftime("%Y-%m-%d %H:%M:%S"), 'ip': s.ip, 'country': s.country,
+                              'continent': s.continent, 'latitude': s.latitude, 'longitude': s.longitude,
+                              'organization': s.organization})
+                    ))
+                )
+            return list_scans
         except Exception as e:
             print(['ScansData'])
             print('Exception', e)

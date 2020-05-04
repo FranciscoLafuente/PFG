@@ -58,15 +58,11 @@ export default {
 
   methods: {
     redirectUser(i, domain) {
-      this.$router.push(
-        `/myproject=${this.id_project}/scan=${this.id_scan}/host=${domain}/${i}`
-      );
+      this.$router.push(`/scan=${this.id_scan}/host=${domain}/${i}`);
     },
 
     toTimeLine(i, domain) {
-      this.$router.push(
-        `/myproject=${this.id_project}/scan=${this.id_scan}/timeline/host=${domain}`
-      );
+      this.$router.push(`/scan=${this.id_scan}/timeline/host=${domain}`);
     }
   }
 };

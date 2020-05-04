@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Search from "../components/Search";
+import Search from "../components/SearchBar";
 import { mapGetters } from "vuex";
 
 export default {

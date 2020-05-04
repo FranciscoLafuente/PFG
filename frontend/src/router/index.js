@@ -22,7 +22,7 @@ const routes = [{
         },
     },
     {
-        path: "/search",
+        path: "/search=:searchText",
         name: "search",
         component: () =>
             import ( /* webpackChunkName: "Search" */ "../pages/Search.vue"),
@@ -100,7 +100,7 @@ const routes = [{
         },
     },
     {
-        path: "/myproject=:id/scan=:id_scan/host=:ip/:index",
+        path: "/scan=:id_scan/host=:ip/:index",
         name: "view_host",
         component: () =>
             import ( /* webpackChunkName: "View Host" */ "../pages/ViewScan.vue"),
@@ -117,7 +117,7 @@ const routes = [{
         },
     },
     {
-        path: "/myproject=:id/scan=:id_scan/timeline/host=:ip",
+        path: "/scan=:id_scan/timeline/host=:ip",
         name: "time_line",
         component: () =>
             import ( /* webpackChunkName: "Time Line" */ "../pages/TimeLine.vue"),

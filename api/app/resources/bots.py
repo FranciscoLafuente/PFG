@@ -129,50 +129,20 @@ def save_data(id_scan):
     return jsonify(msg.SUCCESS), 200
 
 
-@resources.route('/bots/nobita', methods=['POST'])
+@resources.route('/bots/<name>/<host>/<id_scan>', methods=['POST'])
 @fresh_jwt_required
-def save_nobita():
+def save_bot(name, host, id_scan):
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
-    for d in data:
-        views.NobitaManagement().create(data=d)
-
-    return jsonify(msg.SUCCESS), 200
-
-
-@resources.route('/bots/shizuka', methods=['POST'])
-@fresh_jwt_required
-def save_shizuka():
-    data = request.json
-    if not data:
-        return jsonify(msg.NO_DATA), 400
-    for d in data:
-        views.ShizukaManagement().create(data=d)
-
-    return jsonify(msg.SUCCESS), 200
-
-
-@resources.route('/bots/suneo', methods=['POST'])
-@fresh_jwt_required
-def save_suneo():
-    data = request.json
-    if not data:
-        return jsonify(msg.NO_DATA), 400
-    views.SuneoManagement().create(data=data)
-
-    return jsonify(msg.SUCCESS), 200
-
-
-@resources.route('/bots/gigante', methods=['POST'])
-@fresh_jwt_required
-def save_gigante():
-    data = request.json
-    if not data:
-        return jsonify(msg.NO_DATA), 400
-    views.GiganteManagement().create(data=data)
-
-    return jsonify(msg.SUCCESS), 200
+    collection = ""
+    if name == 'nobita':
+        for d in data:
+            collection = generic_model.Generic().create_nobita(name=name, host=host, id=id_scan, data=d)
+    else:
+        collection = generic_model.Generic().create(name=name, host=host, id=id_scan, data=data)
+    if collection:
+        return jsonify(msg.SUCCESS), 200
 
 
 @resources.route('/bots/update_done/<scan_id>', methods=['PUT'])

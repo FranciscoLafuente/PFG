@@ -23,5 +23,5 @@ export const SCAN_CREATE = "scanCreate";
 export const SCAN_EDIT = "scanEdit";
 export const SCAN_RELUNCH = "scanRelunch";
 export const SCAN_DELETE = "scanDelete";
-export const INFO_SAVE = "infoSave";
 export const SAVE_FULL_SCAN = "saveFullScan";
+export const SEARCH_SCAN = "searchScan";

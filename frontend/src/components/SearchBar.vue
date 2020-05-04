@@ -3,7 +3,7 @@
     <v-toolbar dense :elevation="9">
       <v-text-field
         hide-details
-        v-model="lookFor"
+        v-model="text"
         prepend-icon="search"
         single-line
         placeholder="Search"
@@ -16,12 +16,14 @@
 <script>
 export default {
   data: () => ({
-    lookFor: ""
+    text: ""
   }),
+
+  computed: {},
 
   methods: {
     search() {
-      console.log(this.lookFor);
+      this.$router.push(`/search=${this.text}`);
     }
   }
 };

@@ -65,9 +65,7 @@ export default {
       // TODO: AQUI NO HAY QUE HACER ESTA LLAMADA, SIMPLEMENTE SE REDIRECCIONA Y SE LLAMA EN EL NUEVO CONPONENTE
       this.$store.dispatch(`scans/${SAVE_FULL_SCAN}`, item.results);
 
-      this.$router.push(
-        `/myproject=${this.id_project}/scan=${this.id_scan}/host=${this.domain}/${i}`
-      );
+      this.$router.push(`/scan=${this.id_scan}/host=${this.domain}/${i}`);
     }
   }
 };

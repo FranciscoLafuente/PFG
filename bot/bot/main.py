@@ -110,7 +110,6 @@ def main():
                 app.interface.define(e)
             for e in hand_list:
                 app.handler.register(e)
-            # To compare dates
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # Access to database
             c = app.handler.get('manageIf', 'manage', setup=True)
@@ -127,7 +126,6 @@ def main():
                         # Save data geo
                         data = geo.get_geo(ip, host)
                         id_db = c.send_geo(data=data, id=s['id'], domain=host)
-                        print("ID***", id_db['id'])
                         for tp in type_bot:
                             # Launch bot scan
                             app.log.info("BOT " + tp)
@@ -136,9 +134,11 @@ def main():
                             d = dict({tp: data})
                             app.log.info("Scanning completed")
                             list_to_send.append(d)
+                            # Send especific data to create a new collection
+                            c.send_bot(bot=tp, domain=host, data=data, id=id_db['id'])
 
                     # Send data to api
-                    c.send_data(data=list_to_send, id=id_db['id'])
+                    c.send_data(url='data', data=list_to_send, id=id_db['id'])
                     scan_id = s['id']
                     # Update done field in bots collection
                     #c.update_done(scan_id)

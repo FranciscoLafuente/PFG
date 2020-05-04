@@ -101,6 +101,9 @@ export const ScanService = {
     delete(id_project, id_scan) {
         return ApiService.delete(`myproject/${id_project}/${id_scan}`);
     },
+    search(text) {
+        return ApiService.get(`search`, text);
+    },
 };
 
 export const BotService = {

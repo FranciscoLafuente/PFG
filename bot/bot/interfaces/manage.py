@@ -50,6 +50,14 @@ class ManageInterface(Interface):
         """
 
     @abstractmethod
+    def send_bot(self, **kwargs):
+        """
+
+        :param kwargs:
+        :return:
+        """
+
+    @abstractmethod
     def update_done(self, scan_id):
         """
 
@@ -111,6 +119,16 @@ class ManageHandler(ManageInterface, Handler, ABC):
         try:
             response = requests.post("http://localhost:5000/bots/data/" + kwargs['id'], json=kwargs['data'],
                                      headers={'Authorization': 'Bearer ' + self.access_token})
+            self.app.log.info("Backend response: " + response.json()['msg'])
+        except Exception as e:
+            self.app.log.error("Exception when sending data:", e)
+
+    def send_bot(self, **kwargs):
+        self.app.log.info("Sending data to database...")
+        try:
+            response = requests.post("http://localhost:5000/bots/" + kwargs['bot'] + "/" + kwargs['domain'] + "/" +
+                                     kwargs['id'], json=kwargs['data'], headers={'Authorization': 'Bearer ' +
+                                                                                                  self.access_token})
             self.app.log.info("Backend response: " + response.json()['msg'])
         except Exception as e:
             self.app.log.error("Exception when sending data:", e)

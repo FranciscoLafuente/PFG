@@ -7,6 +7,7 @@ import {
     FETCH_END_GEO,
     SAVE_TIMELINE,
     FULL_SCAN,
+    SEARCH_SAVE,
 } from "./mutations.type";
 import {
     FETCH_SCANS,
@@ -14,10 +15,10 @@ import {
     SCAN_CREATE,
     SCAN_RELUNCH,
     SCAN_DELETE,
-    INFO_SAVE,
     SCAN_EDIT,
     FETCH_TIMELINE,
     SAVE_FULL_SCAN,
+    SEARCH_SCAN,
 } from "./actions.type";
 
 const state = {
@@ -26,6 +27,7 @@ const state = {
     scansTLine: [],
     fullScan: {},
     oneScan: [],
+    search: [],
     isLoading: true,
 };
 
@@ -43,7 +45,6 @@ const actions = {
     async [FETCH_INFO](context, id) {
         const response = await ScanService.getInfo(id);
         context.commit(FULL_SCAN, response.data);
-        //context.dispatch(INFO_SAVE, response.data);
     },
     async [FETCH_TIMELINE]({ commit }, params) {
         commit(FETCH_START);
@@ -71,19 +72,16 @@ const actions = {
             commit(DEL_SCAN, params.index);
         });
     },
+    [SEARCH_SCAN](context, text) {
+        return ScanService.search(text).then((r) => {
+            context.commit(SEARCH_SAVE, r.data);
+        });
+    },
     [SCAN_EDIT](context, params) {
         return ScanService.renameBot(params.id, params.name);
     },
     [SCAN_RELUNCH](context, id) {
         return ScanService.update(id);
-    },
-    [INFO_SAVE](context, data) {
-        context.commit(FETCH_START);
-        context.commit(FULL_SCAN, data);
-        data.forEach((element) => {
-            let geo = element.results[0]["geo"];
-            context.commit(FETCH_END_GEO, geo["results"][0]);
-        });
     },
     [SAVE_FULL_SCAN](context, scan) {
         context.commit(FULL_SCAN, scan);
@@ -116,6 +114,9 @@ const mutations = {
     [FULL_SCAN](state, scan) {
         state.fullScan = scan;
     },
+    [SEARCH_SAVE](scate, scan) {
+        state.search = scan;
+    },
 };
 
 const getters = {
@@ -133,6 +134,9 @@ const getters = {
     },
     oneScan(state) {
         return state.fullScan[0]["results"];
+    },
+    getSearch(state) {
+        return state.search;
     },
 };
 
