@@ -141,7 +141,7 @@ def main():
                     c.send_data(url='data', data=list_to_send, id=id_db['id'])
                     scan_id = s['id']
                     # Update done field in bots collection
-                    #c.update_done(scan_id)
+                    c.update_done(scan_id)
 
                 elif s['done']:
                     app.log.info("The scan already done")

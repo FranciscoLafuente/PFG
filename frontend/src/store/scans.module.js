@@ -50,6 +50,8 @@ const actions = {
         commit(FETCH_START);
         return ScanService.getTimeLine(params.id_scan, params.domain)
             .then((r) => {
+                console.log(r.data);
+
                 commit(SAVE_TIMELINE, r.data);
             })
             .catch((error) => {
