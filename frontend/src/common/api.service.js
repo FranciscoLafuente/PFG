@@ -33,9 +33,9 @@ const ApiService = {
     },
 
     upload(resource, file) {
-        return Vue.axios.post(`${resource}`, file, {
-            headers: { "Content-Type": "text/x-python" },
-        });
+        console.log("IN API", file);
+
+        return Vue.axios.post(`${resource}`, file);
     },
 
     update(resource, slug, params) {
@@ -107,7 +107,10 @@ export const ScanService = {
 };
 
 export const BotService = {
-    get() {
+    getMyBots() {
+        return ApiService.query("mybots");
+    },
+    getBots() {
         return ApiService.query("bots");
     },
     create(params) {
@@ -122,7 +125,9 @@ export const BotService = {
     renewToken(id) {
         return ApiService.put(`bots/${id}`);
     },
-    addBot(name, file) {
-        return ApiService.upload(`upload/${name}`, file);
+    addBot(file) {
+        console.log("IN ADDBOT", file);
+
+        return ApiService.upload(`upload`, file);
     },
 };

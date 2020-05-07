@@ -37,12 +37,8 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="$emit('isShow', false)"
-          >Cancel</v-btn
-        >
-        <v-btn :disabled="isError()" color="blue darken-1" text @click="save"
-          >Save</v-btn
-        >
+        <v-btn color="blue darken-1" text @click="$emit('isShow', false)">Cancel</v-btn>
+        <v-btn :disabled="isError()" color="blue darken-1" text @click="save">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -53,32 +49,32 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { helpers } from "vuelidate/lib/validators";
 import Select from "../components/Select";
-import { VALID_IP_ADDRESS, BOTS } from "../common/constants";
+import { VALID_IP_ADDRESS } from "../common/constants";
 
 const ip_address = helpers.regex("ip_address", VALID_IP_ADDRESS);
 
 export default {
   components: {
-    Select,
+    Select
   },
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
       name: { required },
-      ip: { required, ip_address },
-    },
+      ip: { required, ip_address }
+    }
   },
-  props: ["dialogBot"],
+  props: ["dialogBot", "bots"],
   data: () => ({
     formTitle: "New Bot",
-    bots: BOTS,
+    //bots: BOTS,
     selectedBots: [],
     editedItem: {
       name: "",
       ip: "",
-      type: [],
-    },
+      type: []
+    }
   }),
   computed: {
     nameErrors() {
@@ -93,7 +89,7 @@ export default {
       !this.$v.editedItem.ip.ip_address && errors.push("Must be valid ip");
       !this.$v.editedItem.ip.required && errors.push("Ip is required");
       return errors;
-    },
+    }
   },
 
   methods: {
@@ -103,15 +99,15 @@ export default {
       this.editedItem = {
         name: "",
         ip: "",
-        type: [],
+        type: []
       };
     },
 
     isError() {
       // If there are errors or is empty return  false
       return this.$v.editedItem.$error || !this.$v.editedItem.$dirty;
-    },
-  },
+    }
+  }
 };
 </script>
 

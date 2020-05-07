@@ -44,6 +44,12 @@ class MyBots(Document):
     created = DateTimeField(default=datetime.datetime.utcnow)
 
 
+class Bots(Document):
+    name = StringField(required=True)
+    description = StringField(required=True)
+    created = DateTimeField(default=datetime.datetime.utcnow)
+
+
 class Nobita(Document):
     bot = StringField(default="nobita")
     ip = StringField()

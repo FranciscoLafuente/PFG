@@ -2,6 +2,7 @@ from cement import App, TestApp, init_defaults, Interface, Handler
 from cement.core.exc import CaughtSignal
 
 from core.exc import BotError
+from interfaces.manage import ManageHandler, ManageInterface
 
 from importlib import import_module
 import datetime
@@ -34,7 +35,7 @@ def ls(ruta=RUTA):
 def do_imports():
     files = ls()
     for file in files:
-        if '__init__' not in file:
+        if '__init__' not in file and 'manage' not in file:
             s = file.replace('.py', '')
             upper = s.title()
             first = 'interfaces.' + s
@@ -61,6 +62,7 @@ class Bot(App):
 
     class Meta:
         label = 'bot'
+        plugin_dirs = ['./plugins']
 
         # configuration dir
         dir = os.path.realpath('tokens.conf')
@@ -90,8 +92,8 @@ class Bot(App):
         # Funcion que llame al back para recuperar los handlers y los interfaces
 
         # Register handlers and interfaces
-        handlers = hand_list
-        interfaces = if_list
+        handlers = [ManageHandler] + hand_list
+        interfaces = [ManageInterface] + if_list
 
 
 class BotTest(TestApp, Bot):
@@ -105,18 +107,26 @@ def main():
     with Bot() as app:
         try:
             app.run()
+            # Create the handler that it will make the calls to api
+            c = app.handler.get('manageIf', 'manage', setup=True)
+            # Load all bots and scans and then do imports in the interface dir
+            type_bots, scans = c.get_scan()
+            x = 1
+            n_bots = len(type_bots)
+            for bot in type_bots:
+                app.log.info("Downloading %d of %d files" % (x, n_bots))
+                c.download_files(type_bot=bot)
+                app.log.info("File %d downloaded" % x)
+                x += 1
             do_imports()
             for e in if_list:
                 app.interface.define(e)
             for e in hand_list:
                 app.handler.register(e)
+            # Start geo handler
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            # Access to database
-            c = app.handler.get('manageIf', 'manage', setup=True)
-            # Get Scans of api
-            type_bot, scans = c.get_scan()
-            # Geo handler
             geo = app.handler.get('geoIf', 'geo', setup=True)
+            # Go through all the scans
             for s in scans:
                 list_to_send = []
                 if s['executionTime'] < now and not s['done']:
@@ -126,7 +136,7 @@ def main():
                         # Save data geo
                         data = geo.get_geo(ip, host)
                         id_db = c.send_geo(data=data, id=s['id'], domain=host)
-                        for tp in type_bot:
+                        for tp in type_bots:
                             # Launch bot scan
                             app.log.info("BOT " + tp)
                             b = app.handler.get(tp + "If", tp, setup=True)

@@ -9,6 +9,7 @@ export const LOGOUT = "logout";
 export const REGISTER = "register";
 export const UPDATE_USER = "updateUser";
 // BOTS
+export const FETCH_MY_BOTS = "fetchMyBots";
 export const FETCH_BOTS = "fetchBots";
 export const BOT_CREATE = "botCreate";
 export const BOT_DELETE = "botDelete";

@@ -9,7 +9,7 @@ mongo = PyMongo()
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 mail = Mail()
-UPLOAD_FOLDER = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
+UPLOAD_FOLDER = '/home/fran/Escritorio/Proyecto/PFG/api/app/bots/'
 ALLOWED_EXTENSIONS = {'py'}
 
 

@@ -1,11 +1,6 @@
 <template>
   <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="projects"
-      sort-by="Project Name"
-      class="elevation-1"
-    >
+    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -26,8 +21,7 @@
           class="mr-2"
           @click="visualizeScan(item)"
           :disabled="item.scans === undefined"
-          >visibility</v-icon
-        >
+        >visibility</v-icon>
         <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
       </template>
     </v-data-table>
@@ -60,22 +54,22 @@ import {
   SUCCESS_ICON,
   SUCCESS_TEXT,
   GENERIC_TITLE,
-  GENERIC_ICON,
+  GENERIC_ICON
 } from "../common/dialogMsg";
 import { mapGetters } from "vuex";
 import {
   FETCH_PROJECTS,
   PROJECT_CREATE,
   PROJECT_DELETE,
-  FETCH_BOTS,
-  SCAN_CREATE,
+  FETCH_MY_BOTS,
+  SCAN_CREATE
 } from "../store/actions.type";
 
 export default {
   components: {
     dialogScan,
     dialogProject,
-    dialogMessage,
+    dialogMessage
   },
   data: () => ({
     title: "My Projects",
@@ -87,10 +81,10 @@ export default {
         text: "Project Name",
         align: "left",
         sortable: true,
-        value: "name",
+        value: "name"
       },
       { text: "Public", value: "type" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     currentProject: Number,
     index: Number,
@@ -98,21 +92,21 @@ export default {
       name: "",
       bots: 0,
       executiontime: 0,
-      hosts: "",
+      hosts: ""
     },
     editProject: {
       name: "",
       type: true,
-      scans: [],
+      scans: []
     },
     msg_title: "",
     msg_icon: "",
-    msg_text: "",
+    msg_text: ""
   }),
 
   mounted() {
     this.$store.dispatch(`project/${FETCH_PROJECTS}`);
-    this.$store.dispatch(`bots/${FETCH_BOTS}`);
+    this.$store.dispatch(`bots/${FETCH_MY_BOTS}`);
   },
 
   watch: {
@@ -130,21 +124,21 @@ export default {
       if (this.editProject.name !== "") {
         this.addProject();
       }
-    },
+    }
   },
 
   computed: {
     ...mapGetters({
       projects: "project/projects",
-      bots: "bots/name",
-    }),
+      bots: "bots/name"
+    })
   },
 
   methods: {
     addProject() {
       this.$store
         .dispatch(`project/${PROJECT_CREATE}`, this.editProject)
-        .catch((error) => {
+        .catch(error => {
           this.setMessage(GENERIC_TITLE, GENERIC_ICON, error);
           this.dialogMsg = true;
         });
@@ -157,7 +151,7 @@ export default {
 
         this.$store.dispatch(`project/${PROJECT_DELETE}`, {
           id: id,
-          index: index,
+          index: index
         });
       }
     },
@@ -170,7 +164,7 @@ export default {
           this.setMessage(SUCCESS_TITLE, SUCCESS_ICON, SUCCESS_TEXT);
           this.dialogMsg = true;
         })
-        .catch((error) => {
+        .catch(error => {
           this.setMessage(GENERIC_TITLE, GENERIC_ICON, error);
           this.dialogMsg = true;
         });
@@ -192,8 +186,8 @@ export default {
       this.msg_title = title;
       this.msg_icon = icon;
       this.msg_text = text;
-    },
-  },
+    }
+  }
 };
 </script>
 

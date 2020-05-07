@@ -6,3 +6,4 @@ MISSING_PARAMETER = {"msg": "Missing parameter"}
 ALREADY_USE = {"msg": "The name is alredy in use"}
 SUCCESS = {"msg": "Success"}
 UNREGISTERED = {"msg": "Unregistered"}
+ERROR_SAVE_DATABASE = {"msg": "Failed to save in database"}

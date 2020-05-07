@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory
 from flask_jwt_extended import (jwt_required, fresh_jwt_required, create_access_token, get_jwt_identity)
 from flask import current_app as app
 from werkzeug.utils import secure_filename
@@ -11,13 +11,29 @@ import datetime
 from app.static import messages as msg
 from pprint import pprint
 import os
+from os import listdir
+from os.path import isfile, join
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+
+@resources.route('/mybots', methods=['GET'])
+@fresh_jwt_required
+def get_my_bots():
+    current_user = get_jwt_identity()
+    list_bots = views.MyBotsManagement().get_bots(email=current_user)
+
+    return jsonify(list_bots), 200
 
 
 @resources.route('/bots', methods=['GET'])
 @fresh_jwt_required
 def get_bots():
-    current_user = get_jwt_identity()
-    list_bots = views.MyBotsManagement().get_bots(email=current_user)
+    list_bots = views.BotsManagement().get()
+    print("LIST BOTS", list_bots)
 
     return jsonify(list_bots), 200
 
@@ -152,14 +168,32 @@ def update_done(scan_id):
     return jsonify(msg.SUCCESS), 200
 
 
-@resources.route('/upload/<name>', methods=['POST'])
+@resources.route('/upload', methods=['POST'])
 @fresh_jwt_required
-def upload_file(name):
-    if request.data:
-        f = open(app.config['UPLOAD_FOLDER'] + name + ".py", "w+")
-        for line in request.data:
-            f.write(line)
-        f.close()
-        return jsonify(msg.SUCCESS), 200
-    else:
+def upload_file():
+    # First save name and description in database
+    name = request.form.get('name')
+    description = request.form.get('description')
+    res = views.BotsManagement().create(name=name, description=description)
+    if not res:
+        return jsonify(msg.ERROR_SAVE_DATABASE)
+    # Then, save the file to a local directory
+    if 'file' not in request.files:
         return jsonify(msg.NO_DATA), 400
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit an empty part without filename
+    if file.filename == '':
+        return jsonify(msg.NO_DATA), 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return jsonify(msg.SUCCESS), 200
+
+
+@resources.route('/download/<type_bot>', methods=['GET'])
+@fresh_jwt_required
+def download_file(type_bot):
+    bot = type_bot + '.py'
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               bot, as_attachment=True)

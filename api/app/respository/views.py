@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Project, Scan, ScansData, MyBots, Nobita, Shizuka, Suneo, Gigante, GeoLocation
+from .models import User, Project, Scan, ScansData, MyBots, Bots, Nobita, Shizuka, Suneo, Gigante, GeoLocation
 import json
 from bson import ObjectId
 import datetime
@@ -202,7 +202,6 @@ class ScansDataManagement:
             print('Exception', e)
 
     def search(self, **kwargs):
-        #print(kwargs['searchText'])
         list_scans = []
         try:
             for s in ScansData.objects(
@@ -267,6 +266,31 @@ class MyBotsManagement:
     def search_bot(self, **kwargs):
         for b in MyBots.objects(id=kwargs['id'], ip=kwargs['ip']):
             return b.type
+
+
+class BotsManagement:
+
+    def create(self, **kwargs):
+        try:
+            b = Bots(
+                name=kwargs['name'],
+                description=kwargs['description']
+            )
+            b.save()
+            return b.id
+        except Exception as e:
+            print("[Bots in Create]")
+            print("Exception", e)
+
+    def get(self):
+        try:
+            list_bots = []
+            for b in Bots.objects:
+                list_bots.append(b.name)
+            return list_bots
+        except Exception as e:
+            print("[Bots in Create]")
+            print("Exception", e)
 
 
 class NobitaManagement:

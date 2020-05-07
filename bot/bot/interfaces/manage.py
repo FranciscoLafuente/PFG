@@ -4,10 +4,19 @@ import requests
 import jwt
 import base64
 
+RUTA = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
+
 
 class ManageInterface(Interface):
     class Meta:
         interface = 'manageIf'
+
+    @abstractmethod
+    def download_files(self):
+        """
+
+        :return:
+        """
 
     @abstractmethod
     def get_scan(self):
@@ -98,6 +107,13 @@ class ManageHandler(ManageInterface, Handler, ABC):
         except Exception as e:
             self.app.log.error("Exception when trying to login bot:", e)
             self.app.log.error(self.access_token['msg'])
+
+    def download_files(self, **kwargs):
+        response = requests.get("http://localhost:5000/download/" + kwargs['type_bot'],
+                                headers={'Authorization': 'Bearer ' + self.access_token})
+        open(RUTA + kwargs['type_bot'] + '.py', 'wb').write(response.content)
+
+        return True
 
     def stract_scans(self, id_bot):
         response = requests.get("http://localhost:5000/bots/scans", headers={'Authorization': 'Bearer '

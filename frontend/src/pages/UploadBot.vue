@@ -16,7 +16,7 @@
           accept="text/x-python"
           placeholder="Pick an field"
           prepend-icon="attach_file"
-          label="Bot"
+          label="File"
         ></v-file-input>
 
         <v-textarea v-model="description" prepend-icon="reorder" label="Bot description"></v-textarea>
@@ -61,15 +61,17 @@ export default {
 
   methods: {
     upload() {
-      let params = {
-        name: this.name,
-        file: this.file
-      };
-      this.$store.dispatch(`bots/${BOT_UPLOAD}`, params).then(() => {
+      const formData = new FormData();
+      formData.append("file", this.file);
+      formData.append("name", this.name);
+      formData.append("description", this.description);
+
+      this.$store.dispatch(`bots/${BOT_UPLOAD}`, formData).then(() => {
         this.msg_title = UPLOAD_TITLE;
         this.msg_icon = UPLOAD_ICON;
         this.msg_text = UPLOAD_TEXT;
         this.dialogMsg = true;
+        (this.file = {}), (this.name = ""), (this.description = "");
       });
     }
   }

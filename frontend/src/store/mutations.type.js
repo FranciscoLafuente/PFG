@@ -8,6 +8,7 @@ export const SET_AUTH = "setUser";
 // BOT
 export const ADD_BOT = "addBot";
 export const DEL_BOT = "delBot";
+export const FETCH_END_BOTS = "fetchEndBots";
 // SCANS
 export const ADD_SCAN = "addScan";
 export const DEL_SCAN = "delScan";

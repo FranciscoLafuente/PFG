@@ -74,7 +74,7 @@ const actions = {
             commit(DEL_SCAN, params.index);
         });
     },
-    [SEARCH_SCAN](context, text) {
+    async [SEARCH_SCAN](context, text) {
         return ScanService.search(text).then((r) => {
             context.commit(SEARCH_SAVE, r.data);
         });

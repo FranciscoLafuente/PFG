@@ -50,7 +50,7 @@ import {
   FETCH_SCANS,
   SCAN_RELUNCH,
   SCAN_DELETE,
-  FETCH_BOTS,
+  FETCH_MY_BOTS,
   SCAN_EDIT
 } from "../store/actions.type";
 import dialogMessage from "../components/DialogMessage";
@@ -90,7 +90,7 @@ export default {
   mounted() {
     this.id_project = this.$route.params.id.toString();
     this.$store.dispatch(`scans/${FETCH_SCANS}`, this.id_project);
-    this.$store.dispatch(`bots/${FETCH_BOTS}`);
+    this.$store.dispatch(`bots/${FETCH_MY_BOTS}`);
   },
 
   computed: {
