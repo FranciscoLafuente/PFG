@@ -1,3 +1,4 @@
+pika
 geoip
 geoip2
 whois

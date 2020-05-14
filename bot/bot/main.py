@@ -9,6 +9,9 @@ import datetime
 from os import scandir
 import os
 import socket
+import pika
+import json
+import time
 
 # configuration defaults
 CONFIG = init_defaults('bot')
@@ -55,6 +58,76 @@ def dynamic_import(abs_module_path, class_name):
     target_class = getattr(module_object, class_name)
 
     return target_class
+
+
+def launch_scan(app, type_bots, scan):
+    print("SCANEO", scan)
+    scan = json.loads(scan)
+    # Start geo handler
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    geo = app.handler.get('geoIf', 'geo', setup=True)
+
+    results = []
+    if scan['done']:
+        app.log.info("The scan already done")
+        return None
+    elif scan['executionTime'] < now and not scan['done']:
+        for host in scan['hosts']:
+            # Get the ip
+            ip = get_ip(host)
+            # Save data geo
+            geo_data = geo.get_geo(ip, host)
+            for tp in type_bots:
+                # Launch bot scan
+                app.log.info("BOT " + tp)
+                b = app.handler.get(tp + "If", tp, setup=True)
+                bot_data = b.bot_scan(host, ip)
+                d = dict({tp: bot_data})
+                app.log.info("Scanning completed")
+                results.append(d)
+
+            # All data in object for send
+            scan_finished = geo_data
+            scan_finished['results'] = results
+            return scan_finished
+
+
+def send(scan):
+    if not scan:
+        return
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+
+    channel.queue_declare(queue='hello')
+
+    channel.basic_publish(exchange='', routing_key='hello', body=json.dumps(scan))
+    print(" [x] Sent MESSAGE")
+    connection.close()
+
+
+def start_consumer(app, manage, type_bots):
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+
+    channel.queue_declare(queue='hello')
+
+    def callback(ch, method, properties, body):
+        data = launch_scan(app, type_bots, body)
+        print("RESULTS OF DATA", data)
+        if not data:
+            return
+        # Send data to api
+        scan = json.loads(body)
+        manage.send_data(url='data', data=data, id=scan['id'])
+        # Update done field in bots collection
+        manage.update_done(scan['id'])
+
+    channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
+
+    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
 
 
 class Bot(App):
@@ -108,14 +181,14 @@ def main():
         try:
             app.run()
             # Create the handler that it will make the calls to api
-            c = app.handler.get('manageIf', 'manage', setup=True)
+            manage = app.handler.get('manageIf', 'manage', setup=True)
             # Load all bots and scans and then do imports in the interface dir
-            type_bots, scans = c.get_scan()
+            type_bots, scans = manage.get_scan()
             x = 1
             n_bots = len(type_bots)
             for bot in type_bots:
                 app.log.info("Downloading %d of %d files" % (x, n_bots))
-                c.download_files(type_bot=bot)
+                manage.download_files(type_bot=bot)
                 app.log.info("File %d downloaded" % x)
                 x += 1
             do_imports()
@@ -123,38 +196,14 @@ def main():
                 app.interface.define(e)
             for e in hand_list:
                 app.handler.register(e)
-            # Start geo handler
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            geo = app.handler.get('geoIf', 'geo', setup=True)
+
             # Go through all the scans
-            for s in scans:
-                list_to_send = []
-                if s['executionTime'] < now and not s['done']:
-                    for host in s['hosts']:
-                        # Get the ip
-                        ip = get_ip(host)
-                        # Save data geo
-                        data = geo.get_geo(ip, host)
-                        id_db = c.send_geo(data=data, id=s['id'], domain=host)
-                        for tp in type_bots:
-                            # Launch bot scan
-                            app.log.info("BOT " + tp)
-                            b = app.handler.get(tp + "If", tp, setup=True)
-                            data = b.bot_scan(host, ip)
-                            d = dict({tp: data})
-                            app.log.info("Scanning completed")
-                            list_to_send.append(d)
-                            # Send especific data to create a new collection
-                            c.send_bot(bot=tp, domain=host, data=data, id=id_db['id'])
-
-                    # Send data to api
-                    c.send_data(url='data', data=list_to_send, id=id_db['id'])
-                    scan_id = s['id']
-                    # Update done field in bots collection
-                    c.update_done(scan_id)
-
-                elif s['done']:
-                    app.log.info("The scan already done")
+            for scan in scans:
+                send(scan)
+                print("[-] Start sleep")
+                time.sleep(2)
+            # ---- Start consumer ----
+            start_consumer(app, manage, type_bots)
 
         except AssertionError as e:
             print('AssertionError > %s' % e.args[0])

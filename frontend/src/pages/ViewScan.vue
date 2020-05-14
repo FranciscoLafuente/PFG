@@ -59,7 +59,7 @@
 <script>
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 import { mapGetters } from "vuex";
-import { FETCH_INFO } from "../store/actions.type";
+import { FETCH_ONE_INFO } from "../store/actions.type";
 
 export default {
   components: {
@@ -81,9 +81,14 @@ export default {
   created() {
     let id_scan = this.$route.params.id_scan.toString();
     this.domain = this.$route.params.ip.toString();
-    //let num = this.$route.params.index.toString();
+    let num = this.$route.params.index.toString();
+    let params = {
+      id_scan: id_scan,
+      domain: this.domain,
+      num: num
+    };
 
-    this.$store.dispatch(`scans/${FETCH_INFO}`, id_scan).then(() => {
+    this.$store.dispatch(`scans/${FETCH_ONE_INFO}`, params).then(() => {
       this.initialize();
     });
   },
@@ -97,22 +102,22 @@ export default {
 
   methods: {
     initialize() {
-      this.scan.forEach(e => {
+      console.log("SCAN", this.scan.results);
+
+      this.scan.results.forEach(e => {
         let s = {
           bot: Object.keys(e)[0],
           results: Object.values(e)[0]
         };
         this.scansFormat.push(s);
       });
-      this.geo.forEach(e => {
-        let dict = {
-          continent: e["continent"],
-          country: e["country"],
-          organization: e["organization"]
-        };
-        this.geoFormat = dict;
-        this.loadLocation(e[("latitude", e["longitude"])]);
-      });
+      let dict = {
+        continent: this.scan["continent"],
+        country: this.scan["country"],
+        organization: this.scan["organization"]
+      };
+      this.geoFormat = dict;
+      this.loadLocation(this.scan[("latitude", this.scan["longitude"])]);
     },
 
     loadLocation(lat, lon) {

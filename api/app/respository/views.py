@@ -144,10 +144,11 @@ class ScansDataManagement:
             s.latitude = kwargs['data']['latitude']
             s.longitude = kwargs['data']['longitude']
             s.organization = kwargs['data']['organization']
+            s.results = kwargs['data']['results']
             s.save()
             return json.loads(JSONEncoder().encode({'id': s.id}))
         except Exception as e:
-            print("[ScansData]")
+            print("[ScansData - Create]")
             print("Exception", e)
 
     def get_by_id(self, **kwargs):
@@ -160,7 +161,7 @@ class ScansDataManagement:
                           'organization': s.organization})
                 ))
         except Exception as e:
-            print("[ScansData]")
+            print("[ScansData - Get By Id]")
             print("Exception", e)
 
     def store_results(self, **kwargs):
@@ -168,7 +169,7 @@ class ScansDataManagement:
             for s in ScansData.objects(id=kwargs['id']):
                 ScansData.objects(id=s.id).update(push__results=kwargs['list'])
         except Exception as e:
-            print("[ScansData]")
+            print("[ScansData - Store Results]")
             print("Exception", e)
 
     def get_scans(self, **kwargs):
@@ -185,7 +186,7 @@ class ScansDataManagement:
                 )
             return list_scans
         except Exception as e:
-            print(['ScansData'])
+            print(['ScansData - Get Scans'])
             print('Exception', e)
 
     def one_scan(self, **kwargs):

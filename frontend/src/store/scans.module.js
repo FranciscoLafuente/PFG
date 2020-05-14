@@ -7,11 +7,13 @@ import {
     FETCH_END_GEO,
     SAVE_TIMELINE,
     FULL_SCAN,
+    ONE_SCAN,
     SEARCH_SAVE,
 } from "./mutations.type";
 import {
     FETCH_SCANS,
     FETCH_INFO,
+    FETCH_ONE_INFO,
     SCAN_CREATE,
     SCAN_RELUNCH,
     SCAN_DELETE,
@@ -46,12 +48,14 @@ const actions = {
         const response = await ScanService.getInfo(id);
         context.commit(FULL_SCAN, response.data);
     },
+    async [FETCH_ONE_INFO](context, params) {
+        const response = await ScanService.getOneInfo(params.id_scan, params.domain, params.num);
+        context.commit(ONE_SCAN, response.data);
+    },
     async [FETCH_TIMELINE]({ commit }, params) {
         commit(FETCH_START);
         return ScanService.getTimeLine(params.id_scan, params.domain)
             .then((r) => {
-                console.log(r.data);
-
                 commit(SAVE_TIMELINE, r.data);
             })
             .catch((error) => {
@@ -116,6 +120,9 @@ const mutations = {
     [FULL_SCAN](state, scan) {
         state.fullScan = scan;
     },
+    [ONE_SCAN](state, scan) {
+        state.oneScan = scan;
+    },
     [SEARCH_SAVE](scate, scan) {
         state.search = scan;
     },
@@ -135,7 +142,7 @@ const getters = {
         return state.fullScan;
     },
     oneScan(state) {
-        return state.fullScan[0]["results"];
+        return state.oneScan;
     },
     getSearch(state) {
         return state.search;

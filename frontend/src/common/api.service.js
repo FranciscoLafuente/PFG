@@ -80,6 +80,9 @@ export const ScanService = {
     getAllInfo(domain) {
         return ApiService.get("scan/host=", domain);
     },
+    getOneInfo(id_scan, domain, num) {
+        return ApiService.post(`scan/${id_scan}/${domain}`, num);
+    },
     getBotInfo(name, id) {
         return ApiService.get(`bot/${name}`, id);
     },

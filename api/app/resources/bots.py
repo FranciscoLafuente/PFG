@@ -136,12 +136,7 @@ def save_data(id_scan):
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
-
-    for item in data:
-        if not item:
-            return jsonify(msg.SUCCESS), 200
-        views.ScansDataManagement().store_results(id=id_scan, list=item)
-
+    views.ScansDataManagement().create(scan=id_scan, data=data)
     return jsonify(msg.SUCCESS), 200
 
 

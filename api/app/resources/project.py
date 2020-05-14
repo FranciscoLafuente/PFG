@@ -66,12 +66,13 @@ def get_timeline(id_scan, domain):
     return jsonify(list_time), 200
 
 
-@resources.route('/scan/<id_scan>/<domain>/<num>', methods=['GET'])
+@resources.route('/scan/<id_scan>/<domain>', methods=['POST', 'GET'])
 @fresh_jwt_required
-def get_specific_scan(id_scan, domain, num):
-    scan = views.ScansDataManagement().one_scan(scan=id_scan, domain=domain)
+def get_specific_scan(id_scan, domain):
+    num = request.args.get('num', 0, int)
+    scan = views.ScansDataManagement().get_scans(scan=id_scan, domain=domain)
     if scan:
-        return jsonify(scan), 200
+        return jsonify(scan[num]), 200
     return jsonify(msg.NO_DATA)
 
 

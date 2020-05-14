@@ -105,7 +105,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
 
             return type_bots, id_bot
         except Exception as e:
-            self.app.log.error("Exception when trying to login bot:", e)
+            self.app.log.error("[Login Bot] Exception when trying to login bot:", e)
             self.app.log.error(self.access_token['msg'])
 
     def download_files(self, **kwargs):
@@ -128,7 +128,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
             self.app.log.info("Save in database")
             return response.json()
         except Exception as e:
-            self.app.log.error("Exception when sending data:", e)
+            self.app.log.error("[Send Geo] Exception when sending data:", e)
 
     def send_data(self, **kwargs):
         self.app.log.info("Sending data to database...")
@@ -137,7 +137,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
                                      headers={'Authorization': 'Bearer ' + self.access_token})
             self.app.log.info("Backend response: " + response.json()['msg'])
         except Exception as e:
-            self.app.log.error("Exception when sending data:", e)
+            self.app.log.error("[Send Data] Exception when sending data:", e)
 
     def send_bot(self, **kwargs):
         self.app.log.info("Sending data to database...")
@@ -147,10 +147,13 @@ class ManageHandler(ManageInterface, Handler, ABC):
                                                                                                   self.access_token})
             self.app.log.info("Backend response: " + response.json()['msg'])
         except Exception as e:
-            self.app.log.error("Exception when sending data:", e)
+            self.app.log.error("[Send Bot] Exception when sending data:", e)
 
     def update_done(self, scan_id):
-        response = requests.put("http://localhost:5000/bots/update_done/" + scan_id,
-                                headers={'Authorization': 'Bearer ' + self.access_token})
-        self.app.log.info("Updated DB: " + response.json()['msg'])
-        print()
+        try:
+            response = requests.put("http://localhost:5000/bots/update_done/" + scan_id,
+                                    headers={'Authorization': 'Bearer ' + self.access_token})
+            self.app.log.info("Updated DB: " + response.json()['msg'])
+            print()
+        except Exception as e:
+            self.app.log.error("[Update Done] Exception when update field done:", e)
