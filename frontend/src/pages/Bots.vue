@@ -25,10 +25,6 @@
           <div class="action-icons">
             <v-icon small class="mr-2" @click="generateToken(item)">add</v-icon>
             <v-icon small class="mr-2" @click="renewToken(item)">autorenew</v-icon>
-          </div>
-        </template>
-        <template class="delete-icon" v-slot:item.delete="{ item }">
-          <div class="delete-icon">
             <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
           </div>
         </template>
@@ -99,8 +95,7 @@ export default {
       },
       { text: "IPs", value: "ip" },
       { text: "Type Bot", value: "type" },
-      { text: "Generate/Renew Token", value: "action", sortable: false },
-      { text: "Delete Bot", value: "delete", sortable: false }
+      { text: "Actions", value: "action", sortable: false }
     ],
     editedItem: {
       name: "",
@@ -204,12 +199,6 @@ export default {
   bottom: 15%;
   right: 10%;
   position: absolute;
-}
-
-.action-icons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .delete-icon {
