@@ -4,7 +4,7 @@
       <v-col cols="4">
         <v-card class="mx-auto" max-width="300">
           <v-card-title>Description</v-card-title>
-          <v-card-text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia corrupti facilis delectus consectetur cum aliquid ad modi! Optio ipsum velit nam! Atque explicabo exercitationem saepe repellat pariatur odio laborum nulla?</v-card-text>
+          <v-card-text>A timeline is displayed with all the dates of the scans performed. Each date links to a page where all the information collected from a specific host appears.</v-card-text>
         </v-card>
       </v-col>
       <v-col cols="8" class="scan-col">

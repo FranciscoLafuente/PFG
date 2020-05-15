@@ -37,7 +37,7 @@ export default {
     options: {},
     text: "",
     page: 1,
-    pageCount: 3,
+    pageCount: 10,
     itemsPerPage: 4,
     start: 0,
     end: 4

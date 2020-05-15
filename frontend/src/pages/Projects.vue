@@ -1,48 +1,61 @@
 <template>
-  <v-container>
-    <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-toolbar-title>{{ title }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-
-          <dialogScan
-            :dialog="dialog"
-            :bots="bots"
-            @isShow="dialog = $event"
-            @newScan="editedItem = $event"
-          ></dialogScan>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
-        <v-icon
-          small
-          class="mr-2"
-          @click="visualizeScan(item)"
-          :disabled="item.scans === undefined"
-        >visibility</v-icon>
-        <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
-      </template>
-    </v-data-table>
-    <div class="folder-button">
-      <v-btn color="blue darken-1" @click="dialogPro = true" dark fab>
-        <dialogProject
-          :dialogPro="dialogPro"
-          @isShow="dialogPro = $event"
-          @newProject="editProject = $event"
-        ></dialogProject>
-        <v-icon>add</v-icon>
-      </v-btn>
+  <div class="container">
+    <div class="description">
+      <v-card class="mx-auto">
+        <v-card-title>Description</v-card-title>
+        <v-card-text>
+          On this page personal projects are created and displayed. They can be public or private. In addition, you can create scans using the
+          <v-icon small>add</v-icon>&nbsp;button, view all the scans created
+          <v-icon small>visibility</v-icon>&nbsp;or delete the desired project
+          <v-icon small>delete</v-icon>
+        </v-card-text>
+      </v-card>
     </div>
-    <dialogMessage
-      :dialogMsg="dialogMsg"
-      :title="msg_title"
-      :icon="msg_icon"
-      :message="msg_text"
-      @showMsg="dialogMsg = $event"
-    ></dialogMessage>
-  </v-container>
+    <div>
+      <v-data-table :headers="headers" :items="projects" sort-by="Project Name" class="elevation-1">
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>{{ title }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+
+            <dialogScan
+              :dialog="dialog"
+              :bots="bots"
+              @isShow="dialog = $event"
+              @newScan="editedItem = $event"
+            ></dialogScan>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" @click="editItem(item)">add</v-icon>
+          <v-icon
+            small
+            class="mr-2"
+            @click="visualizeScan(item)"
+            :disabled="item.scans === undefined"
+          >visibility</v-icon>
+          <v-icon small class="mr" @click="deleteProject(item)">delete</v-icon>
+        </template>
+      </v-data-table>
+      <div class="folder-button">
+        <v-btn color="blue darken-1" @click="dialogPro = true" dark fab>
+          <dialogProject
+            :dialogPro="dialogPro"
+            @isShow="dialogPro = $event"
+            @newProject="editProject = $event"
+          ></dialogProject>
+          <v-icon>add</v-icon>
+        </v-btn>
+      </div>
+      <dialogMessage
+        :dialogMsg="dialogMsg"
+        :title="msg_title"
+        :icon="msg_icon"
+        :message="msg_text"
+        @showMsg="dialogMsg = $event"
+      ></dialogMessage>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -194,10 +207,11 @@ export default {
 <style scoped>
 .container {
   height: 90%;
-  width: 80%;
-  justify-content: center;
-  display: flex;
-  align-items: center;
+  width: 70%;
+}
+
+.description {
+  margin: 2em;
 }
 
 .button-add {

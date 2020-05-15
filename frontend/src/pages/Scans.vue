@@ -1,47 +1,61 @@
 <template>
-  <v-container>
-    <v-data-table :headers="headers" :items="scans" class="elevation-1">
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-toolbar-title>{{ title }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editScan(item)">create</v-icon>
-        <v-icon small class="mr-2" @click="renewScan(item)">autorenew</v-icon>
-        <v-icon
-          small
-          class="mr-2"
-          @click="openScan(item)"
-          :disabled="item.done === false"
-        >visibility</v-icon>
-        <v-icon small @click="deleteScan(item)">mdi-delete</v-icon>
-      </template>
-    </v-data-table>
-    <v-dialog v-model="dialogEdit" persistent max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Edit Scan</span>
-        </v-card-title>
+  <div class="container">
+    <div class="description">
+      <v-card class="mx-auto">
+        <v-card-title>Description</v-card-title>
         <v-card-text>
-          <v-select v-model="newBot" :items="bots" label="Bots"></v-select>
+          This page shows the scans of the project. you can choose another bot
+          <v-icon small>create</v-icon>&nbsp;, relaunch the scan
+          <v-icon small>autorenew</v-icon>&nbsp;, access more detailed information
+          <v-icon small>visibility</v-icon>&nbsp;or delete the scan
+          <v-icon small>delete</v-icon>&nbsp;.
         </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogEdit = false">Cancel</v-btn>
-          <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-        </v-card-actions>
       </v-card>
-    </v-dialog>
-    <dialogMessage
-      :dialogMsg="dialogMsg"
-      :title="msg_title"
-      :icon="msg_icon"
-      :message="msg_text"
-      @showMsg="dialogMsg = $event"
-    ></dialogMessage>
-  </v-container>
+    </div>
+    <div>
+      <v-data-table :headers="headers" :items="scans" class="elevation-1">
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>{{ title }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" @click="editScan(item)">create</v-icon>
+          <v-icon small class="mr-2" @click="renewScan(item)">autorenew</v-icon>
+          <v-icon
+            small
+            class="mr-2"
+            @click="openScan(item)"
+            :disabled="item.done === false"
+          >visibility</v-icon>
+          <v-icon small @click="deleteScan(item)">mdi-delete</v-icon>
+        </template>
+      </v-data-table>
+      <v-dialog v-model="dialogEdit" persistent max-width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Edit Scan</span>
+          </v-card-title>
+          <v-card-text>
+            <v-select v-model="newBot" :items="bots" label="Bots"></v-select>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="dialogEdit = false">Cancel</v-btn>
+            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <dialogMessage
+        :dialogMsg="dialogMsg"
+        :title="msg_title"
+        :icon="msg_icon"
+        :message="msg_text"
+        @showMsg="dialogMsg = $event"
+      ></dialogMessage>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -153,10 +167,11 @@ export default {
 <style scoped>
 .container {
   height: 90%;
-  width: 80%;
-  justify-content: center;
-  display: flex;
-  align-items: center;
+  width: 70%;
+}
+
+.description {
+  margin: 2em;
 }
 
 .v-application .elevation-1 {

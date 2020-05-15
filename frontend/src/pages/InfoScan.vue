@@ -4,7 +4,7 @@
       <v-col cols="4">
         <v-card class="mx-auto" max-width="300">
           <v-card-title>Description</v-card-title>
-          <v-card-text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia corrupti facilis delectus consectetur cum aliquid ad modi! Optio ipsum velit nam! Atque explicabo exercitationem saepe repellat pariatur odio laborum nulla?</v-card-text>
+          <v-card-text>This page shows the results of the scans performed. There are two links, the one with the calendar icon shows a timeline with all scans in chronological order. The other leads to the result of the last scan.</v-card-text>
         </v-card>
       </v-col>
       <v-col cols="8" class="scan-col">
