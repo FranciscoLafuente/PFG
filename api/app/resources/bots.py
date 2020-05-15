@@ -33,8 +33,6 @@ def get_my_bots():
 @fresh_jwt_required
 def get_bots():
     list_bots = views.BotsManagement().get()
-    print("LIST BOTS", list_bots)
-
     return jsonify(list_bots), 200
 
 

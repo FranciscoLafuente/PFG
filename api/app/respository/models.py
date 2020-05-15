@@ -33,6 +33,9 @@ class ScansData(DynamicDocument):
     scan_user = ObjectIdField(required=True)
     results = ListField()
     created = DateTimeField(default=datetime.datetime.utcnow)
+    meta = {
+        'ordering': ['-created']
+    }
 
 
 class MyBots(Document):

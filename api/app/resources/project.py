@@ -186,15 +186,17 @@ def delete_scan(id_p, id_scan):
     return jsonify(msg.SUCCESS), 200
 
 
-@resources.route('/search/<text>', methods=['GET'])
+@resources.route('/search', methods=['GET'])
 @fresh_jwt_required
-def search_scan(text):
+def search_scan():
+    text = request.args.get('text', ":", str)
     res_list = text.split(':')
+    page = request.args.get('page', 0, int)
+    size = request.args.get('size', 0, int)
     if 'port' in res_list:
         r = generic_model.Generic().search(collection='nobita', port=res_list[1])
         response = [views.ScansDataManagement().get_by_id(id=r)]
-        print(response)
     else:
-        response = views.ScansDataManagement().search(key=res_list[0], searchText=res_list[1])
+        response = views.ScansDataManagement().search(key=res_list[0], searchText=res_list[1], start=page, end=size)
 
     return jsonify(response), 200

@@ -205,9 +205,9 @@ class ScansDataManagement:
     def search(self, **kwargs):
         list_scans = []
         try:
-            for s in ScansData.objects(
-                    Q(continent=kwargs['searchText']) | Q(country=kwargs['searchText'])
-                    | Q(organization=kwargs['searchText']) | Q(domain=kwargs['searchText'])
+            for s in ScansData.objects[kwargs['start']:kwargs['end']](
+                    Q(continent__istartswith=kwargs['searchText']) | Q(country__istartswith=kwargs['searchText'])
+                    | Q(organization__istartswith=kwargs['searchText']) | Q(domain__istartswith=kwargs['searchText'])
             ):
                 list_scans.append(
                     json.loads(JSONEncoder().encode(

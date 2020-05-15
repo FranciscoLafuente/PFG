@@ -78,9 +78,11 @@ const actions = {
             commit(DEL_SCAN, params.index);
         });
     },
-    async [SEARCH_SCAN](context, text) {
-        return ScanService.search(text).then((r) => {
-            context.commit(SEARCH_SAVE, r.data);
+    async [SEARCH_SCAN]({ commit }, params) {
+        console.log("PARAMS MODULE", params);
+
+        return ScanService.search(params).then((r) => {
+            commit(SEARCH_SAVE, r.data);
         });
     },
     [SCAN_EDIT](context, params) {

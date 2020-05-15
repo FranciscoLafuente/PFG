@@ -28,13 +28,17 @@ const ApiService = {
         });
     },
 
+    getParams(resource, params) {
+        return Vue.axios.get(`${resource}`, { params: params }).catch((error) => {
+            throw new Error(`[RWV] ApiService ${error}`);
+        });
+    },
+
     post(resource, params) {
         return Vue.axios.post(`${resource}`, params);
     },
 
     upload(resource, file) {
-        console.log("IN API", file);
-
         return Vue.axios.post(`${resource}`, file);
     },
 
@@ -104,8 +108,8 @@ export const ScanService = {
     delete(id_project, id_scan) {
         return ApiService.delete(`myproject/${id_project}/${id_scan}`);
     },
-    search(text) {
-        return ApiService.get(`search`, text);
+    search(params) {
+        return ApiService.getParams(`search`, params);
     },
 };
 
