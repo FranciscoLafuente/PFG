@@ -1,44 +1,58 @@
 <template>
-  <v-container>
-    <v-data-table :headers="headers" :items="myBots" sort-by="Bot Name" class="elevation-1">
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-toolbar-title>{{ title }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <dialogToken :dialog="dialog" :tokenBot="tokenBot" @isShow="dialog = $event"></dialogToken>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.action="{ item }">
-        <div class="action-icons">
-          <v-icon small class="mr-2" @click="generateToken(item)">add</v-icon>
-          <v-icon small class="mr-2" @click="renewToken(item)">autorenew</v-icon>
-        </div>
-      </template>
-      <template class="delete-icon" v-slot:item.delete="{ item }">
-        <div class="delete-icon">
-          <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
-        </div>
-      </template>
-    </v-data-table>
-    <div class="folder-button">
-      <v-btn color="blue darken-1" @click="dialogBot = true" dark fab>
-        <dialogBot
-          :dialogBot="dialogBot"
-          :bots="bots"
-          @isShow="dialogBot = $event"
-          @newBot="editedItem = $event"
-        ></dialogBot>
-        <v-icon>add</v-icon>
-      </v-btn>
+  <div class="container">
+    <div class="description">
+      <v-card class="mx-auto">
+        <v-card-title>Description</v-card-title>
+        <v-card-text>
+          This page shows the bots that have been created. A new one can be created with the large
+          <v-icon small>add</v-icon>&nbsp; symbol. To do this, you have to choose the type of the bot and the IP from where it will launch. The small
+          <v-icon small>add</v-icon>&nbsp; symbol generates a token for the bot, the
+          <v-icon small>autorenew</v-icon>&nbsp; button regenerates the token in case it has been lost. The
+          <v-icon small>delete</v-icon>&nbsp; button removes the bot.
+        </v-card-text>
+      </v-card>
     </div>
-    <dialogMessage
-      :dialogMsg="dialogMsg"
-      :title="msg_title"
-      :icon="msg_icon"
-      :message="msg_text"
-      @showMsg="dialogMsg = $event"
-    ></dialogMessage>
-  </v-container>
+    <div>
+      <v-data-table :headers="headers" :items="myBots" sort-by="Bot Name" class="elevation-1">
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>{{ title }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <dialogToken :dialog="dialog" :tokenBot="tokenBot" @isShow="dialog = $event"></dialogToken>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.action="{ item }">
+          <div class="action-icons">
+            <v-icon small class="mr-2" @click="generateToken(item)">add</v-icon>
+            <v-icon small class="mr-2" @click="renewToken(item)">autorenew</v-icon>
+          </div>
+        </template>
+        <template class="delete-icon" v-slot:item.delete="{ item }">
+          <div class="delete-icon">
+            <v-icon small class="mr-2" @click="deleteItem(item)">delete</v-icon>
+          </div>
+        </template>
+      </v-data-table>
+      <div class="folder-button">
+        <v-btn color="blue darken-1" @click="dialogBot = true" dark fab>
+          <dialogBot
+            :dialogBot="dialogBot"
+            :bots="bots"
+            @isShow="dialogBot = $event"
+            @newBot="editedItem = $event"
+          ></dialogBot>
+          <v-icon>add</v-icon>
+        </v-btn>
+      </div>
+      <dialogMessage
+        :dialogMsg="dialogMsg"
+        :title="msg_title"
+        :icon="msg_icon"
+        :message="msg_text"
+        @showMsg="dialogMsg = $event"
+      ></dialogMessage>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -176,9 +190,10 @@ export default {
 .container {
   height: 90%;
   width: 80%;
-  justify-content: center;
-  display: flex;
-  align-items: center;
+}
+
+.description {
+  margin: 2em;
 }
 
 .v-application .elevation-1 {
