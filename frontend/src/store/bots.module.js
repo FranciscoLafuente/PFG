@@ -60,8 +60,6 @@ const actions = {
         return BotService.renewToken(id);
     },
     [BOT_UPLOAD](context, params) {
-        console.log("IN BOTS MODULE", params);
-
         return BotService.addBot(params);
     },
 };

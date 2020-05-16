@@ -91,7 +91,6 @@ export const ScanService = {
         return ApiService.get(`bot/${name}`, id);
     },
     getTimeLine(params) {
-        console.log("PARAMS IN TIMELINE", params);
         let p = {
             page: params.page,
             size: params.size,
@@ -120,8 +119,6 @@ export const ScanService = {
         return ApiService.getParams(`search/numItems`, params);
     },
     timelineItems(params) {
-        console.log("timelineItems service", params);
-
         return ApiService.query(`scan/numItems/${params.id_scan}/${params.domain}`)
     }
 };
@@ -146,8 +143,6 @@ export const BotService = {
         return ApiService.put(`bots/${id}`);
     },
     addBot(file) {
-        console.log("IN ADDBOT", file);
-
         return ApiService.upload(`upload`, file);
     },
 };

@@ -60,7 +60,7 @@ def get_timeline(id_scan, domain):
     list_time = []
     page = request.args.get('page', 0, int)
     size = request.args.get('size', 0, int)
-    scans = views.ScansDataManagement().get_scans(scan=id_scan, domain=domain, page=page, size=size)
+    scans = views.ScansDataManagement().get_scans_pag(scan=id_scan, domain=domain, page=page, size=size)
     if not scans:
         return jsonify(msg.NO_DATA)
     for s in scans:

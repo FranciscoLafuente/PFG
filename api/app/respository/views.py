@@ -175,6 +175,23 @@ class ScansDataManagement:
     def get_scans(self, **kwargs):
         list_scans = []
         try:
+            for s in ScansData.objects(scan_user=kwargs['scan'], domain=kwargs['domain']):
+                list_scans.append(
+                    json.loads(JSONEncoder().encode(
+                        dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
+                              'created': s.created.strftime("%Y-%m-%d %H:%M:%S"), 'ip': s.ip, 'country': s.country,
+                              'continent': s.continent, 'latitude': s.latitude, 'longitude': s.longitude,
+                              'organization': s.organization})
+                    ))
+                )
+            return list_scans
+        except Exception as e:
+            print(['ScansData - Get Scans'])
+            print('Exception', e)
+
+    def get_scans_pag(self, **kwargs):
+        list_scans = []
+        try:
             for s in ScansData.objects[kwargs['page']:kwargs['size']](scan_user=kwargs['scan'],
                                                                       domain=kwargs['domain']):
                 list_scans.append(
@@ -187,7 +204,7 @@ class ScansDataManagement:
                 )
             return list_scans
         except Exception as e:
-            print(['ScansData - Get Scans'])
+            print(['ScansData - Get Scans Paginated'])
             print('Exception', e)
 
     def scans_items(self, **kwargs):
