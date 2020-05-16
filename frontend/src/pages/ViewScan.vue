@@ -102,8 +102,6 @@ export default {
 
   methods: {
     initialize() {
-      console.log("SCAN", this.scan.results);
-
       this.scan.results.forEach(e => {
         let s = {
           bot: Object.keys(e)[0],
@@ -117,7 +115,7 @@ export default {
         organization: this.scan["organization"]
       };
       this.geoFormat = dict;
-      this.loadLocation(this.scan[("latitude", this.scan["longitude"])]);
+      this.loadLocation(this.scan["latitude"], this.scan["longitude"]);
     },
 
     loadLocation(lat, lon) {

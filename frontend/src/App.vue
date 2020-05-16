@@ -61,9 +61,7 @@ export default {
 .base {
   margin: 0 auto;
   width: 100%;
-  height: 100%;
-  /*background: url(/img/doraemon.5ec8c002.jpg) no-repeat center top;
-    opacity: 0.1;*/
+  height: 87%;
 }
 
 .v-card:not(.v-sheet--tile):not(.v-card--shaped) {
