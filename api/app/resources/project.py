@@ -58,12 +58,24 @@ def bot_info(name, id):
 @fresh_jwt_required
 def get_timeline(id_scan, domain):
     list_time = []
-    scans = views.ScansDataManagement().get_scans(scan=id_scan, domain=domain)
+    page = request.args.get('page', 0, int)
+    size = request.args.get('size', 0, int)
+    scans = views.ScansDataManagement().get_scans(scan=id_scan, domain=domain, page=page, size=size)
     if not scans:
         return jsonify(msg.NO_DATA)
     for s in scans:
         list_time.append(s)
     return jsonify(list_time), 200
+
+
+@resources.route('/scan/numItems/<id_scan>/<domain>', methods=['GET'])
+@fresh_jwt_required
+def total_timeline(id_scan, domain):
+    scans = views.ScansDataManagement().scans_items(scan=id_scan, domain=domain)
+    if not scans:
+        return jsonify(msg.NO_DATA)
+
+    return jsonify(scans), 200
 
 
 @resources.route('/scan/<id_scan>/<domain>', methods=['POST', 'GET'])

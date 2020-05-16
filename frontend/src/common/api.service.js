@@ -90,8 +90,13 @@ export const ScanService = {
     getBotInfo(name, id) {
         return ApiService.get(`bot/${name}`, id);
     },
-    getTimeLine(id_scan, domain) {
-        return ApiService.get(`scan/${id_scan}`, domain);
+    getTimeLine(params) {
+        console.log("PARAMS IN TIMELINE", params);
+        let p = {
+            page: params.page,
+            size: params.size,
+        }
+        return ApiService.getParams(`scan/${params.id_scan}/${params.domain}`, p);
     },
     getResult(id_scan, domain, num) {
         return ApiService.get(`scan/${id_scan}/${domain}`, num);
@@ -114,6 +119,11 @@ export const ScanService = {
     searchItems(params) {
         return ApiService.getParams(`search/numItems`, params);
     },
+    timelineItems(params) {
+        console.log("timelineItems service", params);
+
+        return ApiService.query(`scan/numItems/${params.id_scan}/${params.domain}`)
+    }
 };
 
 export const BotService = {

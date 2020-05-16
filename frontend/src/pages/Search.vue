@@ -34,7 +34,6 @@ import { mapGetters } from "vuex";
 
 export default {
   data: () => ({
-    options: {},
     text: "",
     page: 1,
     pageCount: 10,

@@ -32,35 +32,87 @@
         </div>
       </v-col>
     </v-row>
+    <div class="text-center pt-2">
+      <v-pagination
+        v-model="page"
+        :length="pageCount"
+        @next="getFromApiNext"
+        @previous="getFromapiPrev"
+      ></v-pagination>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { FETCH_TIMELINE, SAVE_FULL_SCAN } from "../store/actions.type";
+import {
+  FETCH_TIMELINE,
+  SAVE_FULL_SCAN,
+  TIMELINE_ITEMS
+} from "../store/actions.type";
 import { mapGetters } from "vuex";
 
 export default {
   data: () => ({
     id_scan: String,
-    domain: String
+    domain: String,
+    page: 1,
+    pageCount: 10,
+    itemsPerPage: 7,
+    start: 0,
+    end: 7
   }),
 
   mounted() {
     this.id_scan = this.$route.params.id_scan.toString();
     this.domain = this.$route.params.ip.toString();
-
-    let params = {
+    let args = {
       id_scan: this.id_scan,
       domain: this.domain
     };
+    this.$store.dispatch(`scans/${TIMELINE_ITEMS}`, args);
+
+    let params = {
+      id_scan: this.id_scan,
+      domain: this.domain,
+      page: this.start,
+      size: this.end
+    };
     this.$store.dispatch(`scans/${FETCH_TIMELINE}`, params);
+    // Get total pages
+    this.pageCount = Math.ceil(this.items / this.itemsPerPage);
   },
 
   computed: {
-    ...mapGetters({ data_tl: "scans/timeline" })
+    ...mapGetters({ data_tl: "scans/timeline", items: "scans/getItems" })
   },
 
   methods: {
+    getFromApiNext() {
+      this.start = this.start + this.itemsPerPage;
+      this.end = this.start + this.itemsPerPage;
+
+      let params = {
+        id_scan: this.id_scan,
+        domain: this.domain,
+        page: this.start,
+        size: this.end
+      };
+      this.$store.dispatch(`scans/${FETCH_TIMELINE}`, params);
+    },
+
+    getFromapiPrev() {
+      this.end = this.end - this.itemsPerPage;
+      this.start = this.end - this.itemsPerPage;
+
+      let params = {
+        id_scan: this.id_scan,
+        domain: this.domain,
+        page: this.start,
+        size: this.end
+      };
+      this.$store.dispatch(`scans/${FETCH_TIMELINE}`, params);
+    },
+
     redirectUser(item, i) {
       // TODO: AQUI NO HAY QUE HACER ESTA LLAMADA, SIMPLEMENTE SE REDIRECCIONA Y SE LLAMA EN EL NUEVO CONPONENTE
       this.$store.dispatch(`scans/${SAVE_FULL_SCAN}`, item.results);

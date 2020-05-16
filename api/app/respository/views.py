@@ -175,7 +175,8 @@ class ScansDataManagement:
     def get_scans(self, **kwargs):
         list_scans = []
         try:
-            for s in ScansData.objects(scan_user=kwargs['scan'], domain=kwargs['domain']):
+            for s in ScansData.objects[kwargs['page']:kwargs['size']](scan_user=kwargs['scan'],
+                                                                      domain=kwargs['domain']):
                 list_scans.append(
                     json.loads(JSONEncoder().encode(
                         dict({'id': s.id, 'scan_user': s.scan_user, 'domain': s.domain, 'results': s.results,
@@ -187,6 +188,16 @@ class ScansDataManagement:
             return list_scans
         except Exception as e:
             print(['ScansData - Get Scans'])
+            print('Exception', e)
+
+    def scans_items(self, **kwargs):
+        items = 0
+        try:
+            for _ in ScansData.objects(scan_user=kwargs['scan'], domain=kwargs['domain']):
+                items += 1
+            return items
+        except Exception as e:
+            print(['ScansData - Scans Items'])
             print('Exception', e)
 
     def one_scan(self, **kwargs):
@@ -219,7 +230,7 @@ class ScansDataManagement:
                 )
             return list_scans
         except Exception as e:
-            print(['ScansData'])
+            print(['ScansData - Search'])
             print('Exception', e)
 
     def searchItems(self, **kwargs):
@@ -232,7 +243,7 @@ class ScansDataManagement:
                 items += 1
             return items
         except Exception as e:
-            print(['ScansData'])
+            print(['ScansData - Search Items'])
             print('Exception', e)
 
 

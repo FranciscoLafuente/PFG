@@ -20,6 +20,7 @@ import {
     SCAN_DELETE,
     SCAN_EDIT,
     FETCH_TIMELINE,
+    TIMELINE_ITEMS,
     SAVE_FULL_SCAN,
     SEARCH_SCAN,
     SEARCH_ITEMS_SCAN,
@@ -57,13 +58,18 @@ const actions = {
     },
     async [FETCH_TIMELINE]({ commit }, params) {
         commit(FETCH_START);
-        return ScanService.getTimeLine(params.id_scan, params.domain)
+        return ScanService.getTimeLine(params)
             .then((r) => {
                 commit(SAVE_TIMELINE, r.data);
             })
             .catch((error) => {
                 throw new Error(error);
             });
+    },
+    async [TIMELINE_ITEMS]({ commit }, params) {
+        return ScanService.timelineItems(params).then((r) => {
+            commit(ITEMS_SAVE, r.data);
+        });
     },
     async [SCAN_CREATE]({ commit }, params) {
         return ScanService.create(params.id, params.scan)
@@ -82,15 +88,11 @@ const actions = {
         });
     },
     async [SEARCH_SCAN]({ commit }, params) {
-        console.log("PARAMS MODULE", params);
-
         return ScanService.search(params).then((r) => {
             commit(SEARCH_SAVE, r.data);
         });
     },
     async [SEARCH_ITEMS_SCAN]({ commit }, params) {
-        console.log("PARAMS MODULE", params);
-
         return ScanService.searchItems(params).then((r) => {
             commit(ITEMS_SAVE, r.data);
         });
