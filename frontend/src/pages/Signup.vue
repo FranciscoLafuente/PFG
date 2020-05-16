@@ -141,6 +141,7 @@ export default {
 }
 .v-card > *:last-child:not(.v-btn):not(.v-chip) {
   width: 80%;
+  margin: 1em;
 }
 
 h1 {
