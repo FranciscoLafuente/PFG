@@ -44,11 +44,7 @@
 </template>
 
 <script>
-import {
-  FETCH_TIMELINE,
-  //SAVE_FULL_SCAN,
-  TIMELINE_ITEMS
-} from "../store/actions.type";
+import { FETCH_TIMELINE, TIMELINE_ITEMS } from "../store/actions.type";
 import { mapGetters } from "vuex";
 
 export default {
@@ -114,9 +110,6 @@ export default {
     },
 
     redirectUser(item, i) {
-      // TODO: AQUI NO HAY QUE HACER ESTA LLAMADA, SIMPLEMENTE SE REDIRECCIONA Y SE LLAMA EN EL NUEVO CONPONENTE
-      //this.$store.dispatch(`scans/${SAVE_FULL_SCAN}`, item.results);
-
       this.$router.push(`/scan=${this.id_scan}/host=${this.domain}/${i}`);
     }
   }
