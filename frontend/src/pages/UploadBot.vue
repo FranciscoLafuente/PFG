@@ -26,7 +26,7 @@
           <h4>How upload</h4>
           <p
             class="paragraph"
-          >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea numquam, tempore dignissimos sed, repellendus excepturi aliquam aut, sunt natus similique qui. Unde omnis veniam inventore, animi et magni soluta labore!</p>
+          >To upload a bot, you have to assign a name to it, select a file containing the bot with a .py extension and a short description of how it works. It should have the following imports: from abc import abstractmethod, ABC and from cement import Interface, Handler. Then there must be 2 classes, the first with the name you want plus Interface (Interface), for example: class BotInterface (Interface). Within this class, you have to clarify another one as follows: class Meta: and then, interface = 'anynameIf', This declares the methods to be used, with the @abstractmethod decorator. The second class must be created as follows: class BotHandler (BotInterface, Handler, ABC), with an internal class: class Meta: label = 'any name' and the methods you want, and a main one bot_scan (self, * args) which will be called from the main function.</p>
         </div>
       </form>
     </v-card>
@@ -88,7 +88,7 @@ export default {
 }
 
 .form-card {
-  width: 40%;
+  width: 70%;
   padding: inherit;
   margin: auto;
   display: flex;
