@@ -27,3 +27,4 @@ export const SCAN_RELUNCH = "scanRelunch";
 export const SCAN_DELETE = "scanDelete";
 export const SAVE_FULL_SCAN = "saveFullScan";
 export const SEARCH_SCAN = "searchScan";
+export const SEARCH_ITEMS_SCAN = "searchItemsScan";

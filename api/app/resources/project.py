@@ -200,3 +200,13 @@ def search_scan():
         response = views.ScansDataManagement().search(key=res_list[0], searchText=res_list[1], start=page, end=size)
 
     return jsonify(response), 200
+
+
+@resources.route('/search/numItems', methods=['GET'])
+@fresh_jwt_required
+def total_results():
+    text = request.args.get('text', ":", str)
+    res_list = text.split(':')
+    response = views.ScansDataManagement().searchItems(key=res_list[0], searchText=res_list[1])
+
+    return jsonify(response), 200

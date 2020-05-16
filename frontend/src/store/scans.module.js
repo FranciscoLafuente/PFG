@@ -9,6 +9,7 @@ import {
     FULL_SCAN,
     ONE_SCAN,
     SEARCH_SAVE,
+    ITEMS_SAVE,
 } from "./mutations.type";
 import {
     FETCH_SCANS,
@@ -21,6 +22,7 @@ import {
     FETCH_TIMELINE,
     SAVE_FULL_SCAN,
     SEARCH_SCAN,
+    SEARCH_ITEMS_SCAN,
 } from "./actions.type";
 
 const state = {
@@ -30,6 +32,7 @@ const state = {
     fullScan: {},
     oneScan: [],
     search: [],
+    items: 0,
     isLoading: true,
 };
 
@@ -85,6 +88,13 @@ const actions = {
             commit(SEARCH_SAVE, r.data);
         });
     },
+    async [SEARCH_ITEMS_SCAN]({ commit }, params) {
+        console.log("PARAMS MODULE", params);
+
+        return ScanService.searchItems(params).then((r) => {
+            commit(ITEMS_SAVE, r.data);
+        });
+    },
     [SCAN_EDIT](context, params) {
         return ScanService.renameBot(params.id, params.name);
     },
@@ -128,6 +138,9 @@ const mutations = {
     [SEARCH_SAVE](scate, scan) {
         state.search = scan;
     },
+    [ITEMS_SAVE](state, num) {
+        state.items = num;
+    }
 };
 
 const getters = {
@@ -149,6 +162,9 @@ const getters = {
     getSearch(state) {
         return state.search;
     },
+    getItems(state) {
+        return state.items;
+    }
 };
 
 export default {

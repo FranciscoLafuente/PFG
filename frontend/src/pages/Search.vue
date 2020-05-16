@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { SEARCH_SCAN } from "../store/actions.type";
+import { SEARCH_SCAN, SEARCH_ITEMS_SCAN } from "../store/actions.type";
 import { mapGetters } from "vuex";
 
 export default {
@@ -45,16 +45,19 @@ export default {
 
   created() {
     this.text = this.$route.params.searchText.toString();
+    this.$store.dispatch(`scans/${SEARCH_ITEMS_SCAN}`, this.text);
     let params = {
       text: this.text,
       page: this.start,
       size: this.end
     };
     this.$store.dispatch(`scans/${SEARCH_SCAN}`, params);
+    // Get total pages
+    this.pageCount = Math.ceil(this.items / this.itemsPerPage);
   },
 
   computed: {
-    ...mapGetters({ data: "scans/getSearch" })
+    ...mapGetters({ data: "scans/getSearch", items: "scans/getItems" })
   },
 
   methods: {

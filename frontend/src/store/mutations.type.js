@@ -17,6 +17,7 @@ export const SAVE_TIMELINE = "saveTimeline";
 export const FULL_SCAN = "fullScan";
 export const ONE_SCAN = "oneScan";
 export const SEARCH_SAVE = "searchSave";
+export const ITEMS_SAVE = "itemsSave";
 // OTHER
 export const FETCH_END = "fetchEnd";
 export const SET_ERROR = "setError";

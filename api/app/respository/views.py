@@ -222,6 +222,19 @@ class ScansDataManagement:
             print(['ScansData'])
             print('Exception', e)
 
+    def searchItems(self, **kwargs):
+        items = 0
+        try:
+            for _ in ScansData.objects(
+                    Q(continent__istartswith=kwargs['searchText']) | Q(country__istartswith=kwargs['searchText'])
+                    | Q(organization__istartswith=kwargs['searchText']) | Q(domain__istartswith=kwargs['searchText'])
+            ):
+                items += 1
+            return items
+        except Exception as e:
+            print(['ScansData'])
+            print('Exception', e)
+
 
 class MyBotsManagement:
 

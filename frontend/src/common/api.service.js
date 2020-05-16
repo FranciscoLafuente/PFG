@@ -111,6 +111,9 @@ export const ScanService = {
     search(params) {
         return ApiService.getParams(`search`, params);
     },
+    searchItems(params) {
+        return ApiService.getParams(`search/numItems`, params);
+    },
 };
 
 export const BotService = {
