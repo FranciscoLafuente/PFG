@@ -82,9 +82,11 @@ class ManageHandler(ManageInterface, Handler, ABC):
 
     def __init__(self, **kw):
         super().__init__(**kw)
+        self.url = ""
         self.access_token = ""
 
     def get_scan(self):
+        self.url = self.app.config.get('url', 'dev')
         self.app.log.info("Get scans by API")
         self.app.log.debug('about to greet end-user')
         type_bots, id_bot = self.login_bot()
@@ -97,7 +99,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
         token = self.app.config.get('bot', 'token')
         try:
             # Get token bot
-            response = requests.post("http://localhost:5000/bots/login", headers={'Authorization': 'Bearer ' + token})
+            response = requests.post(self.url + "bots/login", headers={'Authorization': 'Bearer ' + token})
             self.access_token = response.json()
             token_decode = jwt.decode(response.json(), verify=False)
             type_bots = token_decode['user_claims']
@@ -109,21 +111,21 @@ class ManageHandler(ManageInterface, Handler, ABC):
             self.app.log.error(self.access_token['msg'])
 
     def download_files(self, **kwargs):
-        response = requests.get("http://localhost:5000/download/" + kwargs['type_bot'],
+        response = requests.get(self.url + "download/" + kwargs['type_bot'],
                                 headers={'Authorization': 'Bearer ' + self.access_token})
         open(RUTA + kwargs['type_bot'] + '.py', 'wb').write(response.content)
 
         return True
 
     def stract_scans(self, id_bot):
-        response = requests.get("http://localhost:5000/bots/scans", headers={'Authorization': 'Bearer '
+        response = requests.get(self.url + "bots/scans", headers={'Authorization': 'Bearer '
                                                                                               + self.access_token})
         return response.json()
 
     def send_geo(self, **kwargs):
         self.app.log.info("Sending geo info to database...")
         try:
-            response = requests.post("http://localhost:5000/bots/geo/" + kwargs['id'],
+            response = requests.post(self.url + "bots/geo/" + kwargs['id'],
                                      json=kwargs['data'], headers={'Authorization': 'Bearer ' + self.access_token})
             self.app.log.info("Save in database")
             return response.json()
@@ -133,7 +135,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
     def send_data(self, **kwargs):
         self.app.log.info("Sending data to database...")
         try:
-            response = requests.post("http://localhost:5000/bots/data/" + kwargs['id'], json=kwargs['data'],
+            response = requests.post(self.url + "bots/data/" + kwargs['id'], json=kwargs['data'],
                                      headers={'Authorization': 'Bearer ' + self.access_token})
             self.app.log.info("Backend response: " + response.json()['msg'])
         except Exception as e:
@@ -142,7 +144,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
     def send_bot(self, **kwargs):
         self.app.log.info("Sending data to database...")
         try:
-            response = requests.post("http://localhost:5000/bots/" + kwargs['bot'] + "/" + kwargs['domain'] + "/" +
+            response = requests.post(self.url + "bots/" + kwargs['bot'] + "/" + kwargs['domain'] + "/" +
                                      kwargs['id'], json=kwargs['data'], headers={'Authorization': 'Bearer ' +
                                                                                                   self.access_token})
             self.app.log.info("Backend response: " + response.json()['msg'])
@@ -151,7 +153,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
 
     def update_done(self, scan_id):
         try:
-            response = requests.put("http://localhost:5000/bots/update_done/" + scan_id,
+            response = requests.put(self.url + "bots/update_done/" + scan_id,
                                     headers={'Authorization': 'Bearer ' + self.access_token})
             self.app.log.info("Updated DB: " + response.json()['msg'])
             print()

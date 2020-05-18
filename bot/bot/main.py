@@ -115,7 +115,6 @@ def start_consumer(app, manage, type_bots):
 
     def callback(ch, method, properties, body):
         data = launch_scan(app, type_bots, body)
-        print("RESULTS OF DATA", data)
         if not data:
             return
         # Send data to api
