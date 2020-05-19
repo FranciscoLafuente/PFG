@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Search class="bar-search"></Search>
+    <SearchBar class="bar-search"></SearchBar>
     <div v-if="isAuthenticated">
       <v-btn class="folder-button" color="primary" dark fab>
         <router-link to="/myproject">
@@ -12,13 +12,14 @@
 </template>
 
 <script>
-import Search from "../components/SearchBar";
+import SearchBar from "../components/SearchBar";
 import { mapGetters } from "vuex";
 
 export default {
   components: {
-    Search
+    SearchBar
   },
+
   computed: {
     ...mapGetters(["isAuthenticated"])
   }
