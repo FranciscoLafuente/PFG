@@ -137,7 +137,7 @@ const mutations = {
     [ONE_SCAN](state, scan) {
         state.oneScan = scan;
     },
-    [SEARCH_SAVE](scate, scan) {
+    [SEARCH_SAVE](state, scan) {
         state.search = scan;
     },
     [ITEMS_SAVE](state, num) {

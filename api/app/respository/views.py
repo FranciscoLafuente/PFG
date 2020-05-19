@@ -234,8 +234,8 @@ class ScansDataManagement:
         list_scans = []
         try:
             for s in ScansData.objects[kwargs['start']:kwargs['end']](
-                    Q(continent__istartswith=kwargs['searchText']) | Q(country__istartswith=kwargs['searchText'])
-                    | Q(organization__istartswith=kwargs['searchText']) | Q(domain__istartswith=kwargs['searchText'])
+                    Q(continent__icontains=kwargs['searchText']) | Q(country__icontains=kwargs['searchText'])
+                    | Q(organization__icontains=kwargs['searchText']) | Q(domain__icontains=kwargs['searchText'])
             ):
                 list_scans.append(
                     json.loads(JSONEncoder().encode(
@@ -254,8 +254,8 @@ class ScansDataManagement:
         items = 0
         try:
             for _ in ScansData.objects(
-                    Q(continent__istartswith=kwargs['searchText']) | Q(country__istartswith=kwargs['searchText'])
-                    | Q(organization__istartswith=kwargs['searchText']) | Q(domain__istartswith=kwargs['searchText'])
+                    Q(continent__icontains=kwargs['searchText']) | Q(country__icontains=kwargs['searchText'])
+                    | Q(organization__icontains=kwargs['searchText']) | Q(domain__icontains=kwargs['searchText'])
             ):
                 items += 1
             return items

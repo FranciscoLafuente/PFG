@@ -42,17 +42,11 @@ export default {
     end: 4
   }),
 
-  created() {
+  mounted() {
     this.text = this.$route.params.searchText.toString();
-    this.$store.dispatch(`scans/${SEARCH_ITEMS_SCAN}`, this.text);
-    let params = {
-      text: this.text,
-      page: this.start,
-      size: this.end
-    };
-    this.$store.dispatch(`scans/${SEARCH_SCAN}`, params);
-    // Get total pages
-    this.pageCount = Math.ceil(this.items / this.itemsPerPage);
+    this.getNumItems();
+    this.getSearch();
+    console.log("ITEMS IN SEARCH", this.items);
   },
 
   computed: {
@@ -60,6 +54,25 @@ export default {
   },
 
   methods: {
+    getSearch() {
+      let params = {
+        text: this.text,
+        page: this.start,
+        size: this.end
+      };
+      this.$store.dispatch(`scans/${SEARCH_SCAN}`, params);
+    },
+
+    getNumItems() {
+      let params = {
+        text: this.text
+      };
+      this.$store.dispatch(`scans/${SEARCH_ITEMS_SCAN}`, params).then(() => {
+        // Get total pages
+        this.pageCount = Math.ceil(this.items / this.itemsPerPage);
+      });
+    },
+
     getFromApiNext() {
       this.start = this.start + this.itemsPerPage;
       this.end = this.start + this.itemsPerPage;
