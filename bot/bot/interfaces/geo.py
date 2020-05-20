@@ -28,7 +28,7 @@ class GeoHandler(GeoInterface, Handler, ABC):
             reader_asn = geoip2.database.Reader('/home/fran/Escritorio/GeoLite2-ASN/GeoLite2-ASN.mmdb')
             res_city = reader_city.city(ip)
             res_asn = reader_asn.asn(ip)
-            geo_info = {'continent': res_city.continent.names['es'], 'country': res_city.country.names['es'],
+            geo_info = {'continent': res_city.continent.names['en'], 'country': res_city.country.names['en'],
                         'ip': ip, 'domain': domain, 'latitude': res_city.location.latitude,
                         'longitude': res_city.location.longitude,
                         'organization': res_asn.autonomous_system_organization
