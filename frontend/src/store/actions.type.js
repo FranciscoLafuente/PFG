@@ -7,6 +7,7 @@ export const CHECK_AUTH = "checkAuth";
 export const LOGIN = "login";
 export const LOGOUT = "logout";
 export const REGISTER = "register";
+export const FORGOT_PASS = "forgotPass";
 export const UPDATE_USER = "updateUser";
 // BOTS
 export const FETCH_MY_BOTS = "fetchMyBots";

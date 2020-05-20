@@ -46,7 +46,6 @@ export default {
     this.text = this.$route.params.searchText.toString();
     this.getNumItems();
     this.getSearch();
-    console.log("ITEMS IN SEARCH", this.items);
   },
 
   computed: {

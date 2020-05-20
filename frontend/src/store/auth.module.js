@@ -5,6 +5,7 @@ import {
     LOGOUT,
     REGISTER,
     CHECK_AUTH,
+    FORGOT_PASS,
     UPDATE_USER
 } from "./actions.type";
 import { SET_AUTH, PURGE_AUTH, SET_ERROR } from "./mutations.type";
@@ -68,7 +69,10 @@ const actions = {
             context.commit(PURGE_AUTH);
         }
     },
-    [UPDATE_USER](context, payload) {
+    [FORGOT_PASS](params) {
+        return ApiService.post("forgot", params);
+    },
+    async [UPDATE_USER](context, payload) {
         const { email, username, password, image, bio } = payload;
         const user = {
             email,
