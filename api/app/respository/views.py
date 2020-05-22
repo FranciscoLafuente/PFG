@@ -19,12 +19,15 @@ class UserManagement:
             return False
 
     def change_password(self, **kwargs):
-        password = self.password(kwargs['password'])
-        for user in User.objects(email=kwargs['email']):
-            u = User.objects(user.email).update_one(set__password=password)
-            u.reload()
-            return True
-        return False
+        try:
+            password = self.password(kwargs['password'])
+            for user in User.objects(email=kwargs['email']):
+                User.objects(email=user.email).update_one(set__password=password)
+                return True
+            return False
+        except Exception as e:
+            print("[UserManagement - ChangePassword]")
+            print("Exception", e)
 
     def exists(self, **kwargs):
         for user in User.objects(email=kwargs['email']):

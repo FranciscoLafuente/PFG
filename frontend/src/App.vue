@@ -18,7 +18,6 @@
 </template>
 
 <script>
-//import axios from "axios";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import dialogMessage from "./components/DialogMessage";

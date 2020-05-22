@@ -69,7 +69,8 @@ const actions = {
             context.commit(PURGE_AUTH);
         }
     },
-    [FORGOT_PASS](params) {
+    [FORGOT_PASS](context, params) {
+        console.log("params", params)
         return ApiService.post("forgot", params);
     },
     async [UPDATE_USER](context, payload) {

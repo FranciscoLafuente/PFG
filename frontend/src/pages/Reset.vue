@@ -3,7 +3,9 @@
     <v-card :elevation="9">
       <form @keypress.enter="submit">
         <div>
-          <h1><em>Reset</em> Password</h1>
+          <h1>
+            <em>Reset</em> Password
+          </h1>
         </div>
 
         <v-text-field
@@ -18,9 +20,7 @@
           @click:append="form.show = !form.show"
         ></v-text-field>
         <v-container>
-          <v-btn color="blue darken-1" dark class="mr-4" @click="submit"
-            >reset password</v-btn
-          >
+          <v-btn color="blue darken-1" dark class="mr-4" @click="submit">reset password</v-btn>
         </v-container>
       </form>
     </v-card>
@@ -31,6 +31,7 @@
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
 import axios from "axios";
+import { API_URL } from "../common/config";
 
 export default {
   mixins: [validationMixin],
@@ -62,18 +63,15 @@ export default {
   methods: {
     submit() {
       let token = this.getToken(this.$route.params.reset_token.toString());
-      console.log(token);
 
       let data = {
         reset_token: this.$route.params.reset_token.toString(),
-        password: "nuevapass"
+        password: this.form.password
       };
 
-      axios
-        .post("http://localhost:5000/" + "/reset", data, token)
-        .catch(error => {
-          console.log(error);
-        });
+      axios.post(API_URL + "reset", data, token).catch(error => {
+        console.log(error);
+      });
     },
 
     getToken(reset_token) {

@@ -58,8 +58,7 @@ export default {
   methods: {
     submit() {
       console.log(this.form);
-
-      this.$store.dispatch(`auth/${FORGOT_PASS}`, this.form);
+      this.$store.dispatch(`${FORGOT_PASS}`, this.form);
     }
   }
 };

@@ -7,6 +7,8 @@ from app.respository import views
 import datetime
 from app.email import send_email
 from app.static import messages as msg
+from app.methods import JSONEncoder
+import json
 
 
 @resources.route('/user', methods=['GET'])
