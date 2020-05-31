@@ -142,7 +142,6 @@ class ScanManagement:
 class ScansDataManagement:
 
     def create(self, **kwargs):
-        print("HA ENTRADO********")
         try:
             s = ScansData(scan_user=kwargs['scan'])
             s.domain = kwargs['data']['domain']
