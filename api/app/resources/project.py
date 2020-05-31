@@ -153,7 +153,7 @@ def edit_bot(scan_id):
 @resources.route('/myproject/scan/<scan_id>', methods=['PUT'])
 @fresh_jwt_required
 def relunch(scan_id):
-    views.ScanManagement().change_done(id=scan_id, value=False)
+    views.ScanManagement().change_launch(id=scan_id, value=True)
     return jsonify(msg.SUCCESS), 200
 
 

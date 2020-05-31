@@ -9,7 +9,7 @@
       </v-col>
       <v-col cols="8" class="scan-col">
         <div class="sub-container">
-          <v-card v-for="(s, index) in scans" :key="index" class="mx-auto" min-width="400">
+          <v-card v-for="(s, index) in scans" :key="index" class="mx-auto cards" min-width="400">
             <v-row dense>
               <v-col cols="9">
                 <v-card-text>
@@ -40,16 +40,16 @@ import { FETCH_INFO } from "../store/actions.type";
 
 export default {
   data: () => ({
-    id_scan: String,
-    id_project: String,
-    visitedCountries: Object,
-    scanInfo: Array
+    id_scan: "",
+    id_project: "",
+    visitedCountries: {}
   }),
 
   created() {
     this.id_scan = this.$route.params.id_scan.toString();
     this.id_project = this.$route.params.id.toString();
     this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan);
+    console.log("Scans", this.scans);
   },
 
   computed: {
@@ -76,6 +76,10 @@ h3 {
 
 .sub-container {
   padding: 2em;
+}
+
+.cards {
+  margin: 1em;
 }
 
 .scan-col {

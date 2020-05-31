@@ -51,14 +51,6 @@ class ManageInterface(Interface):
         """
 
     @abstractmethod
-    def send_geo(self, **kwargs):
-        """
-
-        :param kwargs:
-        :return:
-        """
-
-    @abstractmethod
     def send_bot(self, **kwargs):
         """
 
@@ -119,18 +111,8 @@ class ManageHandler(ManageInterface, Handler, ABC):
 
     def stract_scans(self, id_bot):
         response = requests.get(self.url + "bots/scans", headers={'Authorization': 'Bearer '
-                                                                                              + self.access_token})
+                                                                                   + self.access_token})
         return response.json()
-
-    def send_geo(self, **kwargs):
-        self.app.log.info("Sending geo info to database...")
-        try:
-            response = requests.post(self.url + "bots/geo/" + kwargs['id'],
-                                     json=kwargs['data'], headers={'Authorization': 'Bearer ' + self.access_token})
-            self.app.log.info("Save in database")
-            return response.json()
-        except Exception as e:
-            self.app.log.error("[Send Geo] Exception when sending data:", e)
 
     def send_data(self, **kwargs):
         self.app.log.info("Sending data to database...")

@@ -110,8 +110,12 @@ class ScanManagement:
         for s in Scan.objects(id=kwargs['id']):
             return json.loads(JSONEncoder().encode(
                 dict({'id': s.id, 'name': s.name, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S"),
-                      'done': s.done})
+                      'done': s.done, 'launch': s.launch})
             ))
+
+    def change_launch(self, **kwargs):
+        for s in Scan.objects(id=kwargs['id']):
+            Scan.objects(id=s.id).update(set__launch=kwargs['value'])
 
     def change_done(self, **kwargs):
         for s in Scan.objects(id=kwargs['id']):
@@ -130,7 +134,7 @@ class ScanManagement:
             scans_list.append(
                 json.loads(JSONEncoder().encode(
                     dict({'id': s.id, 'hosts': s.hosts, 'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
-                          'done': s.done})
+                          'done': s.done, 'launch': s.launch})
                 )))
         return scans_list
 
@@ -138,6 +142,7 @@ class ScanManagement:
 class ScansDataManagement:
 
     def create(self, **kwargs):
+        print("HA ENTRADO********")
         try:
             s = ScansData(scan_user=kwargs['scan'])
             s.domain = kwargs['data']['domain']

@@ -27,6 +27,7 @@ class Scan(Document):
     executionTime = DateTimeField(default=datetime.datetime.utcnow)
     created = DateTimeField(default=datetime.datetime.utcnow)
     done = BooleanField(default=False, required=True)
+    launch = BooleanField(default=True, required=True)
 
 
 class ScansData(DynamicDocument):

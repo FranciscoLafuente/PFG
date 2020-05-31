@@ -67,12 +67,13 @@ def launch_scan(app, type_bots, scan):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     geo = app.handler.get('geoIf', 'geo', setup=True)
 
-    results = []
-    if scan['done']:
+    scan_list = []
+    if not scan['launch']:
         app.log.info("The scan already done")
         return None
-    elif scan['executionTime'] < now and not scan['done']:
+    elif scan['executionTime'] < now and scan['launch']:
         for host in scan['hosts']:
+            results = []
             # Get the ip
             ip = get_ip(host)
             # Save data geo
@@ -89,7 +90,8 @@ def launch_scan(app, type_bots, scan):
             # All data in object for send
             scan_finished = geo_data
             scan_finished['results'] = results
-            return scan_finished
+            scan_list.append(scan_finished)
+        return scan_list
 
 
 def send(scan):

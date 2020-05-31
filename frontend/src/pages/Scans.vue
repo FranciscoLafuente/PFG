@@ -62,6 +62,7 @@
 import { mapGetters } from "vuex";
 import {
   FETCH_SCANS,
+  //HAVE_SCANS,
   SCAN_RELUNCH,
   SCAN_DELETE,
   FETCH_MY_BOTS,
@@ -103,7 +104,11 @@ export default {
 
   mounted() {
     this.id_project = this.$route.params.id.toString();
-    this.$store.dispatch(`scans/${FETCH_SCANS}`, this.id_project);
+    this.$store.dispatch(`scans/${FETCH_SCANS}`, this.id_project).then(() => {
+      this.scans.forEach(e => {
+        console.log(e);
+      });
+    });
     this.$store.dispatch(`bots/${FETCH_MY_BOTS}`);
   },
 

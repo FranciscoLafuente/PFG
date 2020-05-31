@@ -14,6 +14,7 @@ import {
 import {
     FETCH_SCANS,
     FETCH_INFO,
+    HAVE_SCANS,
     FETCH_ONE_INFO,
     SCAN_CREATE,
     SCAN_RELUNCH,
@@ -51,6 +52,9 @@ const actions = {
     async [FETCH_INFO](context, id) {
         const response = await ScanService.getInfo(id);
         context.commit(FULL_SCAN, response.data);
+    },
+    async [HAVE_SCANS](context, id) {
+        return ScanService.getInfo(id);
     },
     async [FETCH_ONE_INFO](context, params) {
         const response = await ScanService.getOneInfo(params.id_scan, params.domain, params.num);

@@ -20,6 +20,7 @@ export const BOT_UPLOAD = "botUpload";
 // SCAN
 export const FETCH_SCANS = "fetchScans";
 export const FETCH_INFO = "fetchInfo";
+export const HAVE_SCANS = "haveScans";
 export const FETCH_ONE_INFO = "fetchOneInfo";
 export const FETCH_TIMELINE = "fetchTimeline";
 export const TIMELINE_ITEMS = "timelineItems"

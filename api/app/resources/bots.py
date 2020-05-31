@@ -134,7 +134,8 @@ def save_data(id_scan):
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
-    views.ScansDataManagement().create(scan=id_scan, data=data)
+    for scan in data:
+        views.ScansDataManagement().create(scan=id_scan, data=scan)
     return jsonify(msg.SUCCESS), 200
 
 
@@ -158,6 +159,7 @@ def save_bot(name, host, id_scan):
 @fresh_jwt_required
 def update_done(scan_id):
     views.ScanManagement().change_done(id=scan_id, value=True)
+    views.ScanManagement().change_launch(id=scan_id, value=False)
     return jsonify(msg.SUCCESS), 200
 
 
