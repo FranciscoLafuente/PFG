@@ -43,14 +43,6 @@ services:
       - "9090:27017"
     networks:
       - backend
-  # Semilla de la base de datos
-  db_seed:
-    container_name: mongo-db_seed
-    build: ./dbseed
-    depends_on:
-      - db
-    networks:
-      - backend
 
 # Networks to be created to facilitate communication between containers
 networks:

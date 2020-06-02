@@ -1,8 +1,5 @@
 FROM node:12.2.0-alpine
 
-ENV http_proxy http://flafuente:Yaesnavidad10@10.74.255.120:8080/
-ENV https_proxy http://flafuente:Yaesnavidad10@10.74.255.120:8080/
-
 # instalar un simple servidor http para servir nuestro contenido estático
 RUN npm install -g http-server
 

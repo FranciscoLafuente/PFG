@@ -1,8 +1,5 @@
 FROM ubuntu:bionic
 
-ENV http_proxy http://flafuente:Yaesnavidad10@10.74.255.120:8080/
-ENV https_proxy http://flafuente:Yaesnavidad10@10.74.255.120:8080/
-
 RUN apt-get update -y && \
     apt-get install -y python-pip python-dev
 
