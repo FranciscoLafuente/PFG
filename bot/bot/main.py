@@ -16,6 +16,7 @@ import time
 # configuration defaults
 CONFIG = init_defaults('bot')
 RUTA = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
+host_queue = 'localhost'
 hand_list = []
 if_list = []
 
@@ -61,9 +62,8 @@ def dynamic_import(abs_module_path, class_name):
 
 
 def launch_scan(app, type_bots, scan):
-    print("SCANEO", scan)
     scan = json.loads(scan)
-    # Start geo handler
+    # Start geolocation handler
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     geo = app.handler.get('geoIf', 'geo', setup=True)
 
@@ -76,7 +76,7 @@ def launch_scan(app, type_bots, scan):
             results = []
             # Get the ip
             ip = get_ip(host)
-            # Save data geo
+            # Save data geolocation
             geo_data = geo.get_geo(ip, host)
             for tp in type_bots:
                 # Launch bot scan
@@ -94,26 +94,14 @@ def launch_scan(app, type_bots, scan):
         return scan_list
 
 
-def send(scan):
-    if not scan:
-        return
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
-
-    channel.queue_declare(queue='hello')
-
-    channel.basic_publish(exchange='', routing_key='hello', body=json.dumps(scan))
-    print(" [x] Sent MESSAGE")
-    connection.close()
-
-
 def start_consumer(app, manage, type_bots):
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost'))
+        pika.ConnectionParameters(host=host_queue))
     channel = connection.channel()
 
-    channel.queue_declare(queue='hello')
+    channel.queue_declare(queue='task_queue', durable=True)
+
+    print(' [*] Waiting for messages. To exit press CTRL+C')
 
     def callback(ch, method, properties, body):
         data = launch_scan(app, type_bots, body)
@@ -124,10 +112,11 @@ def start_consumer(app, manage, type_bots):
         manage.send_data(url='data', data=data, id=scan['id'])
         # Update done field in bots collection
         manage.update_done(scan['id'])
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
+    channel.basic_qos(prefetch_count=1)
+    channel.basic_consume(queue='task_queue', on_message_callback=callback)
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
 
 
@@ -198,11 +187,6 @@ def main():
             for e in hand_list:
                 app.handler.register(e)
 
-            # Go through all the scans
-            for scan in scans:
-                send(scan)
-                print("[-] Start sleep")
-                time.sleep(2)
             # ---- Start consumer ----
             start_consumer(app, manage, type_bots)
 

@@ -5,6 +5,7 @@ from flask_jwt_extended import (fresh_jwt_required, get_jwt_identity)
 from . import resources
 from app.respository import views
 from app.respository import generic_model
+from app.methods import send_to_queue
 from bson import ObjectId
 import socket
 import builtwith
@@ -135,6 +136,10 @@ def add_scan(id):
         return jsonify(msg.ALREADY_USE), 400
     views.ProjectManagement().add_scan(id=id, scan_id=scan_id)
 
+    # Add scan to queue
+    scan = views.ScanManagement().get_scan(id=scan_id)
+    send_to_queue(scan)
+
     return jsonify(msg.SUCCESS), 200
 
 
@@ -154,6 +159,9 @@ def edit_bot(scan_id):
 @fresh_jwt_required
 def relunch(scan_id):
     views.ScanManagement().change_launch(id=scan_id, value=True)
+    # Add scan to queue
+    scan = views.ScanManagement().get_scan(id=scan_id)
+    send_to_queue(scan)
     return jsonify(msg.SUCCESS), 200
 
 

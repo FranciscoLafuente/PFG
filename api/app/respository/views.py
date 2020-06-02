@@ -109,7 +109,9 @@ class ScanManagement:
     def get_scan(self, **kwargs):
         for s in Scan.objects(id=kwargs['id']):
             return json.loads(JSONEncoder().encode(
-                dict({'id': s.id, 'name': s.name, 'hosts': s.hosts, 'created': s.created.strftime("%Y-%m-%d %H:%M:%S"),
+                dict({'id': s.id, 'name': s.name, 'hosts': s.hosts,
+                      'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
+                      'created': s.created.strftime("%Y-%m-%d %H:%M:%S"),
                       'done': s.done, 'launch': s.launch})
             ))
 
