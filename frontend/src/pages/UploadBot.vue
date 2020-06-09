@@ -94,6 +94,7 @@ export default {
   display: flex;
   justify-content: center;
   text-align: center;
+  margin-bottom: 50px;
 }
 
 .form-data {
