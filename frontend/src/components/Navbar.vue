@@ -8,9 +8,6 @@
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn color="blue darken-1" text>
-          <router-link to="/myproject">My Projects</router-link>
-        </v-btn>
-        <v-btn color="blue darken-1" text>
           <router-link to="/bots">My Bots</router-link>
         </v-btn>
         <v-btn icon>
