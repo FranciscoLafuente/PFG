@@ -1,8 +1,10 @@
 from mongoengine import *
 import datetime
 
-connect('shoditaV2')
+connect('shodita', host='127.0.0.1', port=9090)
 
+
+# connect('shoditaV2')
 
 class User(Document):
     email = EmailField(required=True, unique=True)

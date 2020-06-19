@@ -6,14 +6,14 @@ import {
     REGISTER,
     CHECK_AUTH,
     FORGOT_PASS,
-    UPDATE_USER
+    UPDATE_USER,
 } from "./actions.type";
 import { SET_AUTH, PURGE_AUTH, SET_ERROR } from "./mutations.type";
 
 const state = {
     errors: null,
     user: {},
-    isAuthenticated: !!JwtService.getToken()
+    isAuthenticated: !!JwtService.getToken(),
 };
 
 const getters = {
@@ -22,7 +22,7 @@ const getters = {
     },
     isAuthenticated(state) {
         return state.isAuthenticated;
-    }
+    },
 };
 
 const actions = {
@@ -46,11 +46,11 @@ const actions = {
         return new Promise((resolve, reject) => {
             ApiService.post("signup", { user: credentials })
                 .then(({ data }) => {
-                    context.commit(SET_AUTH, data.user);
+                    console.log("Response", data);
                     resolve(data);
                 })
                 .catch(({ response }) => {
-                    context.commit(SET_ERROR, response.data.errors);
+                    context.commit(SET_ERROR, response);
                     reject(response);
                 });
         });
@@ -70,7 +70,7 @@ const actions = {
         }
     },
     [FORGOT_PASS](context, params) {
-        console.log("params", params)
+        console.log("params", params);
         return ApiService.post("forgot", params);
     },
     async [UPDATE_USER](context, payload) {
@@ -79,7 +79,7 @@ const actions = {
             email,
             username,
             bio,
-            image
+            image,
         };
         if (password) {
             user.password = password;
@@ -89,7 +89,7 @@ const actions = {
             context.commit(SET_AUTH, data.user);
             return data;
         });
-    }
+    },
 };
 
 const mutations = {
@@ -107,12 +107,12 @@ const mutations = {
         state.user = {};
         state.errors = {};
         JwtService.destroyToken();
-    }
+    },
 };
 
 export default {
     state,
     actions,
     mutations,
-    getters
+    getters,
 };

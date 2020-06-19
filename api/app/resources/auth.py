@@ -12,7 +12,6 @@ import json
 
 
 @resources.route('/user', methods=['GET'])
-@fresh_jwt_required
 def check_user():
     token = request.headers['Authorization'].replace('Bearer ', '')
     return jsonify({"access_token": token}), 200
@@ -20,8 +19,10 @@ def check_user():
 
 @resources.route('/signup', methods=['POST'])
 def signup():
-    user = views.UserManagement().create(request.json)
-    if not user:
+    req = request.get_json()
+    user = req['user']
+    is_created = views.UserManagement().create(user)
+    if not is_created:
         return jsonify(msg.ALREADY_USE), 400
 
     return jsonify(msg.SUCCESS), 200

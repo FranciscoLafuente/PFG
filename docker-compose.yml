@@ -6,7 +6,7 @@ services:
   server:
     container_name: python-backend
     build:
-      context: ./backend/flasky
+      context: ./api
       dockerfile: Dockerfile
     restart: always
     depends_on:
@@ -15,9 +15,6 @@ services:
       - "5000:5000"
     environment:
       FLASK_ENV: development
-    networks:
-      - backend
-      - frontend
   #############################
   #    Parte del frontend     #
   #############################
@@ -30,8 +27,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8090:8080"
-    networks:
-      - frontend
   #############################
   # Parte de la base de datos #
   #############################
@@ -41,10 +36,3 @@ services:
     restart: unless-stopped
     ports:
       - "9090:27017"
-    networks:
-      - backend
-
-# Networks to be created to facilitate communication between containers
-networks:
-  backend:
-  frontend:
