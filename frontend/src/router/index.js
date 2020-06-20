@@ -194,23 +194,6 @@ const routes = [{
             title: "Reset",
         },
     },
-    {
-        path: "/myprofile",
-        name: "myprofile",
-        component: () =>
-            import ( /* webpackChunkName: "myproject" */ "../pages/Profile.vue"),
-        meta: {
-            Auth: true,
-            title: "Myprofile",
-        },
-        beforeEnter: (to, from, next) => {
-            if (!window.localStorage.getItem("access_token")) {
-                next(false);
-            } else {
-                next();
-            }
-        },
-    },
 ];
 
 const router = new VueRouter({

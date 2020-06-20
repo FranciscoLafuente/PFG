@@ -24,7 +24,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     MONGO_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'mongodb://localhost:27017/shoditaV2'
+        'mongodb://localhost:9090/shoditaV2'
 
 
 class TestingConfig(Config):
@@ -35,7 +35,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     MONGO_URI = os.environ.get('DATABASE_URL') or \
-        'mongodb://localhost:27017/shodita/mongodb_test'
+        'mongodb://localhost:9090/shoditaV2'
 
 
 config = {

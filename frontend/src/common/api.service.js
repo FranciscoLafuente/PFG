@@ -94,7 +94,7 @@ export const ScanService = {
         let p = {
             page: params.page,
             size: params.size,
-        }
+        };
         return ApiService.getParams(`scan/${params.id_scan}/${params.domain}`, p);
     },
     getResult(id_scan, domain, num) {
@@ -119,30 +119,30 @@ export const ScanService = {
         return ApiService.getParams(`search/numItems`, params);
     },
     timelineItems(params) {
-        return ApiService.query(`scan/numItems/${params.id_scan}/${params.domain}`)
-    }
+        return ApiService.query(`scan/numItems/${params.id_scan}/${params.domain}`);
+    },
 };
 
 export const BotService = {
     getMyBots() {
         return ApiService.query("mybots");
     },
-    getBots() {
-        return ApiService.query("bots");
-    },
     create(params) {
-        return ApiService.post("bots", params);
+        return ApiService.post("mybots", params);
     },
     remove(slug) {
-        return ApiService.delete(`bots/${slug}`);
+        return ApiService.delete(`mybots/${slug}`);
     },
     generateToken(slug) {
-        return ApiService.query(`bots/${slug}`);
+        return ApiService.query(`mybots/${slug}`);
     },
     renewToken(id) {
-        return ApiService.put(`bots/${id}`);
+        return ApiService.put(`mybots/${id}`);
     },
     addBot(file) {
         return ApiService.upload(`upload`, file);
+    },
+    getBots() {
+        return ApiService.query("bots");
     },
 };

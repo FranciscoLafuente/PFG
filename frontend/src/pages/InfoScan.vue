@@ -49,7 +49,6 @@ export default {
     this.id_scan = this.$route.params.id_scan.toString();
     this.id_project = this.$route.params.id.toString();
     this.$store.dispatch(`scans/${FETCH_INFO}`, this.id_scan);
-    console.log("Scans", this.scans);
   },
 
   computed: {

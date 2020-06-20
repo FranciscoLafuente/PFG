@@ -1,22 +1,26 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User, Project, Scan, ScansData, MyBots, Bots, Nobita, Shizuka, Suneo, Gigante, GeoLocation
+from .models import User, Project, Scan, ScansData, MyBots, Bots
 import json
 from bson import ObjectId
 import datetime
 from mongoengine import errors
 from mongoengine.queryset.visitor import Q
+from app.methods import JSONEncoder
 
 
 class UserManagement:
 
     def create(self, data):
-        password = self.password(data['password'])
-        u = User(email=data['email'], name=data['name'], password=password)
         try:
+            password = self.password(data['password'])
+            u = User(email=data['email'], name=data['name'], password=password)
             u.save()
             return True
         except errors.NotUniqueError:
             return False
+        except Exception as e:
+            print("[UserManagement - Create]")
+            print("Exception", e)
 
     def change_password(self, **kwargs):
         try:
@@ -26,119 +30,194 @@ class UserManagement:
                 return True
             return False
         except Exception as e:
-            print("[UserManagement - ChangePassword]")
+            print("[UserManagement - Change Password]")
             print("Exception", e)
 
     def exists(self, **kwargs):
-        for user in User.objects(email=kwargs['email']):
-            return user.email
+        try:
+            for user in User.objects(email=kwargs['email']):
+                return user.email
+        except Exception as e:
+            print("[UserManagement - Exists]")
+            print("Exception", e)
 
     def check(self, **kwargs):
-        for user in User.objects(email=kwargs['email']):
-            return check_password_hash(user.password, kwargs['password'])
-        return False
+        try:
+            for user in User.objects(email=kwargs['email']):
+                return check_password_hash(user.password, kwargs['password'])
+            return False
+        except Exception as e:
+            print("[UserManagement - Check]")
+            print("Exception", e)
 
     def add_project(self, **kwargs):
-        for user in User.objects(email=kwargs['user']):
-            User.objects(id=user.id).update(push__projects=kwargs['id'])
-            return True
+        try:
+            for user in User.objects(email=kwargs['user']):
+                User.objects(id=user.id).update(push__projects=kwargs['id'])
+                return True
+        except Exception as e:
+            print("[UserManagement - Add Project]")
+            print("Exception", e)
 
     def update_projects(self, **kwargs):
-        for user in User.objects(email=kwargs['email']):
-            User.objects(id=user.id).update(set__projects=kwargs['projects'])
-            return True
+        try:
+            for user in User.objects(email=kwargs['email']):
+                User.objects(id=user.id).update(set__projects=kwargs['projects'])
+                return True
+        except Exception as e:
+            print("[UserManagement - Update Projects]")
+            print("Exception", e)
 
     def projects_id(self, **kwargs):
-        for user in User.objects(email=kwargs['email']):
-            return user.projects
+        try:
+            for user in User.objects(email=kwargs['email']):
+                return user.projects
+        except Exception as e:
+            print("[UserManagement - Projects Id]")
+            print("Exception", e)
 
     def password(self, password):
-        return generate_password_hash(password)
+        try:
+            return generate_password_hash(password)
+        except Exception as e:
+            print("[UserManagement - Password]")
+            print("Exception", e)
 
 
 class ProjectManagement:
 
     def create(self, **kwargs):
-        p = Project(name=kwargs['name'], type=kwargs['type'])
         try:
+            p = Project(name=kwargs['name'], type=kwargs['type'])
             p.save()
             return json.loads(JSONEncoder().encode(
                 dict({'id': p.id, 'name': p.name, 'type': p.type})
             ))
         except errors.NotUniqueError:
             return False
+        except Exception as e:
+            print("[ProjectManagement - Create]")
+            print("Exception", e)
 
     def project(self, **kwargs):
-        for p in Project.objects(id=kwargs['id']):
-            return json.loads(JSONEncoder().encode(
-                dict({'id': p.id, 'name': p.name, 'type': p.type, 'scans': p.scans})
-            ))
+        try:
+            for p in Project.objects(id=kwargs['id']):
+                return json.loads(JSONEncoder().encode(
+                    dict({'id': p.id, 'name': p.name, 'type': p.type, 'scans': p.scans})
+                ))
+        except Exception as e:
+            print("[ProjectManagement - Project]")
+            print("Exception", e)
 
     def add_scan(self, **kwargs):
-        for p in Project.objects(id=kwargs['id']):
-            Project.objects(id=p.id).update(push__scans=kwargs['scan_id'])
-            return True
+        try:
+            for p in Project.objects(id=kwargs['id']):
+                Project.objects(id=p.id).update(push__scans=kwargs['scan_id'])
+                return True
+        except Exception as e:
+            print("[ProjectManagement - Add Scan]")
+            print("Exception", e)
 
     def scans_id(self, **kwargs):
-        for p in Project.objects(id=kwargs['id']):
-            return p.scans
+        try:
+            for p in Project.objects(id=kwargs['id']):
+                return p.scans
+        except Exception as e:
+            print("[ProjectManagement - Scans Id]")
+            print("Exception", e)
 
     def delete(self, **kwargs):
-        Project.objects(id=kwargs['id']).delete()
+        try:
+            Project.objects(id=kwargs['id']).delete()
+        except Exception as e:
+            print("[ProjectManagement - Delete]")
+            print("Exception", e)
 
     def update_scans(self, **kwargs):
-        for p in Project.objects(id=kwargs['id']):
-            Project.objects(id=p.id).update(set__scans=kwargs['scans'])
-            return True
+        try:
+            for p in Project.objects(id=kwargs['id']):
+                Project.objects(id=p.id).update(set__scans=kwargs['scans'])
+                return True
+        except Exception as e:
+            print("[ProjectManagement - Update Scans]")
+            print("Exception", e)
 
 
 class ScanManagement:
 
     def create(self, **kwargs):
-        if kwargs['execution_time']:
-            s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'],
-                     executionTime=kwargs['execution_time'])
-        else:
-            s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'])
         try:
+            if kwargs['execution_time']:
+                s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'],
+                         executionTime=kwargs['execution_time'])
+            else:
+                s = Scan(name=kwargs['name'], hosts=kwargs['hosts'], bot=kwargs['bot'])
             s.save()
             return s.id
         except errors.NotUniqueError:
             return False
+        except Exception as e:
+            print("[ScanManagement - Create]")
+            print("Exception", e)
 
     def get_scan(self, **kwargs):
-        for s in Scan.objects(id=kwargs['id']):
-            return json.loads(JSONEncoder().encode(
-                dict({'id': s.id, 'name': s.name, 'hosts': s.hosts,
-                      'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
-                      'created': s.created.strftime("%Y-%m-%d %H:%M:%S"),
-                      'done': s.done, 'launch': s.launch})
-            ))
+        try:
+            for s in Scan.objects(id=kwargs['id']):
+                return json.loads(JSONEncoder().encode(
+                    dict({'id': s.id, 'name': s.name, 'hosts': s.hosts,
+                          'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
+                          'created': s.created.strftime("%Y-%m-%d %H:%M:%S"),
+                          'done': s.done, 'launch': s.launch})
+                ))
+        except Exception as e:
+            print("[ScanManagement - Get Scan]")
+            print("Exception", e)
 
     def change_launch(self, **kwargs):
-        for s in Scan.objects(id=kwargs['id']):
-            Scan.objects(id=s.id).update(set__launch=kwargs['value'])
+        try:
+            for s in Scan.objects(id=kwargs['id']):
+                Scan.objects(id=s.id).update(set__launch=kwargs['value'])
+        except Exception as e:
+            print("[ScanManagement - Change Launch]")
+            print("Exception", e)
 
     def change_done(self, **kwargs):
-        for s in Scan.objects(id=kwargs['id']):
-            Scan.objects(id=s.id).update(set__done=kwargs['value'])
+        try:
+            for s in Scan.objects(id=kwargs['id']):
+                Scan.objects(id=s.id).update(set__done=kwargs['value'])
+        except Exception as e:
+            print("[ScanManagement - Change Done]")
+            print("Exception", e)
 
     def cahnge_bot(self, **kwargs):
-        for s in Scan.objects(id=kwargs['id']):
-            Scan.objects(id=s.id).update(set__bot=kwargs['bot'])
+        try:
+            for s in Scan.objects(id=kwargs['id']):
+                Scan.objects(id=s.id).update(set__bot=kwargs['bot'])
+        except Exception as e:
+            print("[ScanManagement - Change Bot]")
+            print("Exception", e)
 
     def delete(self, **kwargs):
-        Scan.objects(id=kwargs['id']).delete()
+        try:
+            Scan.objects(id=kwargs['id']).delete()
+        except Exception as e:
+            print("[ScanManagement - Delete]")
+            print("Exception", e)
 
     def scans_by_bot(self, **kwargs):
-        scans_list = []
-        for s in Scan.objects(bot=ObjectId(kwargs['bot'])):
-            scans_list.append(
-                json.loads(JSONEncoder().encode(
-                    dict({'id': s.id, 'hosts': s.hosts, 'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
-                          'done': s.done, 'launch': s.launch})
-                )))
-        return scans_list
+        try:
+            scans_list = []
+            for s in Scan.objects(bot=ObjectId(kwargs['bot'])):
+                scans_list.append(
+                    json.loads(JSONEncoder().encode(
+                        dict({'id': s.id, 'hosts': s.hosts,
+                              'executionTime': s.executionTime.strftime("%Y-%m-%d %H:%M:%S"),
+                              'done': s.done, 'launch': s.launch})
+                    )))
+            return scans_list
+        except Exception as e:
+            print("[ScanManagement - Scans By Bot]")
+            print("Exception", e)
 
 
 class ScansDataManagement:
@@ -195,7 +274,7 @@ class ScansDataManagement:
                 )
             return list_scans
         except Exception as e:
-            print(['ScansData - Get Scans'])
+            print('[ScansData - Get Scans]')
             print('Exception', e)
 
     def get_scans_pag(self, **kwargs):
@@ -213,7 +292,7 @@ class ScansDataManagement:
                 )
             return list_scans
         except Exception as e:
-            print(['ScansData - Get Scans Paginated'])
+            print('[ScansData - Get Scans Paginated]')
             print('Exception', e)
 
     def scans_items(self, **kwargs):
@@ -223,7 +302,7 @@ class ScansDataManagement:
                 items += 1
             return items
         except Exception as e:
-            print(['ScansData - Scans Items'])
+            print('[ScansData - Scans Items]')
             print('Exception', e)
 
     def one_scan(self, **kwargs):
@@ -236,7 +315,7 @@ class ScansDataManagement:
                           'organization': s.organization})
                 ))
         except Exception as e:
-            print(['ScansData'])
+            print('ScansData - One Scan')
             print('Exception', e)
 
     def search(self, **kwargs):
@@ -256,7 +335,7 @@ class ScansDataManagement:
                 )
             return list_scans
         except Exception as e:
-            print(['ScansData - Search'])
+            print('[ScansData - Search]')
             print('Exception', e)
 
     def searchItems(self, **kwargs):
@@ -269,54 +348,81 @@ class ScansDataManagement:
                 items += 1
             return items
         except Exception as e:
-            print(['ScansData - Search Items'])
+            print('[ScansData - Search Items]')
             print('Exception', e)
 
 
 class MyBotsManagement:
 
     def create(self, **kwargs):
-        b = MyBots(name=kwargs['name'], email=kwargs['email'], ip=kwargs['ip'], type=kwargs['type'])
         try:
+            b = MyBots(name=kwargs['name'], email=kwargs['email'], ip=kwargs['ip'], type=kwargs['type'])
             b.save()
             return json.loads(JSONEncoder().encode(
                 dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type})
             ))
         except errors.NotUniqueError:
             return False
+        except Exception as e:
+            print('[MyBots - Create]')
+            print('Exception', e)
 
     def get_id(self, **kwargs):
-        for b in MyBots.objects(name=kwargs['name']):
-            return b.id
+        try:
+            for b in MyBots.objects(name=kwargs['name']):
+                return b.id
+        except Exception as e:
+            print('[MyBots - Get Id]')
+            print('Exception', e)
 
     def get_bots(self, **kwargs):
-        list_bots = []
-        for b in MyBots.objects(email=kwargs['email']):
-            list_bots.append(
-                json.loads(JSONEncoder().encode(
-                    dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
-                )))
-        return list_bots
+        try:
+            list_bots = []
+            for b in MyBots.objects(email=kwargs['email']):
+                list_bots.append(
+                    json.loads(JSONEncoder().encode(
+                        dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
+                    )))
+            return list_bots
+        except Exception as e:
+            print('[MyBots - Get Bots]')
+            print('Exception', e)
 
     def get_all_bots(self):
-        list_bots = []
-        for b in MyBots.objects:
-            list_bots.append(
-                json.loads(JSONEncoder().encode(
-                    dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
-                )))
-        return list_bots
+        try:
+            list_bots = []
+            for b in MyBots.objects:
+                list_bots.append(
+                    json.loads(JSONEncoder().encode(
+                        dict({'id': b.id, 'ip': b.ip, 'name': b.name, 'type': b.type, 'token': b.token})
+                    )))
+            return list_bots
+        except Exception as e:
+            print('[MyBots - Get All Bots]')
+            print('Exception', e)
 
     def add_token(self, **kwargs):
-        for b in MyBots.objects(id=kwargs['id']):
-            MyBots.objects(id=b.id).update(set__token=kwargs['token'])
+        try:
+            for b in MyBots.objects(id=kwargs['id']):
+                MyBots.objects(id=b.id).update(set__token=kwargs['token'])
+        except Exception as e:
+            print('[MyBots - Add Token]')
+            print('Exception', e)
 
     def delete(self, **kwargs):
-        MyBots.objects(id=kwargs['id']).delete()
+        try:
+            MyBots.objects(id=kwargs['id']).delete()
+        except Exception as e:
+            print('[MyBots - Delete]')
+            print('Exception', e)
 
     def search_bot(self, **kwargs):
-        for b in MyBots.objects(id=kwargs['id'], ip=kwargs['ip']):
-            return b.type
+        try:
+            for b in MyBots.objects(id=kwargs['id'], ip=kwargs['ip']):
+                return b.type
+        except Exception as e:
+            print('[MyBots - Search Bot]')
+            print('Exception', e)
 
 
 class BotsManagement:
@@ -330,7 +436,7 @@ class BotsManagement:
             b.save()
             return b.id
         except Exception as e:
-            print("[Bots in Create]")
+            print("[Bots - Create]")
             print("Exception", e)
 
     def get(self):
@@ -340,129 +446,5 @@ class BotsManagement:
                 list_bots.append(b.name)
             return list_bots
         except Exception as e:
-            print("[Bots in Create]")
+            print("[Bots - Get]")
             print("Exception", e)
-
-
-class NobitaManagement:
-
-    def create(self, **kwargs):
-        n = Nobita(
-            ip=kwargs['data']['ip'],
-            domain=kwargs['data']['domain'],
-            port=kwargs['data']['port'],
-            banner=kwargs['data']['banner'],
-        )
-        n.save()
-        return n.id
-
-    def get_nobita(self, **kwargs):
-        nobita_list = []
-        for n in Nobita.objects(domain=kwargs['domain']):
-            nobita_list.append(
-                json.loads(JSONEncoder().encode(
-                    dict({'ip': n.ip, 'domain': n.domain, 'port': n.port, 'banner': n.banner,
-                          'created': n.created.strftime("%Y-%m-%d %H:%M:%S")})
-                ))
-            )
-        return nobita_list
-
-
-class ShizukaManagement:
-
-    def create(self, **kwargs):
-        try:
-            shi = Shizuka(ip=kwargs['data']['ip'], target=kwargs['data']['target'], domain=kwargs['data']['domain'])
-            shi.save()
-            return shi.id
-        except errors.NotUniqueError as e:
-            pass
-        except errors.OperationError as e:
-            print("[Shizuka in Views]")
-            print("Exception", e)
-        except Exception as e:
-            print("[Shizuka in Views]")
-            print("Exception", e)
-
-    def get_shizuka(self, **kwargs):
-        shizuka_list = []
-        for shi in Shizuka.objects(target=kwargs['domain']):
-            shizuka_list.append(
-                json.loads(JSONEncoder().encode(
-                    dict({'ip': shi.ip, 'target': shi.target, 'domain': shi.domain})
-                ))
-            )
-        return shizuka_list
-
-
-class SuneoManagement:
-
-    def create(self, **kwargs):
-        try:
-            su = Suneo(ip=kwargs['data']['ip'], domain=kwargs['data']['domain'], cms=kwargs['data']['cms'],
-                       technologies=kwargs['data']['technologies'])
-            su.save()
-            return su.id
-        except errors.NotUniqueError as err:
-            pass
-        except Exception as e:
-            print("[Suneo in Views]")
-            print("Exception", e)
-
-    def get_suneo(self, **kwargs):
-        for su in Suneo.objects(domain=kwargs['domain']):
-            return json.loads(JSONEncoder().encode(
-                dict({'cms': su.cms, 'technologies': su.technologies})
-            ))
-
-
-class GiganteManagement:
-
-    def create(self, **kwargs):
-        pass
-
-    def get_shizuka(self, **kwargs):
-        for gi in Gigante.objects(domain=kwargs['domain']):
-            return gi.to_json()
-
-
-class GeoLocationManagement:
-
-    def create(self, **kwargs):
-        try:
-            geo = GeoLocation(
-                ip=kwargs['data']['ip'],
-                domain=kwargs['data']['domain'],
-                continent=kwargs['data']['continent'],
-                country=kwargs['data']['country'],
-                organization=kwargs['data']['organization'],
-                latitude=kwargs['data']['latitude'],
-                longitude=kwargs['data']['longitude'],
-            )
-            geo.save()
-            return geo.id
-        except errors.NotUniqueError:
-            pass
-        except Exception as e:
-            print("[GeoLocation in Views]")
-            print("Exception", e)
-
-    def get_geo(self, **kwargs):
-        try:
-            for g in GeoLocation.objects(domain=kwargs['domain']):
-                return json.loads(JSONEncoder().encode(
-                    dict({
-                        'ip': g.ip, 'domain': g.domain, 'country': g.country, 'organization': g.organization,
-                        'latitude': g.latitude, 'longitude': g.longitude
-                    })
-                ))
-        except Exception as e:
-            print("[GeoLocation in Views]")
-            print("Exception", e)
-
-
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)

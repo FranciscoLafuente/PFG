@@ -11,6 +11,10 @@ export const UN_TEXT =
 export const ACCESS_TITLE = "Wrong credentials!";
 export const ACCESS_ICON = "lock";
 export const ACCESS_TEXT = "Wrong email or password";
+// User already exists
+export const EXISTS_TITLE = "User already exists!";
+export const EXISTS_ICON = "info";
+export const EXISTS_TEXT = "The entered email is already in use";
 // Token already generated
 export const TOKEN_TITLE = "Already Generated!";
 export const TOKEN_ICON = "error_outline";

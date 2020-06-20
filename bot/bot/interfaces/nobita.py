@@ -15,7 +15,11 @@ class NobitaInterface(Interface):
 
     @abstractmethod
     def bot_scan(self, *args):
-        """"""
+        """
+        Get all information about the ports of a domain
+        :param args: The domain ip
+        :return: A list with all results
+        """
         pass
 
 

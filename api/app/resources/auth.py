@@ -13,12 +13,20 @@ import json
 
 @resources.route('/user', methods=['GET'])
 def check_user():
+    """
+    Every time the user changes the page, it checks the token
+    :return: The token checked
+    """
     token = request.headers['Authorization'].replace('Bearer ', '')
     return jsonify({"access_token": token}), 200
 
 
-@resources.route('/signup', methods=['POST'])
+@resources.route('/user/signup', methods=['POST'])
 def signup():
+    """
+    Register a new user
+    :return: Successful operation
+    """
     req = request.get_json()
     user = req['user']
     is_created = views.UserManagement().create(user)
@@ -28,8 +36,12 @@ def signup():
     return jsonify(msg.SUCCESS), 200
 
 
-@resources.route('/login', methods=['POST'])
+@resources.route('/user/login', methods=['POST'])
 def login():
+    """
+    When the user do login
+    :return: The access token
+    """
     if not request.is_json:
         return jsonify(msg.MISSING_JSON), 400
     req = request.get_json()['user']
@@ -52,9 +64,13 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
-@resources.route('/forgot', methods=['POST'])
+@resources.route('/user/forgot', methods=['POST'])
 def forgot_password():
-    url = 'http://localhost:8080/' + 'reset/'
+    """
+    If the user forgot your password
+    :return: Successful operation
+    """
+    url = 'http://localhost:8080/' + 'user/reset/'
     body = request.get_json()
     email = body.get('email')
     if not email:
@@ -73,9 +89,13 @@ def forgot_password():
     return jsonify(msg.SUCCESS), 200
 
 
-@resources.route('/reset', methods=['POST'])
+@resources.route('/user/reset', methods=['POST'])
 @jwt_required
 def reset_password():
+    """
+    The user has to introduce a new password
+    :return: Successful operation
+    """
     body = request.get_json()
     reset_token = body.get('reset_token')
     password = body.get('password')
@@ -92,9 +112,3 @@ def reset_password():
                text_body='Password reset was successful', html_body='<p>Password reset was successful</p>')
 
     return jsonify(msg.SUCCESS), 200
-
-
-@resources.route('/myprofile', methods=['GET'])
-@fresh_jwt_required
-def get_user():
-    pass

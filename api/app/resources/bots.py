@@ -16,6 +16,11 @@ from os.path import isfile, join
 
 
 def allowed_file(filename):
+    """
+    File extension allowed to upload bot files
+    :param filename: File you want to upload
+    :return: If it's allowed, return True
+    """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -23,22 +28,23 @@ def allowed_file(filename):
 @resources.route('/mybots', methods=['GET'])
 @fresh_jwt_required
 def get_my_bots():
+    """
+    Returns bots created by the user.
+    :return: A bots list
+    """
     current_user = get_jwt_identity()
     list_bots = views.MyBotsManagement().get_bots(email=current_user)
 
     return jsonify(list_bots), 200
 
 
-@resources.route('/bots', methods=['GET'])
-@fresh_jwt_required
-def get_bots():
-    list_bots = views.BotsManagement().get()
-    return jsonify(list_bots), 200
-
-
-@resources.route('/bots', methods=['POST'])
+@resources.route('/mybots', methods=['POST'])
 @fresh_jwt_required
 def create_bots():
+    """
+    To create a new user bot
+    :return: The bot created
+    """
     current_user = get_jwt_identity()
     if not request.is_json:
         return jsonify(msg.MISSING_JSON), 400
@@ -57,44 +63,70 @@ def create_bots():
     return jsonify(bot), 200
 
 
-@resources.route('/bots/<id_bot>', methods=['GET'])
+@resources.route('/mybots/<id_bot>', methods=['GET'])
 @fresh_jwt_required
 def generate_token_bot(id_bot):
+    """
+    Generate a token for the bot
+    :param id_bot: ID of bot
+    :return: The token
+    """
     token_bot = create_access_token(identity=id_bot, expires_delta=False)
     views.MyBotsManagement().add_token(id=id_bot, token=token_bot)
 
     return jsonify(token_bot), 200
 
 
-@resources.route('/bots/<id_bot>', methods=['PUT'])
+@resources.route('/mybots/<id_bot>', methods=['PUT'])
 @fresh_jwt_required
 def renew_token_bot(id_bot):
+    """
+    Update the token bot
+    :param id_bot: ID of bot
+    :return: The new token
+    """
     token_bot = create_access_token(identity=id_bot, expires_delta=False)
     views.MyBotsManagement().add_token(id=id_bot, token=token_bot)
 
     return jsonify(token_bot), 200
 
 
-@resources.route('/bots/<id_bot>', methods=['DELETE'])
+@resources.route('/mybots/<id_bot>', methods=['DELETE'])
 @fresh_jwt_required
 def delete_bot(id_bot):
+    """
+    Delete a bot by Id
+    :param id_bot: ID of bot
+    :return: Successful operation
+    """
     if id_bot:
         views.MyBotsManagement().delete(id=id_bot)
         return jsonify(msg.SUCCESS), 200
     return jsonify(msg.NO_DATA), 404
 
 
+@resources.route('/bots', methods=['GET'])
+@fresh_jwt_required
+def get_bots():
+    """
+    Return all type bots created to attack. They are diferents with the scan bots created within page mybots
+    :return: The list of bots
+    """
+    list_bots = views.BotsManagement().get()
+    return jsonify(list_bots), 200
+
+
+# -------------------------
 # CONNECT WITH BOTS (CEMENT)
-
-@resources.route('/bots/tokens', methods=['GET'])
-def get_token_bots():
-    bots = views.MyBotsManagement().get_all_bots()
-    return jsonify(bots)
-
+# -------------------------
 
 @resources.route('/bots/login', methods=['POST'])
 @jwt_required
 def login_bot():
+    """
+    Logs bot into the API
+    :return: The bot token
+    """
     bot_ip = request.remote_addr
     bot_id = get_jwt_identity()
     # Search if the bot exists in database
@@ -112,6 +144,10 @@ def login_bot():
 @resources.route('/bots/scans', methods=['GET'])
 @fresh_jwt_required
 def scans_by_bot():
+    """
+    Return the bot by scan id
+    :return: The bot
+    """
     bot_id = get_jwt_identity()
     bot_scans = views.ScanManagement().scans_by_bot(bot=bot_id)
 
@@ -121,6 +157,11 @@ def scans_by_bot():
 @resources.route('/bots/geo/<id_scan>', methods=['POST'])
 @fresh_jwt_required
 def save_geo(id_scan):
+    """
+    Save geo info of a bot
+    :param id_scan: Scan id
+    :return: The id of document into database
+    """
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
@@ -131,6 +172,11 @@ def save_geo(id_scan):
 @resources.route('/bots/data/<id_scan>', methods=['POST'])
 @fresh_jwt_required
 def save_data(id_scan):
+    """
+    Save all information about a scan
+    :param id_scan: Scan id
+    :return: Successful operation
+    """
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
@@ -142,6 +188,13 @@ def save_data(id_scan):
 @resources.route('/bots/<name>/<host>/<id_scan>', methods=['POST'])
 @fresh_jwt_required
 def save_bot(name, host, id_scan):
+    """
+    Save the information about a bot in a separate collection
+    :param name: Name of bot type
+    :param host: The bot target
+    :param id_scan: Scan id
+    :return: Successful operation
+    """
     data = request.json
     if not data:
         return jsonify(msg.NO_DATA), 400
@@ -158,6 +211,11 @@ def save_bot(name, host, id_scan):
 @resources.route('/bots/update_done/<scan_id>', methods=['PUT'])
 @fresh_jwt_required
 def update_done(scan_id):
+    """
+    Update the done field in document
+    :param scan_id: Scan id
+    :return: Successful operation
+    """
     views.ScanManagement().change_done(id=scan_id, value=True)
     views.ScanManagement().change_launch(id=scan_id, value=False)
     return jsonify(msg.SUCCESS), 200
@@ -166,6 +224,10 @@ def update_done(scan_id):
 @resources.route('/upload', methods=['POST'])
 @fresh_jwt_required
 def upload_file():
+    """
+    Upload a new type of bot
+    :return: Successful operation
+    """
     # First save name and description in database
     name = request.form.get('name')
     description = request.form.get('description')
@@ -189,6 +251,11 @@ def upload_file():
 @resources.route('/download/<type_bot>', methods=['GET'])
 @fresh_jwt_required
 def download_file(type_bot):
+    """
+    Download bot files
+    :param type_bot: Bot name
+    :return: The bot file
+    """
     bot = type_bot + '.py'
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                bot, as_attachment=True)

@@ -12,9 +12,10 @@ class GeoInterface(Interface):
     @abstractmethod
     def get_geo(self, ip, domain):
         """
-        :param domain:
-        :param ip:
-        :return:
+        Get all geographic information about a domain
+        :param domain: The domain
+        :param ip: The domain ip
+        :return: A dict with all information
         """
 
 

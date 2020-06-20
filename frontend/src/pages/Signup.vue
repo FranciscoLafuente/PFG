@@ -39,13 +39,29 @@
           @click:append="show = !show"
         ></v-text-field>
 
-        <v-btn color="blue darken-1" dark class="mr-4" @click="register">create</v-btn>
+        <v-btn
+          :disabled="isError()"
+          color="blue darken-1"
+          dark
+          class="mr-4"
+          @click="register"
+        >create</v-btn>
       </form>
     </v-card>
+    <dialogMessage
+      :dialogMsg="dialogMsg"
+      :title="msg_title"
+      :icon="msg_icon"
+      :message="msg_text"
+      @showMsg="dialogMsg = $event"
+    ></dialogMessage>
   </v-container>
 </template>
 
 <script>
+import { REGISTER } from "../store/actions.type";
+import dialogMessage from "../components/DialogMessage";
+import { EXISTS_TITLE, EXISTS_ICON, EXISTS_TEXT } from "../common/dialogMsg";
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -55,6 +71,7 @@ import {
 } from "vuelidate/lib/validators";
 
 export default {
+  components: { dialogMessage },
   mixins: [validationMixin],
 
   validations: {
@@ -68,8 +85,11 @@ export default {
     email: "",
     password: "",
     show: false,
-
-    form: {}
+    form: {},
+    dialogMsg: false,
+    msg_title: EXISTS_TITLE,
+    msg_icon: EXISTS_ICON,
+    msg_text: EXISTS_TEXT
   }),
 
   computed: {
@@ -107,9 +127,12 @@ export default {
         is_admin: this.is_admin
       };
       this.$store
-        .dispatch("register", data)
+        .dispatch(REGISTER, data)
         .then(() => this.$router.push("/"))
-        .catch(err => console.log(err));
+        .catch(() => {
+          this.clear();
+          this.dialogMsg = true;
+        });
     },
 
     clear() {
@@ -117,6 +140,18 @@ export default {
       this.name = "";
       this.email = "";
       this.password = "";
+    },
+
+    isError() {
+      // If there are errors or is empty return  false
+      return (
+        this.$v.name.$error ||
+        !this.$v.name.$dirty ||
+        this.$v.email.$error ||
+        !this.$v.email.$dirty ||
+        this.$v.password.$error ||
+        !this.$v.password.$dirty
+      );
     }
   }
 };

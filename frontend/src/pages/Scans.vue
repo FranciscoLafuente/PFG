@@ -104,11 +104,7 @@ export default {
 
   mounted() {
     this.id_project = this.$route.params.id.toString();
-    this.$store.dispatch(`scans/${FETCH_SCANS}`, this.id_project).then(() => {
-      this.scans.forEach(e => {
-        console.log(e);
-      });
-    });
+    this.$store.dispatch(`scans/${FETCH_SCANS}`, this.id_project);
     this.$store.dispatch(`bots/${FETCH_MY_BOTS}`);
   },
 

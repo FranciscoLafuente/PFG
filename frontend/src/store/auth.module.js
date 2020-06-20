@@ -28,7 +28,7 @@ const getters = {
 const actions = {
     [LOGIN](context, credentials) {
         return new Promise((resolve, reject) => {
-            ApiService.post("login", { user: credentials })
+            ApiService.post("user/login", { user: credentials })
                 .then(({ data }) => {
                     context.commit(SET_AUTH, data);
                     resolve(data);
@@ -44,7 +44,7 @@ const actions = {
     },
     [REGISTER](context, credentials) {
         return new Promise((resolve, reject) => {
-            ApiService.post("signup", { user: credentials })
+            ApiService.post("user/signup", { user: credentials })
                 .then(({ data }) => {
                     console.log("Response", data);
                     resolve(data);
@@ -71,7 +71,7 @@ const actions = {
     },
     [FORGOT_PASS](context, params) {
         console.log("params", params);
-        return ApiService.post("forgot", params);
+        return ApiService.post("user/forgot", params);
     },
     async [UPDATE_USER](context, payload) {
         const { email, username, password, image, bio } = payload;

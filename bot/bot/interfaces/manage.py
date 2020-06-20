@@ -14,15 +14,14 @@ class ManageInterface(Interface):
     @abstractmethod
     def download_files(self):
         """
-
-        :return:
+        Download all bots files from the API
+        :return: The bots files
         """
 
     @abstractmethod
     def get_scan(self):
         """
         Start scans with the selected bot.
-
         :return: if the scan has been succesfull
         """
         pass
@@ -30,6 +29,7 @@ class ManageInterface(Interface):
     @abstractmethod
     def login_bot(self):
         """
+        When the bot does login
         :return: The type of bots
         """
         pass
@@ -46,24 +46,17 @@ class ManageInterface(Interface):
     @abstractmethod
     def send_data(self, **kwargs):
         """
+        Send to API all information getting
         :param kwargs:
-        :return:
-        """
-
-    @abstractmethod
-    def send_bot(self, **kwargs):
-        """
-
-        :param kwargs:
-        :return:
+        :return: A object with all information
         """
 
     @abstractmethod
     def update_done(self, scan_id):
         """
-
-        :param scan_id:
-        :return:
+        Request to API to change value done to true, in a scan
+        :param scan_id: Scan id
+        :return: Print the message responsed from the API
         """
         pass
 
@@ -122,16 +115,6 @@ class ManageHandler(ManageInterface, Handler, ABC):
             self.app.log.info("Backend response: " + response.json()['msg'])
         except Exception as e:
             self.app.log.error("[Send Data] Exception when sending data:", e)
-
-    def send_bot(self, **kwargs):
-        self.app.log.info("Sending data to database...")
-        try:
-            response = requests.post(self.url + "bots/" + kwargs['bot'] + "/" + kwargs['domain'] + "/" +
-                                     kwargs['id'], json=kwargs['data'], headers={'Authorization': 'Bearer ' +
-                                                                                                  self.access_token})
-            self.app.log.info("Backend response: " + response.json()['msg'])
-        except Exception as e:
-            self.app.log.error("[Send Bot] Exception when sending data:", e)
 
     def update_done(self, scan_id):
         try:

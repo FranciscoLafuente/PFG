@@ -57,7 +57,11 @@ const actions = {
         return ScanService.getInfo(id);
     },
     async [FETCH_ONE_INFO](context, params) {
-        const response = await ScanService.getOneInfo(params.id_scan, params.domain, params.num);
+        const response = await ScanService.getOneInfo(
+            params.id_scan,
+            params.domain,
+            params.num
+        );
         context.commit(ONE_SCAN, response.data);
     },
     async [FETCH_TIMELINE]({ commit }, params) {
@@ -146,7 +150,7 @@ const mutations = {
     },
     [ITEMS_SAVE](state, num) {
         state.items = num;
-    }
+    },
 };
 
 const getters = {
@@ -170,7 +174,7 @@ const getters = {
     },
     getItems(state) {
         return state.items;
-    }
+    },
 };
 
 export default {

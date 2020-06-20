@@ -4,7 +4,7 @@ services:
   #     Parte del backend     #
   #############################
   server:
-    container_name: python-backend
+    container_name: backend-container
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -19,7 +19,7 @@ services:
   #    Parte del frontend     #
   #############################
   client:
-    container_name: vue-frontend
+    container_name: frontend-container
     depends_on:
       - server
     build:
@@ -31,8 +31,8 @@ services:
   # Parte de la base de datos #
   #############################
   db:
-    container_name: mongo-db
+    container_name: database-container
     image: mongo
-    restart: unless-stopped
+    restart: always
     ports:
       - "9090:27017"
