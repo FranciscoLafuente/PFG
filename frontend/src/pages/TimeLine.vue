@@ -65,17 +65,18 @@ export default {
       id_scan: this.id_scan,
       domain: this.domain
     };
-    this.$store.dispatch(`scans/${TIMELINE_ITEMS}`, args);
-
-    let params = {
-      id_scan: this.id_scan,
-      domain: this.domain,
-      page: this.start,
-      size: this.end
-    };
-    this.$store.dispatch(`scans/${FETCH_TIMELINE}`, params);
-    // Get total pages
-    this.pageCount = Math.ceil(this.items / this.itemsPerPage);
+    this.$store.dispatch(`scans/${TIMELINE_ITEMS}`, args).then(() => {
+      // Get total pages
+      this.pageCount = Math.ceil(this.items / this.itemsPerPage);
+      // Get paginated items
+      let params = {
+        id_scan: this.id_scan,
+        domain: this.domain,
+        page: this.start,
+        size: this.end
+      };
+      this.$store.dispatch(`scans/${FETCH_TIMELINE}`, params);
+    });
   },
 
   computed: {
