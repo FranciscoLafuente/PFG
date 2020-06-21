@@ -44,7 +44,6 @@ export default {
 
   mounted() {
     this.text = this.$route.params.searchText.toString();
-    this.getNumItems();
     this.getSearch();
   },
 
@@ -55,20 +54,18 @@ export default {
   methods: {
     getSearch() {
       let params = {
-        text: this.text,
-        page: this.start,
-        size: this.end
-      };
-      this.$store.dispatch(`scans/${SEARCH_SCAN}`, params);
-    },
-
-    getNumItems() {
-      let params = {
         text: this.text
       };
       this.$store.dispatch(`scans/${SEARCH_ITEMS_SCAN}`, params).then(() => {
         // Get total pages
         this.pageCount = Math.ceil(this.items / this.itemsPerPage);
+        // Get paginated searches
+        let params = {
+          text: this.text,
+          page: this.start,
+          size: this.end
+        };
+        this.$store.dispatch(`scans/${SEARCH_SCAN}`, params);
       });
     },
 
