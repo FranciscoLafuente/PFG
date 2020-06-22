@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
 
-connect('shodita', host='127.0.0.1', port=9090)
+connect('shoditaDB', host='db', port=27017)
 
 
 # connect('shoditaV2')

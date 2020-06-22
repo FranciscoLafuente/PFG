@@ -128,7 +128,7 @@ class Bot(App):
         plugin_dirs = ['./plugins']
 
         # configuration dir
-        dir = os.path.realpath('tokens.conf')
+        dir = os.path.realpath('properties.conf')
         config_files = [dir]
 
         # configuration defaults

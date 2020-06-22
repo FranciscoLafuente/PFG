@@ -1,38 +1,65 @@
 version: "3.5"
 services:
-  #############################
-  #     Parte del backend     #
-  #############################
-  server:
+  api:
     container_name: backend-container
     build:
       context: ./api
-      dockerfile: Dockerfile
     restart: always
+    volumes:
+      - ./api:/app
     depends_on:
       - db
+      - rabbitmq
     ports:
-      - "5000:5000"
+      - 5000:5000
     environment:
-      FLASK_ENV: development
-  #############################
-  #    Parte del frontend     #
-  #############################
+      FLASK_ENV: ${FLASK_DEV}
+      FLASK_DEBUG: ${FLASK_DEBUG}
+      PYTHONUNBUFFERED: ${PYTHON_STDOUT}
+    networks:
+      - frontend
+      - backend
+
   client:
     container_name: frontend-container
     depends_on:
-      - server
+      - api
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     ports:
-      - "8090:8080"
-  #############################
-  # Parte de la base de datos #
-  #############################
+      - 8090:8080
+    networks:
+      - frontend
+
   db:
     container_name: database-container
-    image: mongo
+    image: mongo:4.2.8-bionic
+    environment:
+      - MONGO_INITDB_DATABASE=${NAME_DATABASE}
     restart: always
+    volumes:
+      - ./database:/data/db
+      - "./database/startDatabase.js:/docker-entrypoint-initdb.d/startDatabase.js"
     ports:
-      - "9090:27017"
+      - 9090:27017
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq-container
+    #volumes:
+    #- ./.docker/rabbitmq/etc/:/etc/rabbitmq
+    #- ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+    #- ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
