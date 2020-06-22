@@ -15,7 +15,8 @@ class ShizukaInterface(Interface):
     @abstractmethod
     def bot_scan(self, *args):
         """
-        :return:
+        This bot does ipreverse about a host.
+        :return: A list with all information
         """
         pass
 

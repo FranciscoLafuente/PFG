@@ -14,7 +14,11 @@ class SuneoInterface(Interface):
 
     @abstractmethod
     def bot_scan(self, *args):
-        """"""
+        """
+        This bot extract the used technologies and the CMS
+        :param args: The domain
+        :return: A list with all information
+        """
         pass
 
 
