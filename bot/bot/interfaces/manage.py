@@ -4,8 +4,6 @@ import requests
 import jwt
 import base64
 
-RUTA = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
-
 
 class ManageInterface(Interface):
     class Meta:
@@ -96,11 +94,16 @@ class ManageHandler(ManageInterface, Handler, ABC):
             self.app.log.error(self.access_token['msg'])
 
     def download_files(self, **kwargs):
-        response = requests.get(self.url + "download/" + kwargs['type_bot'],
-                                headers={'Authorization': 'Bearer ' + self.access_token})
-        open(RUTA + kwargs['type_bot'] + '.py', 'wb').write(response.content)
+        try:
+            route = self.app.config.get('route', 'store_files')
+            response = requests.get(self.url + "download/" + kwargs['type_bot'],
+                                    headers={'Authorization': 'Bearer ' + self.access_token})
+            open(route + kwargs['type_bot'] + '.py', 'wb').write(response.content)
 
-        return True
+            return True
+        except Exception as e:
+            self.app.log.error("[Download Files] Exception when trying download bots:", e)
+            self.app.log.error(self.access_token['msg'])
 
     def stract_scans(self, id_bot):
         response = requests.get(self.url + "bots/scans", headers={'Authorization': 'Bearer '
