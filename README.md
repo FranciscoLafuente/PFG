@@ -1,10 +1,10 @@
-# TFG
+# PFG
 
-Trabajo de fin de grado
+Proyecto de fin de grado
 
 # Descripción
 
-El proyecto está basado en uno ya creado por quantika14 basado en la herramienta Shodan.
+La idea original parte de quantika14 basado en la herramienta Shodan.
 Se basa en la extracción de toda la información posible de cierto host, para conseguir
 encontrar las vulnerabilidades y que posteriormente puedan ser explotadas.
 
@@ -29,7 +29,7 @@ $ flask run
 
 Vue.js se utilizará para la creación de la parte del cliente (frontend).
 
-Para iniciar el frontend en local: \$ npm run serve
+Se deben instalar en primera instancia las librerias: \$ npm install
 
 # - Docker -
 
