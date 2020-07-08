@@ -25,8 +25,8 @@ class GeoHandler(GeoInterface, Handler, ABC):
 
     def get_geo(self, ip, domain):
         try:
-            reader_city = geoip2.database.Reader('/home/fran/Escritorio/GeoLite2-City/GeoLite2-City.mmdb')
-            reader_asn = geoip2.database.Reader('/home/fran/Escritorio/GeoLite2-ASN/GeoLite2-ASN.mmdb')
+            reader_city = geoip2.database.Reader('./geodb/GeoLite2-City/GeoLite2-City.mmdb')
+            reader_asn = geoip2.database.Reader('./geodb/GeoLite2-ASN/GeoLite2-ASN.mmdb')
             res_city = reader_city.city(ip)
             res_asn = reader_asn.asn(ip)
             geo_info = {'continent': res_city.continent.names['en'], 'country': res_city.country.names['en'],

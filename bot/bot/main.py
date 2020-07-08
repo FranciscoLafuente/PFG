@@ -15,7 +15,7 @@ import time
 
 # configuration defaults
 CONFIG = init_defaults('bot')
-RUTA = '/home/fran/Escritorio/Proyecto/PFG/bot/bot/interfaces/'
+RUTA = './interfaces/'
 host_queue = 'localhost'
 hand_list = []
 if_list = []

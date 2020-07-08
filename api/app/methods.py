@@ -3,7 +3,7 @@ import json
 from bson import ObjectId
 import pika
 
-host_queue = 'localhost'
+host_queue = 'rabbitmq'
 
 
 def send_to_queue(scan):
