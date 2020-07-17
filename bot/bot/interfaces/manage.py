@@ -3,7 +3,7 @@ from cement import Interface, Handler
 import requests
 import jwt
 import base64
-
+import sys
 
 class ManageInterface(Interface):
     class Meta:
@@ -92,6 +92,7 @@ class ManageHandler(ManageInterface, Handler, ABC):
         except Exception as e:
             self.app.log.error("[Login Bot] Exception when trying to login bot:", e)
             self.app.log.error(self.access_token['msg'])
+            sys.exit(1)
 
     def download_files(self, **kwargs):
         try:

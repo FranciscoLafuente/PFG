@@ -1,22 +1,16 @@
-FROM node:12.2.0-alpine
-
-# instalar un simple servidor http para servir nuestro contenido estático
-RUN npm install -g http-server
-
-# hacer la carpeta 'app' el directorio de trabajo actual
+# build environment
+FROM node:12.2.0-alpine as build
 WORKDIR /app
-
-# copiar 'package.json' y 'package-lock.json' (si están disponibles)
-COPY package*.json ./
-
-# instalar dependencias del proyecto
-RUN npm install
-
-# copiar los archivos y carpetas del proyecto al directorio de trabajo actual (es decir, la carpeta 'app')
-COPY . .
-
-# construir aplicación para producción minificada
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json /app/package.json
+RUN npm install --silent
+RUN npm install @vue/cli@3.7.0 -g
+COPY . /app
 RUN npm run build
 
-EXPOSE 8080
-CMD [ "http-server", "dist" ]
+# production environment
+FROM nginx:1.16.0-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx_config/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

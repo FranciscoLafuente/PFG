@@ -1,8 +1,4 @@
-FROM python:3.7.1
-
-RUN apt-get update -y && \
-    pip install --upgrade pip && \
-    apt-get install -y python-pip python-dev
+FROM tiangolo/uwsgi-nginx-flask:python3.8
 
 ENV FLASK_APP flasky.py
 
@@ -13,4 +9,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-CMD flask run --host 0.0.0.0
+CMD flask run --host 0.0.0.0 --port=80

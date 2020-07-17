@@ -62,8 +62,7 @@ import {
   GENERIC_TITLE,
   GENERIC_ICON,
   RELUNCH_TITLE,
-  RELUNCH_ICON,
-  RELUNCH_TEXT
+  RELUNCH_ICON
 } from "../common/dialogMsg";
 import { mapGetters } from "vuex";
 import {
@@ -166,8 +165,8 @@ export default {
     renewToken(item) {
       let id = item.id;
 
-      this.$store.dispatch(`bots/${TOKEN_RELUNCH}`, id).then(() => {
-        this.setMessage(RELUNCH_TITLE, RELUNCH_ICON, RELUNCH_TEXT);
+      this.$store.dispatch(`bots/${TOKEN_RELUNCH}`, id).then(res => {
+        this.setMessage(RELUNCH_TITLE, RELUNCH_ICON, res.data);
         this.dialogMsg = true;
       });
     },
